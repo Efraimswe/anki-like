@@ -39,6 +39,13 @@ All scheduling logic MUST implement the SM-2 variant faithfully:
   `newInterval = interval * easeFactor`
 - Card lifecycle phases (New, Learning, Review, Relearning) MUST be
   tracked and transitions enforced correctly
+- Learning steps MUST be supported: failed cards (Again) re-enter a
+  learning phase with sub-day intervals (default: 1min, 10min) before
+  graduating back to review — matching Anki's learning-step behavior
+- Learning-phase cards rated "Good" MUST advance through steps; rated
+  "Easy" MUST skip remaining steps and graduate with a bonus interval
+- Rating buttons MUST display projected next-interval hints (e.g.,
+  "1m", "10m", "1d", "4d") so users see consequences before rating
 - Any algorithm change MUST be validated against known SM-2 reference
   outputs before merge
 
