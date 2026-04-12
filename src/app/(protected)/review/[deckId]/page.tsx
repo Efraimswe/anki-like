@@ -148,8 +148,8 @@ export default function ReviewSession() {
     }
   };
 
-  if (sessionLoading && !initialized) return <LoadingSpinner />;
-  if ((sessionError && !initialized) || error) return <ErrorMessage message={error || (sessionErrorObj instanceof Error ? sessionErrorObj.message : 'Failed to load session')} />;
+  if (!initialized) return <LoadingSpinner />;
+  if (sessionError || error) return <ErrorMessage message={error || (sessionErrorObj instanceof Error ? sessionErrorObj.message : 'Failed to load session')} />;
 
   if (waitingUntil) {
     const mins = Math.floor(waitSeconds / 60);
