@@ -1,9 +1,11 @@
 'use client';
 
 import { Brain, Calculator, Cross, Landmark, Languages } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { fetchApi } from '@/hooks/use-auth';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { fetchApi } from '@/lib/auth-client';
+import { deckKeys, deckListOptions } from '@/lib/queries/decks';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
 import ErrorMessage from '@/components/ui/ErrorMessage';
@@ -19,63 +21,100 @@ const deckAccentStyles = [
 ];
 
 export default function DeckListPage() {
-  const [decks, setDecks] = useState<Deck[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const queryClient = useQueryClient();
   const [newName, setNewName] = useState('');
   const [showCreate, setShowCreate] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [deletingDeck, setDeletingDeck] = useState<Deck | null>(null);
 
-  const load = () => {
-    setLoading(true);
-    setError('');
-    fetchApi<Deck[]>('/api/decks')
-      .then(setDecks)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  };
+  const { data: decks = [], isPending, isError, error } = useQuery(deckListOptions);
 
-  useEffect(load, []);
+  const createDeck = useMutation({
+    mutationFn: (name: string) =>
+      fetchApi<Deck>('/api/decks', { method: 'POST', body: JSON.stringify({ name }) }),
+    onMutate: async (name) => {
+      await queryClient.cancelQueries({ queryKey: deckKeys.lists() });
+      const previous = queryClient.getQueryData<Deck[]>(deckKeys.lists());
+      queryClient.setQueryData<Deck[]>(deckKeys.lists(), (old = []) => [
+        { id: 'temp-' + Date.now(), name, cardCount: 0, dueCount: 0, newCount: 0, createdAt: new Date().toISOString() },
+        ...old,
+      ]);
+      return { previous };
+    },
+    onError: (_err, _name, ctx) => {
+      queryClient.setQueryData(deckKeys.lists(), ctx?.previous);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
+    },
+  });
+
+  const updateDeck = useMutation({
+    mutationFn: ({ id, name }: { id: string; name: string }) =>
+      fetchApi<Deck>(`/api/decks/${id}`, { method: 'PATCH', body: JSON.stringify({ name }) }),
+    onMutate: async ({ id, name }) => {
+      await queryClient.cancelQueries({ queryKey: deckKeys.lists() });
+      const previous = queryClient.getQueryData<Deck[]>(deckKeys.lists());
+      queryClient.setQueryData<Deck[]>(deckKeys.lists(), (old = []) =>
+        old.map((d) => (d.id === id ? { ...d, name } : d)),
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      queryClient.setQueryData(deckKeys.lists(), ctx?.previous);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
+    },
+  });
+
+  const deleteDeck = useMutation({
+    mutationFn: (id: string) =>
+      fetchApi(`/api/decks/${id}`, { method: 'DELETE' }),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: deckKeys.lists() });
+      const previous = queryClient.getQueryData<Deck[]>(deckKeys.lists());
+      queryClient.setQueryData<Deck[]>(deckKeys.lists(), (old = []) =>
+        old.filter((d) => d.id !== id),
+      );
+      return { previous };
+    },
+    onError: (_err, _id, ctx) => {
+      queryClient.setQueryData(deckKeys.lists(), ctx?.previous);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
+    },
+  });
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName.trim()) return;
-    try {
-      const deck = await fetchApi<Deck>('/api/decks', { method: 'POST', body: JSON.stringify({ name: newName.trim() }) });
-      setDecks((prev) => [deck, ...prev]);
-      setNewName('');
-      setShowCreate(false);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
-    }
+    createDeck.mutate(newName.trim(), {
+      onSuccess: () => {
+        setNewName('');
+        setShowCreate(false);
+      },
+    });
   };
 
-  const handleUpdate = async (id: string) => {
+  const handleUpdate = (id: string) => {
     if (!editName.trim()) return;
-    try {
-      const updated = await fetchApi<Deck>(`/api/decks/${id}`, { method: 'PATCH', body: JSON.stringify({ name: editName.trim() }) });
-      setDecks((prev) => prev.map((d) => (d.id === id ? { ...d, ...updated } : d)));
-      setEditingId(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
-    }
+    updateDeck.mutate({ id, name: editName.trim() }, {
+      onSuccess: () => setEditingId(null),
+    });
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deletingDeck) return;
-    try {
-      await fetchApi(`/api/decks/${deletingDeck.id}`, { method: 'DELETE' });
-      setDecks((prev) => prev.filter((d) => d.id !== deletingDeck.id));
-      setDeletingDeck(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
-    }
+    deleteDeck.mutate(deletingDeck.id, {
+      onSuccess: () => setDeletingDeck(null),
+    });
   };
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={load} />;
+  if (isPending) return <LoadingSpinner />;
+  if (isError) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load decks'} />;
 
   return (
     <div className="space-y-4 md:space-y-6">

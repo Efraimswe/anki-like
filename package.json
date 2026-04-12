@@ -17,6 +17,8 @@
   "dependencies": {
     "@open-spaced-repetition/binding": "^0.3.0",
     "@prisma/client": "^6.19.2",
+    "@tanstack/react-query": "^5.99.0",
+    "@tanstack/react-query-devtools": "^5.99.0",
     "bcrypt": "^6.0.0",
     "jose": "^6.0.11",
     "lucide-react": "^1.0.1",

@@ -53,6 +53,14 @@ export async function setAuthCookies(accessToken: string, refreshToken: string, 
     path: '/',
     maxAge: 7 * 24 * 60 * 60,
   });
+
+  cookieStore.set('token_expiry', String(Date.now() + 15 * 60 * 1000), {
+    httpOnly: false,
+    secure: isProduction,
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 15 * 60,
+  });
 }
 
 export async function clearAuthCookies() {
@@ -60,6 +68,7 @@ export async function clearAuthCookies() {
   cookieStore.delete('access_token');
   cookieStore.delete('refresh_token');
   cookieStore.delete('csrf_token');
+  cookieStore.delete('token_expiry');
 }
 
 export async function getAuthUser(): Promise<TokenPayload | null> {

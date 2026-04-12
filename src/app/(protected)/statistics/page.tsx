@@ -1,30 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { fetchApi } from '@/hooks/use-auth';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { statisticsOptions } from '@/lib/queries/statistics';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import type { Statistics } from '@/types';
 
 export default function StatisticsPage() {
-  const [stats, setStats] = useState<Statistics | null>(null);
   const [period, setPeriod] = useState<'week' | 'month' | 'all'>('week');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { data: stats, isPending, isError, error, refetch } = useQuery(statisticsOptions(period));
 
-  const load = () => {
-    setLoading(true);
-    setError('');
-    fetchApi<Statistics>(`/api/statistics?period=${period}`)
-      .then(setStats)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(load, [period]);
-
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={load} />;
+  if (isPending) return <LoadingSpinner />;
+  if (isError) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load statistics'} onRetry={() => refetch()} />;
   if (!stats) return null;
 
   return (

@@ -42,6 +42,26 @@ export async function middleware(request: NextRequest) {
     await jwtVerify(token, secret);
     return NextResponse.next();
   } catch {
+    // Access token expired — try inline refresh before redirecting
+    const refreshToken = request.cookies.get('refresh_token')?.value;
+    if (refreshToken) {
+      try {
+        const refreshUrl = new URL('/api/auth/refresh', request.url);
+        const refreshRes = await fetch(refreshUrl, {
+          method: 'POST',
+          headers: { Cookie: `refresh_token=${refreshToken}` },
+        });
+        if (refreshRes.ok) {
+          const response = NextResponse.next();
+          refreshRes.headers.getSetCookie().forEach((cookie) => {
+            response.headers.append('Set-Cookie', cookie);
+          });
+          return response;
+        }
+      } catch {
+        // Refresh fetch failed — fall through to redirect
+      }
+    }
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 }

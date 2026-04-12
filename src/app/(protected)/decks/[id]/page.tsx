@@ -1,9 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { fetchApi } from '@/hooks/use-auth';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
+import { fetchApi } from '@/lib/auth-client';
+import { deckKeys } from '@/lib/queries/decks';
+import { cardKeys } from '@/lib/queries/cards';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
 import ErrorMessage from '@/components/ui/ErrorMessage';
@@ -17,9 +21,8 @@ interface DeckWithCards extends Deck {
 export default function DeckDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [deck, setDeck] = useState<DeckWithCards | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const queryClient = useQueryClient();
+
   const [showCreate, setShowCreate] = useState(false);
   const [newFront, setNewFront] = useState('');
   const [newBack, setNewBack] = useState('');
@@ -29,64 +32,100 @@ export default function DeckDetailPage() {
   const [editBack, setEditBack] = useState('');
   const [deletingCard, setDeletingCard] = useState<Card | null>(null);
 
-  const load = () => {
-    if (!id) return;
-    setLoading(true);
-    setError('');
-    fetchApi<DeckWithCards>(`/api/decks/${id}`)
-      .then(setDeck)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  };
+  const deckWithCardsOptions = queryOptions({
+    queryKey: deckKeys.detail(id),
+    queryFn: () => fetchApi<DeckWithCards>(`/api/decks/${id}`),
+    enabled: !!id,
+  });
 
-  useEffect(load, [id]);
+  const { data: deck, isPending, isError, error, refetch } = useQuery(deckWithCardsOptions);
+
+  const createCard = useMutation({
+    mutationFn: ({ front, back, type }: { front: string; back: string; type: string }) =>
+      fetchApi<Card | Card[]>('/api/cards', {
+        method: 'POST',
+        body: JSON.stringify({ deckId: id, front, back, type }),
+      }),
+    onSuccess: (result) => {
+      const newCards = Array.isArray(result) ? result : [result];
+      queryClient.setQueryData<DeckWithCards>(deckKeys.detail(id), (prev) =>
+        prev ? { ...prev, cards: [...prev.cards, ...newCards], cardCount: prev.cardCount + newCards.length } : prev,
+      );
+      queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
+    },
+  });
+
+  const updateCard = useMutation({
+    mutationFn: ({ cardId, front, back }: { cardId: string; front: string; back: string }) =>
+      fetchApi<Card>(`/api/cards/${cardId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ front, back }),
+      }),
+    onMutate: async ({ cardId, front, back }) => {
+      await queryClient.cancelQueries({ queryKey: deckKeys.detail(id) });
+      const previous = queryClient.getQueryData<DeckWithCards>(deckKeys.detail(id));
+      queryClient.setQueryData<DeckWithCards>(deckKeys.detail(id), (prev) =>
+        prev ? { ...prev, cards: prev.cards.map((c) => (c.id === cardId ? { ...c, front, back } : c)) } : prev,
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      queryClient.setQueryData(deckKeys.detail(id), ctx?.previous);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: deckKeys.detail(id) });
+    },
+  });
+
+  const deleteCard = useMutation({
+    mutationFn: (cardId: string) =>
+      fetchApi(`/api/cards/${cardId}`, { method: 'DELETE' }),
+    onMutate: async (cardId) => {
+      await queryClient.cancelQueries({ queryKey: deckKeys.detail(id) });
+      const previous = queryClient.getQueryData<DeckWithCards>(deckKeys.detail(id));
+      queryClient.setQueryData<DeckWithCards>(deckKeys.detail(id), (prev) =>
+        prev ? { ...prev, cards: prev.cards.filter((c) => c.id !== cardId), cardCount: prev.cardCount - 1 } : prev,
+      );
+      return { previous };
+    },
+    onError: (_err, _id, ctx) => {
+      queryClient.setQueryData(deckKeys.detail(id), ctx?.previous);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: deckKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
+    },
+  });
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newFront.trim() || !newBack.trim() || !id) return;
-    try {
-      const result = await fetchApi<Card | Card[]>('/api/cards', {
-        method: 'POST',
-        body: JSON.stringify({ deckId: id, front: newFront.trim(), back: newBack.trim(), type: newType }),
-      });
-      const newCards = Array.isArray(result) ? result : [result];
-      setDeck((prev) => prev ? { ...prev, cards: [...prev.cards, ...newCards], cardCount: prev.cardCount + newCards.length } : prev);
-      setNewFront('');
-      setNewBack('');
-      setNewType('basic');
-      setShowCreate(false);
-    } catch (e: any) {
-      setError(e.message);
-    }
+    createCard.mutate({ front: newFront.trim(), back: newBack.trim(), type: newType }, {
+      onSuccess: () => {
+        setNewFront('');
+        setNewBack('');
+        setNewType('basic');
+        setShowCreate(false);
+      },
+    });
   };
 
-  const handleUpdate = async (cardId: string) => {
+  const handleUpdate = (cardId: string) => {
     if (!editFront.trim() || !editBack.trim()) return;
-    try {
-      const updated = await fetchApi<Card>(`/api/cards/${cardId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ front: editFront.trim(), back: editBack.trim() }),
-      });
-      setDeck((prev) => prev ? { ...prev, cards: prev.cards.map((c) => (c.id === cardId ? updated : c)) } : prev);
-      setEditingId(null);
-    } catch (e: any) {
-      setError(e.message);
-    }
+    updateCard.mutate({ cardId, front: editFront.trim(), back: editBack.trim() }, {
+      onSuccess: () => setEditingId(null),
+    });
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deletingCard) return;
-    try {
-      await fetchApi(`/api/cards/${deletingCard.id}`, { method: 'DELETE' });
-      setDeck((prev) => prev ? { ...prev, cards: prev.cards.filter((c) => c.id !== deletingCard.id), cardCount: prev.cardCount - 1 } : prev);
-      setDeletingCard(null);
-    } catch (e: any) {
-      setError(e.message);
-    }
+    deleteCard.mutate(deletingCard.id, {
+      onSuccess: () => setDeletingCard(null),
+    });
   };
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={load} />;
+  if (isPending) return <LoadingSpinner />;
+  if (isError) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load deck'} onRetry={() => refetch()} />;
   if (!deck) return <ErrorMessage message="Deck not found" />;
 
   const cards = deck.cards;

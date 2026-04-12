@@ -3,7 +3,10 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { fetchApi } from '@/hooks/use-auth';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { fetchApi } from '@/lib/auth-client';
+import { reviewKeys, reviewSessionOptions } from '@/lib/queries/reviews';
+import { deckKeys } from '@/lib/queries/decks';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { getNow, getNowMs, isTestClockEnabled, getTestClockStartIso } from '@/lib/clock';
@@ -37,37 +40,57 @@ function getNextDueTime(cards: DueCard[], startIndex: number): Date | null {
 
 export default function ReviewSession() {
   const { deckId } = useParams<{ deckId: string }>();
+  const queryClient = useQueryClient();
   const [cards, setCards] = useState<DueCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
   const [error, setError] = useState('');
   const [done, setDone] = useState(false);
   const [remainingNew, setRemainingNew] = useState(0);
   const [remainingReviews, setRemainingReviews] = useState(0);
-  const [submitting, setSubmitting] = useState(false);
   const [reviewedCount, setReviewedCount] = useState(0);
   const [waitingUntil, setWaitingUntil] = useState<Date | null>(null);
   const [waitSeconds, setWaitSeconds] = useState(0);
   const cardStartTime = useRef(getNowMs());
   const waitTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const fetchCards = useCallback(() => {
-    if (!deckId) return;
-    setLoading(true);
-    fetchApi<DueCardsResponse>(`/api/reviews/session/${deckId}`)
-      .then((res) => {
-        setCards(res.cards);
-        setCurrentIndex(0);
-        setRemainingNew(res.remainingNew);
-        setRemainingReviews(res.remainingReviews);
-        if (res.cards.length === 0) setDone(true);
-      })
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
+  const { data: initialSession, isPending: sessionLoading, isError: sessionError, error: sessionErrorObj } = useQuery(reviewSessionOptions(deckId));
+
+  // Initialize local state from query result on first load
+  useEffect(() => {
+    if (!initialSession || initialized) return;
+    setCards(initialSession.cards);
+    setCurrentIndex(0);
+    setRemainingNew(initialSession.remainingNew);
+    setRemainingReviews(initialSession.remainingReviews);
+    if (initialSession.cards.length === 0) setDone(true);
+    setInitialized(true);
+  }, [initialSession, initialized]);
+
+  const submitReview = useMutation({
+    mutationFn: (payload: { cardId: string; rating: Rating; timeTakenMs: number }) =>
+      fetchApi('/api/reviews/submit', { method: 'POST', body: JSON.stringify(payload) }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: reviewKeys.session(deckId) });
+      queryClient.invalidateQueries({ queryKey: reviewKeys.dailyLimits });
+      queryClient.invalidateQueries({ queryKey: deckKeys.all });
+    },
+  });
+
+  const fetchCards = useCallback(async () => {
+    try {
+      const res = await fetchApi<DueCardsResponse>(`/api/reviews/session/${deckId}`);
+      setCards(res.cards);
+      setCurrentIndex(0);
+      setRemainingNew(res.remainingNew);
+      setRemainingReviews(res.remainingReviews);
+      if (res.cards.length === 0) setDone(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load cards');
+    }
   }, [deckId]);
 
-  useEffect(() => { fetchCards(); }, [fetchCards]);
   useEffect(() => () => { if (waitTimerRef.current) clearInterval(waitTimerRef.current); }, []);
 
   const startWaitingFor = (dueTime: Date) => {
@@ -114,22 +137,19 @@ export default function ReviewSession() {
 
   const handleRate = async (rating: Rating) => {
     const card = cards[currentIndex];
-    if (!card || submitting) return;
-    setSubmitting(true);
+    if (!card || submitReview.isPending) return;
     const timeTakenMs = getNowMs() - cardStartTime.current;
     try {
-      await fetchApi('/api/reviews/submit', { method: 'POST', body: JSON.stringify({ cardId: card.id, rating, timeTakenMs }) });
+      await submitReview.mutateAsync({ cardId: card.id, rating, timeTakenMs });
       setReviewedCount((c) => c + 1);
       await advanceToNextCard(currentIndex + 1);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Review submission failed');
-    } finally {
-      setSubmitting(false);
     }
   };
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} />;
+  if (sessionLoading && !initialized) return <LoadingSpinner />;
+  if ((sessionError && !initialized) || error) return <ErrorMessage message={error || (sessionErrorObj instanceof Error ? sessionErrorObj.message : 'Failed to load session')} />;
 
   if (waitingUntil) {
     const mins = Math.floor(waitSeconds / 60);
@@ -198,7 +218,7 @@ export default function ReviewSession() {
                   {RATINGS.map((r) => {
                     const hint = card.intervalHints?.[r.value];
                     return (
-                      <button key={r.value} disabled={submitting} onClick={() => handleRate(r.value)} className={`flex flex-col items-center px-8 py-4 text-white text-sm font-bold rounded-2xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-lg ${r.color}`}>
+                      <button key={r.value} disabled={submitReview.isPending} onClick={() => handleRate(r.value)} className={`flex flex-col items-center px-8 py-4 text-white text-sm font-bold rounded-2xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-lg ${r.color}`}>
                         <span>{r.label}</span>
                         {hint && <span className="text-[10px] opacity-80 mt-1 uppercase tracking-tighter">{hint}</span>}
                       </button>

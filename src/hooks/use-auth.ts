@@ -1,7 +1,9 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext } from 'react';
 import type { User } from '@/types';
+
+export { fetchApi } from '@/lib/auth-client';
 
 interface AuthContextValue {
   user: User | null;
@@ -20,39 +22,4 @@ export function useAuth() {
     throw new Error('useAuth must be used within AuthProvider');
   }
   return context;
-}
-
-export async function fetchApi<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    ...options,
-  });
-
-  if (res.status === 401 && !url.includes('/api/auth/')) {
-    // Try refresh
-    const refreshRes = await fetch('/api/auth/refresh', { method: 'POST', credentials: 'include' });
-    if (refreshRes.ok) {
-      const retry = await fetch(url, {
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json', ...options?.headers },
-        ...options,
-      });
-      if (!retry.ok) throw new Error((await retry.json()).message || 'Request failed');
-      if (retry.status === 204) return undefined as T;
-      return retry.json();
-    }
-    if (typeof window !== 'undefined' && window.location.pathname !== '/sign-in' && window.location.pathname !== '/sign-up') {
-      window.location.replace('/sign-in');
-    }
-    throw new Error('Session expired');
-  }
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(body.message || 'Request failed');
-  }
-
-  if (res.status === 204) return undefined as T;
-  return res.json();
 }

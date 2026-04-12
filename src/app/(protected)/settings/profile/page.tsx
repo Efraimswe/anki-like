@@ -3,31 +3,38 @@
 import { useState } from 'react';
 import { Pencil } from 'lucide-react';
 import Link from 'next/link';
-import { useAuth, fetchApi } from '@/hooks/use-auth';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/hooks/use-auth';
+import { fetchApi } from '@/lib/auth-client';
+import { userKeys } from '@/lib/queries/user';
 import type { User } from '@/types';
 
 export default function SettingsProfilePage() {
   const { user, updateUser } = useAuth();
+  const queryClient = useQueryClient();
   const [displayName, setDisplayName] = useState(user?.displayName || '');
-  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [isEditingName, setIsEditingName] = useState(false);
 
-  async function handleSave() {
-    setSaving(true);
-    setMessage('');
-    try {
-      const updated = await fetchApi<User>('/api/users/me', {
+  const updateProfile = useMutation({
+    mutationFn: (name: string | null) =>
+      fetchApi<User>('/api/users/me', {
         method: 'PATCH',
-        body: JSON.stringify({ displayName: displayName || null }),
-      });
+        body: JSON.stringify({ displayName: name }),
+      }),
+    onSuccess: (updated) => {
       updateUser(updated);
+      queryClient.setQueryData(userKeys.me(), updated);
       setMessage('Profile updated successfully!');
-    } catch {
+    },
+    onError: () => {
       setMessage('Failed to update profile');
-    } finally {
-      setSaving(false);
-    }
+    },
+  });
+
+  async function handleSave() {
+    setMessage('');
+    updateProfile.mutate(displayName || null);
   }
 
   return (
@@ -65,8 +72,8 @@ export default function SettingsProfilePage() {
           <div className="mt-8 flex flex-col items-stretch gap-4 md:flex-row md:items-center md:justify-end">
             {message && <p className={`text-sm font-bold ${message.includes('successfully') ? 'text-green-500' : 'text-red-500'}`}>{message}</p>}
             {isEditingName && (
-              <button onClick={handleSave} disabled={saving} className="button-primary px-10 py-3 shadow-xl shadow-orange-500/10">
-                {saving ? 'Saving...' : 'Update Profile'}
+              <button onClick={handleSave} disabled={updateProfile.isPending} className="button-primary px-10 py-3 shadow-xl shadow-orange-500/10">
+                {updateProfile.isPending ? 'Saving...' : 'Update Profile'}
               </button>
             )}
           </div>

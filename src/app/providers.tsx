@@ -1,10 +1,33 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { User } from '@/types';
 import { AuthContext, fetchApi } from '@/hooks/use-auth';
 import { ThemeContext } from '@/hooks/use-theme';
+import { attemptRefresh, getTokenExpiry } from '@/lib/auth-client';
 import SelectionTranslateOverlay from '@/components/ui/SelectionTranslateOverlay';
+
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60_000,
+        gcTime: 5 * 60_000,
+        retry: 1,
+      },
+    },
+  });
+}
+
+let browserQueryClient: QueryClient | undefined;
+
+function getQueryClient() {
+  if (isServer) return makeQueryClient();
+  if (!browserQueryClient) browserQueryClient = makeQueryClient();
+  return browserQueryClient;
+}
 
 function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState('light');
@@ -65,6 +88,39 @@ function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
+  // Proactive refresh timer: fires at 80% of token lifetime to prevent logouts
+  useEffect(() => {
+    if (!user) return;
+    let timerId: ReturnType<typeof setTimeout>;
+
+    function scheduleRefresh() {
+      const expiry = getTokenExpiry();
+      if (!expiry) return;
+
+      const delay = (expiry - Date.now()) * 0.8;
+
+      if (delay <= 0) {
+        attemptRefresh().then((ok) => { if (ok) scheduleRefresh(); });
+        return;
+      }
+
+      timerId = setTimeout(() => {
+        if (document.visibilityState === 'hidden') {
+          const onVisible = () => {
+            document.removeEventListener('visibilitychange', onVisible);
+            attemptRefresh().then((ok) => { if (ok) scheduleRefresh(); });
+          };
+          document.addEventListener('visibilitychange', onVisible);
+          return;
+        }
+        attemptRefresh().then((ok) => { if (ok) scheduleRefresh(); });
+      }, delay);
+    }
+
+    scheduleRefresh();
+    return () => clearTimeout(timerId);
+  }, [user]);
+
   const handleSignIn = useCallback(async (email: string, password: string) => {
     const res = await fetchApi<{ user: User }>('/api/auth/sign-in', {
       method: 'POST',
@@ -101,12 +157,17 @@ function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export default function Providers({ children }: { children: ReactNode }) {
+  const queryClient = getQueryClient();
+
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        {children}
-        <SelectionTranslateOverlay />
-      </AuthProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <AuthProvider>
+          {children}
+          <SelectionTranslateOverlay />
+        </AuthProvider>
+      </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
