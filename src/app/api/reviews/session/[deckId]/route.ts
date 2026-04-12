@@ -5,6 +5,7 @@ import { getLimits, getCounters } from '@/lib/daily-limits';
 import { ensureDeckFsrsConfig } from '@/lib/fsrs-config';
 import { getIntervalHints } from '@/lib/fsrs';
 import { materializeFsrsState } from '@/lib/fsrs-migration';
+import { addMinutes, getNow } from '@/lib/clock';
 import type { TokenPayload } from '@/lib/auth';
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ deckId: string }> }) {
@@ -31,8 +32,8 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   }
 
   const effectiveLimit = Math.min(50, remainingReviews);
-  const now = new Date();
-  const learningCutoff = new Date(Date.now() + 20 * 60 * 1000);
+  const now = getNow();
+  const learningCutoff = addMinutes(now, 20);
 
   const reviewCards = await prisma.card.findMany({
     where: {

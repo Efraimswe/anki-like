@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { requireAuth, jsonError } from '@/lib/api-utils';
 import { createDeckSchema } from '@/lib/validations';
 import { buildDefaultDeckFsrsConfig } from '@/lib/fsrs-defaults';
+import { getNow } from '@/lib/clock';
 import type { TokenPayload } from '@/lib/auth';
 
 export async function GET() {
@@ -21,7 +22,7 @@ export async function GET() {
     },
   });
 
-  const now = new Date();
+  const now = getNow();
   const result = decks.map((d) => {
     const dueCount = d.cards.filter((c) => c.cardState && new Date(c.cardState.dueDate) <= now).length;
     const newCount = d.cards.filter((c) => c.cardState?.phase === 'new').length;

@@ -1,9 +1,7 @@
 'use client';
 
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
 import { Brain, Calculator, Cross, Landmark, Languages } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { fetchApi } from '@/hooks/use-auth';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
@@ -29,24 +27,6 @@ export default function DeckListPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [deletingDeck, setDeletingDeck] = useState<Deck | null>(null);
-  const container = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    if (loading) return;
-    const tl = gsap.timeline();
-    tl.to('.page-header', { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' })
-      .to('.deck-card', { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, ease: 'power2.out' }, '-=0.3');
-  }, { scope: container, dependencies: [loading] });
-
-  useGSAP(() => {
-    if (showCreate) {
-      gsap.to('.create-form-wrapper', { height: 'auto', opacity: 1, duration: 0.5, ease: 'power3.out' });
-      gsap.to('.create-form-gsap', { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' });
-    } else {
-      gsap.to('.create-form-wrapper', { height: 0, opacity: 0, duration: 0.4, ease: 'power3.inOut' });
-      gsap.to('.create-form-gsap', { scale: 0.95, opacity: 0, duration: 0.3 });
-    }
-  }, { scope: container, dependencies: [showCreate] });
 
   const load = () => {
     setLoading(true);
@@ -98,9 +78,9 @@ export default function DeckListPage() {
   if (error) return <ErrorMessage message={error} onRetry={load} />;
 
   return (
-    <div ref={container} className="space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="decks-content-shell space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8">
-        <div className="page-header opacity-0 -translate-y-4 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <h1 className="text-3xl md:text-5xl font-bold text-(--color-text-primary) tracking-tight">
               Let&apos;s start <span className="text-(--color-accent)">strong!</span>
@@ -110,8 +90,8 @@ export default function DeckListPage() {
           <button onClick={() => setShowCreate(true)} className="button-primary shadow-xl shadow-orange-500/20 py-3 md:py-2 whitespace-nowrap">+ New Deck</button>
         </div>
 
-        <div className="create-form-wrapper overflow-hidden" style={{ height: 0, opacity: 0 }}>
-          <div className="create-form-gsap opacity-0 scale-95 premium-card p-4 md:p-6 mb-4">
+        {showCreate && (
+          <div className="premium-card p-4 md:p-6 mb-4">
             <h3 className="text-lg font-bold mb-4 heading">Create New Deck</h3>
             <form onSubmit={handleCreate} className="flex flex-col md:flex-row gap-3">
               <input autoFocus={showCreate} value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="e.g. Spanish Vocabulary" className="flex-1 px-4 py-3 bg-(--color-bg-page) border border-(--color-border) rounded-2xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none" />
@@ -121,7 +101,7 @@ export default function DeckListPage() {
               </div>
             </form>
           </div>
-        </div>
+        )}
 
         <section className="pt-2">
           {decks.length === 0 ? (
@@ -134,7 +114,7 @@ export default function DeckListPage() {
                 const mastery = deck.cardCount > 0 ? Math.max(12, Math.min(98, Math.round(((deck.cardCount - deck.dueCount) / deck.cardCount) * 100))) : 0;
 
                 return (
-                  <div key={deck.id} className="deck-card deck-card-compact opacity-0 -translate-y-4 premium-card group">
+                  <div key={deck.id} className="deck-card-compact premium-card group">
                     {editingId === deck.id ? (
                       <form onSubmit={(e) => { e.preventDefault(); handleUpdate(deck.id); }} className="flex-1 flex gap-2">
                         <input autoFocus value={editName} onChange={(e) => setEditName(e.target.value)} className="flex-1 px-4 py-2 bg-(--color-bg-page) border border-(--color-border) rounded-xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none" />

@@ -1,4 +1,5 @@
 import { prisma } from './prisma';
+import { getNow } from './clock';
 
 function startOfUtcDay(date: Date) {
   const d = new Date(date);
@@ -23,7 +24,7 @@ export async function updateLimits(userId: string, maxNewCards?: number, maxRevi
 }
 
 export async function getCounters(userId: string) {
-  const today = startOfUtcDay(new Date());
+  const today = startOfUtcDay(getNow());
   const counter = await prisma.dailyCounter.findUnique({
     where: { userId_date: { userId, date: today } },
   });

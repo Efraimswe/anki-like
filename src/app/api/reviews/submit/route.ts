@@ -7,6 +7,7 @@ import { ensureDeckFsrsConfig } from '@/lib/fsrs-config';
 import { scheduleReview, toStoredRating } from '@/lib/fsrs';
 import { materializeFsrsState } from '@/lib/fsrs-migration';
 import { formatInterval } from '@/lib/interval-format';
+import { getNow } from '@/lib/clock';
 import { submitReviewSchema } from '@/lib/validations';
 import type { TokenPayload } from '@/lib/auth';
 
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
     select: { rating: true, reviewedAt: true },
   });
 
-  const now = new Date();
+  const now = getNow();
   const currentState = materializeFsrsState({
     current: {
       interval: cardState.interval,

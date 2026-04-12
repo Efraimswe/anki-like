@@ -1,8 +1,6 @@
 'use client';
 
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
@@ -59,13 +57,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(() =>
     typeof window !== 'undefined' ? localStorage.getItem('sidebar-collapsed') === 'true' : false,
   );
-  const container = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    gsap.to('.sidebar-island', { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out' });
-    gsap.to('.nav-item-gsap', { x: 0, opacity: 1, duration: 0.5, stagger: 0.08, delay: 0.4, ease: 'power2.out' });
-    gsap.to('.outlet-gsap', { y: 0, opacity: 1, duration: 0.8, delay: 0.2, ease: 'power2.out' });
-  }, { scope: container });
 
   const toggle = () => {
     setCollapsed((prev) => {
@@ -89,7 +80,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div ref={container} className="min-h-screen flex flex-col lg:flex-row bg-(--color-bg-page) text-(--color-text-primary) p-4 md:p-4 lg:py-0 lg:pr-6 lg:pl-0 lg:gap-6">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-(--color-bg-page) text-(--color-text-primary) p-4 md:p-4 lg:py-0 lg:pr-6 lg:pl-0 lg:gap-6">
       {/* Mobile Header */}
       <header className="lg:hidden flex items-center justify-between py-2 px-1 mb-4">
         <div className="flex items-center gap-3">
@@ -104,7 +95,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Sidebar */}
-      <aside className={`sidebar-island opacity-0 -translate-x-24 fixed top-0 bottom-0 left-0 z-30 hidden lg:flex flex-col sidebar-glass sidebar-rail shadow-2xl overflow-hidden ${collapsed ? 'w-20' : 'w-64'}`} style={{ transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+      <aside className={`fixed top-0 bottom-0 left-0 z-30 hidden lg:flex flex-col sidebar-glass sidebar-rail shadow-2xl overflow-hidden ${collapsed ? 'w-20' : 'w-64'}`} style={{ transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
         <div className={`flex items-center justify-between h-20 px-6 ${collapsed ? 'flex-col gap-4 py-6' : ''}`}>
           {!collapsed && <span className="text-xl font-bold text-(--color-sidebar-text) heading truncate">Anki-Like</span>}
           <button onClick={toggle} className="p-2 rounded-xl text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-all" title={collapsed ? 'Expand' : 'Collapse'}>
@@ -116,7 +107,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
         <nav className="flex-1 py-4 px-3 space-y-2 overflow-y-auto overflow-x-hidden">
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined} className={`nav-item-gsap flex items-center gap-4 rounded-2xl ${collapsed ? 'justify-center p-3' : 'px-4 py-3'} ${isActive(item.href) ? 'bg-(--color-sidebar-active-bg) text-(--color-sidebar-text) shadow-lg' : 'text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-colors duration-200'}`}>
+            <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined} className={`flex items-center gap-4 rounded-2xl ${collapsed ? 'justify-center p-3' : 'px-4 py-3'} ${isActive(item.href) ? 'bg-(--color-sidebar-active-bg) text-(--color-sidebar-text) shadow-lg' : 'text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-colors duration-200'}`}>
               <span className="shrink-0">{item.icon}</span>
               {!collapsed && <span className="text-sm font-semibold tracking-wide whitespace-nowrap">{item.label}</span>}
             </Link>
@@ -144,7 +135,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* Main */}
       <main className={`flex-1 transition-all duration-300 ${collapsed ? 'lg:ml-20' : 'lg:ml-64'} ml-0 mb-20 lg:mb-0`}>
-        <div className="outlet-gsap opacity-0 -translate-y-4 max-w-6xl mx-auto pt-8 pb-4">
+        <div className="max-w-6xl mx-auto pt-8 pb-4">
           {children}
         </div>
       </main>

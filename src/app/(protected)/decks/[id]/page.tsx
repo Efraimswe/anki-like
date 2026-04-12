@@ -1,8 +1,6 @@
 'use client';
 
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { fetchApi } from '@/hooks/use-auth';
@@ -30,14 +28,6 @@ export default function DeckDetailPage() {
   const [editFront, setEditFront] = useState('');
   const [editBack, setEditBack] = useState('');
   const [deletingCard, setDeletingCard] = useState<Card | null>(null);
-  const container = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    if (loading) return;
-    const tl = gsap.timeline();
-    tl.to('.detail-header', { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' })
-      .to('.card-item', { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: 'power2.out' }, '-=0.4');
-  }, { scope: container, dependencies: [loading] });
 
   const load = () => {
     if (!id) return;
@@ -102,8 +92,8 @@ export default function DeckDetailPage() {
   const cards = deck.cards;
 
   return (
-    <div ref={container} className="space-y-8">
-      <div className="detail-header opacity-0 -translate-y-4 space-y-4">
+    <div className="space-y-8">
+      <div className="space-y-4">
         <Link href="/decks" className="flex items-center gap-2 text-sm font-bold text-(--color-text-secondary) hover:text-(--color-accent) transition-colors">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
           Back to Collections
@@ -169,7 +159,7 @@ export default function DeckDetailPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4">
             {cards.map((card) => (
-              <div key={card.id} className="card-item opacity-0 -translate-y-4 premium-card p-6 group hover:border-(--color-accent)">
+              <div key={card.id} className="premium-card p-6 group hover:border-(--color-accent)">
                 {editingId === card.id ? (
                   <form onSubmit={(e) => { e.preventDefault(); handleUpdate(card.id); }} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

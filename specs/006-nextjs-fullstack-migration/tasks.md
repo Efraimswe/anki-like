@@ -22,7 +22,7 @@
 - [X] T001 Initialize Next.js 15 project at repo root with App Router, TypeScript, TailwindCSS 4, ESLint in package.json and next.config.ts
 - [X] T002 Move Prisma schema and migrations from backend/prisma/ to prisma/ and configure prisma/ path in package.json
 - [X] T003 [P] Create environment config with .env.example containing DATABASE_URL, JWT_SECRET, JWT_EXPIRY, REFRESH_EXPIRY
-- [X] T004 [P] Install dependencies: @prisma/client, prisma, bcrypt, jose, gsap, @gsap/react, lucide-react, react-spinners, zod in package.json
+- [X] T004 [P] Install dependencies: @prisma/client, prisma, bcrypt, jose, lucide-react, react-spinners, zod in package.json
 - [X] T005 [P] Configure TypeScript tsconfig.json with path aliases (@/lib, @/components, @/hooks, @/types)
 - [X] T006 Create Prisma client singleton with dev hot-reload caching in src/lib/prisma.ts
 - [X] T007 Create shared TypeScript types (User, Deck, Card, CardState, ReviewLog, DailyLimit, Session, API error format) in src/types/index.ts
@@ -141,9 +141,9 @@
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-**Purpose**: GSAP animations, final verification, old code cleanup
+**Purpose**: UI polish, final verification, old code cleanup
 
-- [X] T053 [P] Migrate GSAP animations to client components with "use client" directive across all animated pages
+- [X] T053 [P] Ensure client-only pages/components that need browser APIs use "use client" appropriately
 - [X] T054 [P] Ensure all API routes return consistent error format per contracts/api-routes.md
 - [X] T055 Verify complete user flow: sign up → create deck → add cards → review → statistics → settings
 - [ ] T056 Verify JWT expiry mid-session redirects gracefully to sign-in

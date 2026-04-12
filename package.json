@@ -15,11 +15,9 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "@gsap/react": "^2.1.2",
     "@open-spaced-repetition/binding": "^0.3.0",
     "@prisma/client": "^6.19.2",
     "bcrypt": "^6.0.0",
-    "gsap": "^3.14.2",
     "jose": "^6.0.11",
     "lucide-react": "^1.0.1",
     "next": "^15.3.4",

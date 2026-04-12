@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { fetchApi } from '@/hooks/use-auth';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { getNow, getNowMs, isTestClockEnabled, getTestClockStartIso } from '@/lib/clock';
 import type { DueCard, DueCardsResponse, Rating } from '@/types';
 
 const RATINGS: { value: Rating; label: string; color: string }[] = [
@@ -16,7 +17,7 @@ const RATINGS: { value: Rating; label: string; color: string }[] = [
 ];
 
 function findNextDueIndex(cards: DueCard[], startIndex: number): number {
-  const now = new Date();
+  const now = getNow();
   for (let i = startIndex; i < cards.length; i++) {
     if (!cards[i].dueDate || new Date(cards[i].dueDate) <= now) return i;
   }
@@ -48,7 +49,7 @@ export default function ReviewSession() {
   const [reviewedCount, setReviewedCount] = useState(0);
   const [waitingUntil, setWaitingUntil] = useState<Date | null>(null);
   const [waitSeconds, setWaitSeconds] = useState(0);
-  const cardStartTime = useRef(Date.now());
+  const cardStartTime = useRef(getNowMs());
   const waitTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchCards = useCallback(() => {
@@ -71,10 +72,10 @@ export default function ReviewSession() {
 
   const startWaitingFor = (dueTime: Date) => {
     setWaitingUntil(dueTime);
-    setWaitSeconds(Math.max(0, Math.ceil((dueTime.getTime() - Date.now()) / 1000)));
+    setWaitSeconds(Math.max(0, Math.ceil((dueTime.getTime() - getNowMs()) / 1000)));
     if (waitTimerRef.current) clearInterval(waitTimerRef.current);
     waitTimerRef.current = setInterval(() => {
-      const remaining = Math.ceil((dueTime.getTime() - Date.now()) / 1000);
+      const remaining = Math.ceil((dueTime.getTime() - getNowMs()) / 1000);
       if (remaining <= 0) {
         clearInterval(waitTimerRef.current!);
         setWaitingUntil(null);
@@ -90,7 +91,7 @@ export default function ReviewSession() {
     setCards(cardsList);
     setCurrentIndex(idx);
     setRevealed(false);
-    cardStartTime.current = Date.now();
+    cardStartTime.current = getNowMs();
   };
 
   const advanceToNextCard = async (nextIndex: number) => {
@@ -106,7 +107,7 @@ export default function ReviewSession() {
     if (dueIdx >= 0) { showCard(res.cards, dueIdx); return; }
     const nextDue = getNextDueTime(res.cards, 0);
     if (nextDue) {
-      const waitMs = nextDue.getTime() - Date.now();
+      const waitMs = nextDue.getTime() - getNowMs();
       if (waitMs <= 60_000) { showCard(res.cards, 0); } else { setCards(res.cards); setCurrentIndex(0); startWaitingFor(nextDue); }
     } else { setDone(true); }
   };
@@ -115,7 +116,7 @@ export default function ReviewSession() {
     const card = cards[currentIndex];
     if (!card || submitting) return;
     setSubmitting(true);
-    const timeTakenMs = Date.now() - cardStartTime.current;
+    const timeTakenMs = getNowMs() - cardStartTime.current;
     try {
       await fetchApi('/api/reviews/submit', { method: 'POST', body: JSON.stringify({ cardId: card.id, rating, timeTakenMs }) });
       setReviewedCount((c) => c + 1);
@@ -171,6 +172,11 @@ export default function ReviewSession() {
           <span>{remainingReviews} Reviews</span>
         </div>
       </div>
+      {isTestClockEnabled() && (
+        <div className="mb-6 rounded-2xl border border-amber-300/50 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900 dark:border-amber-500/30 dark:bg-amber-950/30 dark:text-amber-200">
+          Test clock enabled: simulating time from {getTestClockStartIso()}
+        </div>
+      )}
 
       <div className="relative group">
         <div className="absolute -inset-1 bg-linear-to-r from-(--color-accent) to-orange-400 rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-500" />

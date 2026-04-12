@@ -39,15 +39,15 @@
 - No validation library (manual): Error-prone, loses type safety
 - `valibot`: Smaller bundle but less ecosystem support
 
-## R4: GSAP Animations in Next.js
+## R4: Client-Side Motion In Next.js
 
-**Decision**: Use GSAP with `"use client"` directives on animated components
+**Decision**: Keep components client-compatible where needed, but avoid a dedicated animation library
 
-**Rationale**: GSAP requires DOM access and must run client-side. Components using `@gsap/react` hooks need the `"use client"` directive. This is a minimal change — add the directive to existing animated components.
+**Rationale**: The app can preserve functionality without a motion dependency. Components that need browser APIs already use `"use client"`, and static rendering keeps the implementation simpler and easier to maintain.
 
 **Alternatives considered**:
-- Replace GSAP with CSS animations: Would change visual behavior (spec requires preservation)
-- Framer Motion: Different API, would require rewriting animations
+- Add GSAP: Extra dependency for non-essential motion
+- Add Framer Motion: Different API, larger rewrite for no product gain
 
 ## R5: Testing Strategy
 

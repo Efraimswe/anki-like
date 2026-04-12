@@ -1,9 +1,7 @@
 'use client';
 
-import { useGSAP } from '@gsap/react';
 import { useState } from 'react';
 import { Pencil } from 'lucide-react';
-import gsap from 'gsap';
 import Link from 'next/link';
 import { useAuth, fetchApi } from '@/hooks/use-auth';
 import type { User } from '@/types';
@@ -14,16 +12,6 @@ export default function SettingsProfilePage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [isEditingName, setIsEditingName] = useState(false);
-
-  useGSAP(() => {
-    if (isEditingName) {
-      gsap.to('.profile-save-wrapper', { height: 'auto', opacity: 1, duration: 0.5, ease: 'power3.out' });
-      gsap.to('.profile-save-button', { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' });
-    } else {
-      gsap.to('.profile-save-wrapper', { height: 0, opacity: 0, duration: 0.4, ease: 'power3.inOut' });
-      gsap.to('.profile-save-button', { scale: 0.95, opacity: 0, duration: 0.3 });
-    }
-  }, { dependencies: [isEditingName] });
 
   async function handleSave() {
     setSaving(true);
@@ -76,11 +64,11 @@ export default function SettingsProfilePage() {
           </div>
           <div className="mt-8 flex flex-col items-stretch gap-4 md:flex-row md:items-center md:justify-end">
             {message && <p className={`text-sm font-bold ${message.includes('successfully') ? 'text-green-500' : 'text-red-500'}`}>{message}</p>}
-            <div className="profile-save-wrapper overflow-hidden" style={{ height: 0, opacity: 0 }}>
-              <button onClick={handleSave} disabled={saving} className="profile-save-button button-primary px-10 py-3 shadow-xl shadow-orange-500/10 opacity-0 scale-95">
+            {isEditingName && (
+              <button onClick={handleSave} disabled={saving} className="button-primary px-10 py-3 shadow-xl shadow-orange-500/10">
                 {saving ? 'Saving...' : 'Update Profile'}
               </button>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/api-utils';
+import { getNow } from '@/lib/clock';
 import type { TokenPayload } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
@@ -9,7 +10,7 @@ export async function GET(request: NextRequest) {
   const user = auth as TokenPayload;
 
   const period = request.nextUrl.searchParams.get('period') || 'week';
-  const now = new Date();
+  const now = getNow();
   let from: Date;
 
   if (period === 'month') {
