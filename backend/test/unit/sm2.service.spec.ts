@@ -1,4 +1,8 @@
-import { Sm2Service, CardState, Rating } from '../../src/reviews/sm2.service';
+import {
+  Sm2Service,
+  CardState,
+  Rating,
+} from '../../src/modules/reviews/domain/services/sm2.service';
 
 describe('Sm2Service', () => {
   let sm2: Sm2Service;

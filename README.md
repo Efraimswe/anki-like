@@ -17,9 +17,9 @@ specs/      # Feature specifications
 ```bash
 cd backend
 cp .env.example .env    # set DATABASE_URL
-npm install
-npx prisma migrate deploy
-npm run start:dev       # http://localhost:3000
+pnpm install
+pnpm exec prisma migrate deploy
+pnpm run start:dev      # http://localhost:3000
 ```
 
 ### Frontend
@@ -27,8 +27,8 @@ npm run start:dev       # http://localhost:3000
 ```bash
 cd frontend
 cp .env.example .env    # set VITE_API_BASE_URL
-npm install
-npm run dev             # http://localhost:5173
+pnpm install
+pnpm run dev            # http://localhost:5173
 ```
 
 ## Tech Stack

@@ -1,0 +1,366 @@
+/* Inter & Outfit Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap');
+
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Design Tokens ─── */
+:root {
+	/* Backgrounds */
+	--color-bg-page: #f3f3f3;
+	--color-bg-surface: #ffffff;
+	--color-bg-surface-hover: #f8f8f8;
+	--color-bg-muted: #e9e9e9;
+	--color-bg-overlay: rgba(0, 0, 0, 0.4);
+
+	/* Sidebar (The Dark Island) */
+	--color-sidebar-bg: #ffffff;
+	--color-sidebar-text: #111111;
+	--color-sidebar-text-muted: #777777;
+	--color-sidebar-active-bg: #efefef;
+
+	/* Text */
+	--color-text-primary: #111111;
+	--color-text-secondary: #444444;
+	--color-text-tertiary: #777777;
+	--color-text-muted: #999999;
+
+	/* Borders */
+	--color-border: #e0e0e0;
+	--color-border-strong: #cccccc;
+
+	/* Accent (Coral from design) */
+	--color-accent: #f25b39;
+	--color-accent-hover: #e04a29;
+	--color-accent-muted: #ffece8;
+	--color-accent-text: #f25b39;
+	--color-accent-text-active: #ffffff;
+	--color-accent-ring: rgba(242, 91, 57, 0.3);
+	--color-accent-progress: #f25b39;
+
+	/* Semantic */
+	--color-success: #10b981;
+	--color-danger: #ef4444;
+
+	/* Radii */
+	--radius-xl: 2.5rem;
+	--radius-lg: 1.5rem;
+	--radius-md: 0.75rem;
+}
+
+.dark {
+	--color-bg-page: #0a0a0a;
+	--color-bg-surface: #141414;
+	--color-bg-surface-hover: #1c1c1c;
+	--color-bg-muted: #1c1c1c;
+	--color-sidebar-bg: #222222;
+	--color-sidebar-text: #ffffff;
+	--color-sidebar-text-muted: #888888;
+	--color-sidebar-active-bg: rgba(255, 255, 255, 0.1);
+
+	--color-text-primary: #f5f5f5;
+	--color-text-secondary: #aaaaaa;
+	--color-text-tertiary: #777777;
+
+	--color-border: #222222;
+	--color-border-strong: #333333;
+
+	--color-accent: #f25b39;
+	--color-accent-hover: #ff7556;
+}
+
+/* ─── Base Styles ─── */
+body {
+	margin: 0;
+	font-family: 'Inter', system-ui, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	background-color: var(--color-bg-page);
+	color: var(--color-text-primary);
+	min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+.heading {
+	font-family: 'Outfit', sans-serif;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+/* ─── Utilities ─── */
+.premium-card {
+	background: var(--color-bg-surface);
+	border-radius: var(--radius-lg);
+	box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+	border: 1px solid var(--color-border);
+	transition: all 0.3s ease;
+}
+
+.dark .premium-card {
+	box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+	border: 1px solid var(--color-border);
+}
+
+.premium-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-glass {
+	background: var(--color-sidebar-bg);
+	backdrop-filter: blur(16px);
+	border-radius: var(--radius-xl);
+}
+
+@media (max-width: 1023px) {
+	.sidebar-glass {
+		border-radius: 0;
+	}
+}
+
+@media (min-width: 1024px) {
+	.sidebar-rail {
+		border-radius: 0;
+	}
+}
+
+.button-primary {
+	background: var(--color-accent);
+	color: white;
+	border-radius: 9999px;
+	padding: 0.75rem 1.5rem;
+	font-weight: 600;
+	transition: all 0.2s ease;
+}
+
+.button-primary:hover {
+	background: var(--color-accent-hover);
+	transform: scale(1.02);
+}
+
+.progress-circle {
+	transition: stroke-dashoffset 0.5s ease-out;
+}
+
+.decks-content-shell {
+	width: fit-content;
+	max-width: 100%;
+	margin: 0 auto;
+}
+
+.decks-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 138px);
+	gap: 10px;
+	justify-content: center;
+}
+
+.deck-card-compact {
+	width: 138px;
+	min-height: 170px;
+	padding: 15px;
+}
+
+.deck-card-shell {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.deck-card-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 9999px;
+	flex-shrink: 0;
+}
+
+.deck-icon-medical {
+	background: #fff1e8;
+	color: #b43b00;
+}
+
+.deck-icon-language {
+	background: #ebf3ff;
+	color: #0b69c7;
+}
+
+.deck-icon-cognitive {
+	background: #f3e9ff;
+	color: #8b43e6;
+}
+
+.deck-icon-arts {
+	background: #fff4d9;
+	color: #dc8a00;
+}
+
+.deck-icon-math {
+	background: #ededff;
+	color: #5657dd;
+}
+
+.dark .deck-icon-medical {
+	background: #b43b00;
+	color: #fff1e8;
+}
+
+.dark .deck-icon-language {
+	background: #0b69c7;
+	color: #ebf3ff;
+}
+
+.dark .deck-icon-cognitive {
+	background: #8b43e6;
+	color: #f3e9ff;
+}
+
+.dark .deck-icon-arts {
+	background: #dc8a00;
+	color: #fff4d9;
+}
+
+.dark .deck-icon-math {
+	background: #5657dd;
+	color: #ededff;
+}
+
+.deck-card-link {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	text-decoration: none;
+	margin-top: 18px;
+}
+
+.deck-card-title {
+	font-family: 'Outfit', sans-serif;
+	font-size: 1.05rem;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: -0.02em;
+	color: var(--color-text-primary);
+	margin: 0;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.group:hover .deck-card-title {
+	color: var(--color-accent);
+}
+
+.deck-card-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem 0.75rem;
+	margin-top: 0.7rem;
+	font-size: 0.69rem;
+	font-weight: 700;
+	color: var(--color-text-secondary);
+}
+
+.deck-card-stat {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+}
+
+.deck-card-dot {
+	width: 0.42rem;
+	height: 0.42rem;
+	border-radius: 9999px;
+	flex-shrink: 0;
+}
+
+.deck-card-dot-cards {
+	background: #6b4f3f;
+}
+
+.deck-card-progress {
+	margin-top: auto;
+	padding-top: 1rem;
+}
+
+.deck-card-progress-labels {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	margin-bottom: 0.4rem;
+	font-size: 0.58rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.11em;
+	color: var(--color-text-secondary);
+}
+
+.deck-card-progress-track {
+	height: 0.34rem;
+	border-radius: 9999px;
+	background: color-mix(in srgb, var(--color-border) 75%, white);
+	overflow: hidden;
+}
+
+.deck-card-progress-fill {
+	height: 100%;
+	border-radius: inherit;
+}
+
+@media (min-width: 480px) {
+	.decks-grid {
+		grid-template-columns: repeat(3, 138px);
+	}
+}
+
+@media (min-width: 768px) {
+	.decks-grid {
+		grid-template-columns: repeat(4, 172px);
+		gap: 18px;
+	}
+
+	.deck-card-compact {
+		width: 172px;
+		min-height: 192px;
+		padding: 20px;
+	}
+}
+
+@media (min-width: 1024px) {
+	.decks-grid {
+		grid-template-columns: repeat(4, 172px);
+		gap: 18px;
+	}
+
+	.deck-card-compact {
+		width: 172px;
+		min-height: 192px;
+		padding: 20px;
+	}
+}
+
+@media (min-width: 1440px) {
+	.decks-grid {
+		grid-template-columns: repeat(5, 172px);
+	}
+}
+
+/* View Transition API - Circular Sweep */
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+	z-index: 1;
+}
+
+::view-transition-new(root) {
+	z-index: 9999;
+}

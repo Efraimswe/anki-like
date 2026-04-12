@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { ConfigModule } from './config/config.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { SessionsModule } from './sessions/sessions.module';
-import { DecksModule } from './decks/decks.module';
-import { CardsModule } from './cards/cards.module';
-import { ReviewsModule } from './reviews/reviews.module';
-import { StatisticsModule } from './statistics/statistics.module';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { CsrfGuard } from './auth/csrf.guard';
+import { ConfigModule } from './shared/config/config.module';
+import { PrismaModule } from './shared/infrastructure/persistence/prisma/prisma.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { SessionsModule } from './modules/sessions/sessions.module';
+import { DecksModule } from './modules/decks/decks.module';
+import { CardsModule } from './modules/cards/cards.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
+import { StatisticsModule } from './modules/statistics/statistics.module';
+import { JwtAuthGuard } from './modules/auth/infrastructure/security/jwt-auth.guard';
+import { CsrfGuard } from './modules/auth/infrastructure/security/csrf.guard';
 
 @Module({
   imports: [

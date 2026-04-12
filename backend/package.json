@@ -5,6 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "packageManager": "pnpm@10.30.1",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -18,9 +19,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:migrate": "npx prisma migrate deploy",
-    "prisma:generate": "npx prisma generate",
-    "studio": "npx prisma studio"
+    "prisma:migrate": "pnpm exec prisma migrate deploy",
+    "prisma:generate": "pnpm exec prisma generate",
+    "studio": "pnpm exec prisma studio"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
@@ -76,13 +77,17 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
+    "roots": [
+      "<rootDir>/src",
+      "<rootDir>/test"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "src/**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"

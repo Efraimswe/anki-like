@@ -12,7 +12,7 @@ import {
 import { ValidationPipe } from '@nestjs/common';
 import fastifyCookie from '@fastify/cookie';
 import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './common/http-exception.filter';
+import { GlobalExceptionFilter } from './shared/infrastructure/http/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
