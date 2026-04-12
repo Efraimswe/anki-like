@@ -47,6 +47,7 @@ model Deck {
 
   user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   cards Card[]
+  fsrs  DeckFsrsConfig?
 
   @@index([userId], map: "idx_decks_user_id")
   @@map("decks")
@@ -82,13 +83,36 @@ model CardState {
   easeFactor   Float    @default(2.5) @map("ease_factor") @db.Real
   repetitions  Int      @default(0)
   learningStep Int      @default(0) @map("learning_step")
+  stability    Float    @default(0) @db.Real
+  difficulty   Float    @default(0) @db.Real
+  scheduledDays Int     @default(0) @map("scheduled_days")
+  reps         Int      @default(0)
+  lapses       Int      @default(0)
   dueDate      DateTime @default(now()) @map("due_date") @db.Timestamptz()
+  lastReview   DateTime? @map("last_review") @db.Timestamptz()
   updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz()
 
   card Card @relation(fields: [cardId], references: [id])
 
   @@index([dueDate], map: "idx_card_states_due_date")
   @@map("card_states")
+}
+
+model DeckFsrsConfig {
+  deckId            String    @id @map("deck_id") @db.Uuid
+  desiredRetention  Float     @default(0.9) @map("desired_retention") @db.Real
+  maximumInterval   Int       @default(36500) @map("maximum_interval")
+  weights           Float[]   @default([]) @db.Real
+  learningSteps     String[]  @default([]) @map("learning_steps")
+  relearningSteps   String[]  @default([]) @map("relearning_steps")
+  isOptimized       Boolean   @default(false) @map("is_optimized")
+  lastOptimizedAt   DateTime? @map("last_optimized_at") @db.Timestamptz()
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@map("deck_fsrs_configs")
 }
 
 model ReviewLog {

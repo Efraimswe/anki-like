@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth, jsonError } from '@/lib/api-utils';
 import { createDeckSchema } from '@/lib/validations';
+import { buildDefaultDeckFsrsConfig } from '@/lib/fsrs-defaults';
 import type { TokenPayload } from '@/lib/auth';
 
 export async function GET() {
@@ -48,7 +49,13 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return jsonError(400, parsed.error.issues[0]?.message || 'Invalid input');
 
   const deck = await prisma.deck.create({
-    data: { name: parsed.data.name, userId: user.sub },
+    data: {
+      name: parsed.data.name,
+      userId: user.sub,
+      fsrs: {
+        create: buildDefaultDeckFsrsConfig(),
+      },
+    },
     select: { id: true, name: true, createdAt: true, updatedAt: true },
   });
 

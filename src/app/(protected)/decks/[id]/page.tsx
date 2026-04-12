@@ -122,6 +122,9 @@ export default function DeckDetailPage() {
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347c-.75.412-1.667-.13-1.667-.986V5.653z" /></svg>
               Start Session
             </button>
+            <button onClick={() => router.push(`/decks/${id}/settings`)} className="px-8 py-3 bg-white dark:bg-white/10 text-(--color-text-primary) border border-(--color-border) font-bold rounded-2xl hover:bg-(--color-bg-surface-hover) transition-all">
+              FSRS Settings
+            </button>
             <button onClick={() => setShowCreate(true)} className="px-8 py-3 bg-white dark:bg-white/10 text-(--color-text-primary) border border-(--color-border) font-bold rounded-2xl hover:bg-(--color-bg-surface-hover) transition-all">+ Add Card</button>
           </div>
         </div>

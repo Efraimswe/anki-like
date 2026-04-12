@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth, jsonError } from '@/lib/api-utils';
 import { getLimits, getCounters } from '@/lib/daily-limits';
-import { previewIntervals, type CardState } from '@/lib/sm2';
+import { ensureDeckFsrsConfig } from '@/lib/fsrs-config';
+import { getIntervalHints } from '@/lib/fsrs';
+import { materializeFsrsState } from '@/lib/fsrs-migration';
 import type { TokenPayload } from '@/lib/auth';
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ deckId: string }> }) {
@@ -11,9 +13,13 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   const user = auth as TokenPayload;
   const { deckId } = await params;
 
-  const deck = await prisma.deck.findFirst({ where: { id: deckId, userId: user.sub, deletedAt: null }, select: { id: true } });
+  const deck = await prisma.deck.findFirst({
+    where: { id: deckId, userId: user.sub, deletedAt: null },
+    select: { id: true },
+  });
   if (!deck) return jsonError(404, 'Deck not found');
 
+  const fsrsConfig = await ensureDeckFsrsConfig(deckId);
   const limits = await getLimits(user.sub);
   const counters = await getCounters(user.sub);
 
@@ -30,7 +36,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
   const reviewCards = await prisma.card.findMany({
     where: {
-      deckId, deletedAt: null, deck: { userId: user.sub },
+      deckId,
+      deletedAt: null,
+      deck: { userId: user.sub },
       cardState: {
         phase: { not: 'new' },
         OR: [
@@ -42,8 +50,28 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     orderBy: { cardState: { dueDate: 'asc' } },
     take: effectiveLimit,
     select: {
-      id: true, front: true, back: true, type: true,
-      cardState: { select: { phase: true, dueDate: true, interval: true, easeFactor: true, repetitions: true, learningStep: true } },
+      id: true,
+      front: true,
+      back: true,
+      type: true,
+      cardState: {
+        select: {
+          phase: true,
+          dueDate: true,
+          interval: true,
+          learningStep: true,
+          stability: true,
+          difficulty: true,
+          scheduledDays: true,
+          reps: true,
+          lapses: true,
+          lastReview: true,
+        },
+      },
+      reviewLogs: {
+        orderBy: { reviewedAt: 'asc' },
+        select: { rating: true, reviewedAt: true },
+      },
     },
   });
 
@@ -55,22 +83,59 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       orderBy: { createdAt: 'asc' },
       take: newLimit,
       select: {
-        id: true, front: true, back: true, type: true,
-        cardState: { select: { phase: true, dueDate: true, interval: true, easeFactor: true, repetitions: true, learningStep: true } },
+        id: true,
+        front: true,
+        back: true,
+        type: true,
+        cardState: {
+          select: {
+            phase: true,
+            dueDate: true,
+            interval: true,
+            learningStep: true,
+            stability: true,
+            difficulty: true,
+            scheduledDays: true,
+            reps: true,
+            lapses: true,
+            lastReview: true,
+          },
+        },
+        reviewLogs: {
+          orderBy: { reviewedAt: 'asc' },
+          select: { rating: true, reviewedAt: true },
+        },
       },
     });
   }
 
-  const allCards = [...reviewCards, ...newCards].map((c) => {
-    const cs = c.cardState!;
-    const state: CardState = {
-      interval: cs.interval, easeFactor: cs.easeFactor, repetitions: cs.repetitions,
-      phase: cs.phase as CardState['phase'], learningStep: cs.learningStep,
-    };
+  const allCards = [...reviewCards, ...newCards].map((card) => {
+    const state = materializeFsrsState({
+      current: {
+        interval: card.cardState!.interval,
+        dueDate: card.cardState!.dueDate,
+        stability: card.cardState!.stability,
+        difficulty: card.cardState!.difficulty,
+        scheduledDays: card.cardState!.scheduledDays,
+        reps: card.cardState!.reps,
+        lapses: card.cardState!.lapses,
+        learningStep: card.cardState!.learningStep,
+        phase: card.cardState!.phase as 'new' | 'learning' | 'review' | 'relearning',
+        lastReview: card.cardState!.lastReview,
+      },
+      reviewLogs: card.reviewLogs,
+      now,
+      config: fsrsConfig,
+    });
+
     return {
-      id: c.id, front: c.front, back: c.back, type: c.type,
-      phase: cs.phase, dueDate: cs.dueDate,
-      intervalHints: previewIntervals(state),
+      id: card.id,
+      front: card.front,
+      back: card.back,
+      type: card.type,
+      phase: state.phase,
+      dueDate: state.dueDate,
+      intervalHints: getIntervalHints(state, now, fsrsConfig),
     };
   });
 

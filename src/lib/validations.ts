@@ -52,3 +52,8 @@ export const updateProfileSchema = z.object({
 export const statisticsQuerySchema = z.object({
   period: z.enum(['week', 'month', 'all']).optional().default('week'),
 });
+
+export const updateDeckFsrsSchema = z.object({
+  desiredRetention: z.number().min(0.7).max(0.99).optional(),
+  maximumInterval: z.number().int().min(1).max(36500).optional(),
+});

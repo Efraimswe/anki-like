@@ -33,8 +33,8 @@ export interface Card {
 export interface CardState {
   phase: string;
   interval: number;
-  easeFactor: number;
-  repetitions: number;
+  stability?: number;
+  difficulty?: number;
   dueDate?: string;
 }
 
@@ -67,6 +67,7 @@ export interface ReviewResult {
   cardId: string;
   previousState: CardState;
   newState: CardState;
+  intervalDisplay?: string;
 }
 
 export type Rating = 'again' | 'hard' | 'good' | 'easy';
@@ -102,6 +103,24 @@ export interface DailyLimits {
   maxReviews: number;
   todayNewCount: number;
   todayReviewCount: number;
+}
+
+export interface DeckFsrsConfig {
+  desiredRetention: number;
+  maximumInterval: number;
+  weights: number[];
+  learningSteps: string[];
+  relearningSteps: string[];
+  isOptimized: boolean;
+  lastOptimizedAt: string | null;
+}
+
+export interface DeckFsrsOptimizationResult {
+  ok: boolean;
+  reason?: string;
+  reviewCount: number;
+  cardCount: number;
+  config?: DeckFsrsConfig;
 }
 
 // API Error
