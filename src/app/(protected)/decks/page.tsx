@@ -116,9 +116,6 @@ export default function DeckListPage() {
     });
   };
 
-  if (isPending) return <LoadingSpinner />;
-  if (isError) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load decks'} />;
-
   return (
     <div className="space-y-4 md:space-y-6">
       <div className="decks-content-shell space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8">
@@ -146,7 +143,11 @@ export default function DeckListPage() {
         )}
 
         <section className="pt-2">
-          {decks.length === 0 ? (
+          {isPending ? (
+            <LoadingSpinner />
+          ) : isError ? (
+            <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load decks'} />
+          ) : decks.length === 0 ? (
             <EmptyState title={t('emptyTitle')} description={t('emptyDescription')} action={{ label: t('emptyAction'), onClick: () => setShowCreate(true) }} />
           ) : (
             <div className="decks-grid">

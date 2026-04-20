@@ -10,10 +10,6 @@ export default function StatisticsPage() {
   const [period, setPeriod] = useState<'week' | 'month' | 'all'>('week');
   const { data: stats, isPending, isError, error, refetch } = useQuery(statisticsOptions(period));
 
-  if (isPending) return <LoadingSpinner />;
-  if (isError) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load statistics'} onRetry={() => refetch()} />;
-  if (!stats) return null;
-
   return (
     <div className="space-y-8 max-w-4xl">
       <div className="flex items-end justify-between">
@@ -27,6 +23,9 @@ export default function StatisticsPage() {
         </div>
       </div>
 
+      {isPending ? <LoadingSpinner /> : isError ? (
+        <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load statistics'} onRetry={() => refetch()} />
+      ) : !stats ? null : (<>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="premium-card p-6 text-center">
           <p className="text-3xl font-bold text-(--color-accent)">{stats.totalReviews}</p>
@@ -63,6 +62,7 @@ export default function StatisticsPage() {
           </div>
         </div>
       )}
+      </>)}
     </div>
   );
 }

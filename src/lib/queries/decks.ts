@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query';
+import { queryOptions, keepPreviousData } from '@tanstack/react-query';
 import { fetchApi } from '@/lib/auth-client';
 import type { Deck } from '@/types';
 
@@ -11,6 +11,7 @@ export const deckKeys = {
 export const deckListOptions = queryOptions({
   queryKey: deckKeys.lists(),
   queryFn: () => fetchApi<Deck[]>('/api/decks'),
+  placeholderData: keepPreviousData,
 });
 
 export const deckDetailOptions = (id: string) =>
@@ -18,4 +19,5 @@ export const deckDetailOptions = (id: string) =>
     queryKey: deckKeys.detail(id),
     queryFn: () => fetchApi<Deck>(`/api/decks/${id}`),
     enabled: !!id,
+    placeholderData: keepPreviousData,
   });

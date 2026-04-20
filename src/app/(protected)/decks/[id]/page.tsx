@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { queryOptions } from '@tanstack/react-query';
 import { fetchApi } from '@/lib/auth-client';
 import { deckKeys } from '@/lib/queries/decks';
@@ -39,6 +39,7 @@ export default function DeckDetailPage() {
     queryKey: deckKeys.detail(id),
     queryFn: () => fetchApi<DeckWithCards>(`/api/decks/${id}`),
     enabled: !!id,
+    placeholderData: keepPreviousData,
   });
 
   const { data: deck, isPending, isError, error, refetch } = useQuery(deckWithCardsOptions);
@@ -127,11 +128,10 @@ export default function DeckDetailPage() {
     });
   };
 
-  if (isPending) return <LoadingSpinner />;
   if (isError) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load deck'} onRetry={() => refetch()} />;
-  if (!deck) return <ErrorMessage message="Deck not found" />;
+  if (!isPending && !deck) return <ErrorMessage message="Deck not found" />;
 
-  const cards = deck.cards;
+  const cards = deck?.cards ?? [];
 
   return (
     <div className="space-y-8">
@@ -140,13 +140,14 @@ export default function DeckDetailPage() {
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
           {t('backButton')}
         </Link>
+        {isPending ? <LoadingSpinner /> : (
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-1">
-            <h1 className="text-5xl font-bold text-(--color-text-primary) tracking-tight heading">{deck.name}</h1>
+            <h1 className="text-5xl font-bold text-(--color-text-primary) tracking-tight heading">{deck!.name}</h1>
             <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">
               <span>{cards.length} {t('cardsTotal')}</span>
               <span className="w-1.5 h-1.5 rounded-full bg-(--color-accent) opacity-50" />
-              <span className="text-(--color-accent)">{deck.dueCount} {t('dueNow')}</span>
+              <span className="text-(--color-accent)">{deck!.dueCount} {t('dueNow')}</span>
             </div>
           </div>
           <div className="flex gap-4">
@@ -160,6 +161,7 @@ export default function DeckDetailPage() {
             <button onClick={() => setShowCreate(true)} className="px-8 py-3 bg-white dark:bg-white/10 text-(--color-text-primary) border border-(--color-border) font-bold rounded-2xl hover:bg-(--color-bg-surface-hover) transition-all">{t('addCard')}</button>
           </div>
         </div>
+        )}
       </div>
 
       {showCreate && (
