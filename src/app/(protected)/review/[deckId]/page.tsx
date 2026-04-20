@@ -40,6 +40,7 @@ function getNextDueTime(cards: DueCard[], startIndex: number): Date | null {
 }
 
 export default function ReviewSession() {
+  // i18n-keys: ["again", "hard", "good", "easy"]
   const t = useTranslations('review');
   const { deckId } = useParams<{ deckId: string }>();
   const queryClient = useQueryClient();

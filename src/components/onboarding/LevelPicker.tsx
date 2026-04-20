@@ -9,6 +9,14 @@ interface LevelPickerProps {
 }
 
 export function LevelPicker({ value, onChange }: LevelPickerProps) {
+  // i18n-keys: ["groups.Beginner", "groups.Intermediate", "groups.Advanced", "groups.Fluent"]
+  // i18n-keys: ["A1.title", "A1.desc", "A1 solid.title", "A1 solid.desc"]
+  // i18n-keys: ["A2.title", "A2.desc", "A2 solid.title", "A2 solid.desc"]
+  // i18n-keys: ["B1.title", "B1.desc", "B1 solid.title", "B1 solid.desc"]
+  // i18n-keys: ["B2.title", "B2.desc", "B2 solid.title", "B2 solid.desc"]
+  // i18n-keys: ["C1.title", "C1.desc", "C1 solid.title", "C1 solid.desc"]
+  // i18n-keys: ["C2.title", "C2.desc", "C2 solid.title", "C2 solid.desc"]
+  // i18n-keys: ["Fluent.title", "Fluent.desc"]
   const t = useTranslations('onboarding.levels');
   return (
     <div className="onb-level-groups">

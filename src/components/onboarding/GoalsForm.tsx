@@ -15,6 +15,7 @@ interface GoalsFormProps {
 const PRESET_KEYS = ['remoteJob', 'ielts', 'travel', 'shows', 'moveAbroad', 'readBooks', 'confident', 'friends'] as const;
 
 export function GoalsForm({ initialValue, onSubmit, isSubmitting }: GoalsFormProps) {
+  // i18n-keys: ["presets.remoteJob", "presets.ielts", "presets.travel", "presets.shows", "presets.moveAbroad", "presets.readBooks", "presets.confident", "presets.friends"]
   const t = useTranslations('onboarding.goals');
   const [primary, setPrimary] = useState(initialValue?.primary ?? '');
   const [touched, setTouched] = useState(false);

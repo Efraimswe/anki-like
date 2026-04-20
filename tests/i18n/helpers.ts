@@ -103,8 +103,11 @@ function parseOverrideComment(text: string): string[] {
 }
 
 function getLeadingCommentOverrides(node: ts.Node, sourceFile: ts.SourceFile): string[] {
+  // Leading comments before `const t = ...` are trivia on the VariableStatement,
+  // not the VariableDeclaration. Resolve to the containing statement.
+  const target = ts.findAncestor(node, ts.isVariableStatement) ?? node;
   const fullText = sourceFile.getFullText();
-  const commentRanges = ts.getLeadingCommentRanges(fullText, node.getFullStart()) ?? [];
+  const commentRanges = ts.getLeadingCommentRanges(fullText, target.getFullStart()) ?? [];
   const overrides: string[] = [];
   for (const range of commentRanges) {
     overrides.push(...parseOverrideComment(fullText.slice(range.pos, range.end)));
