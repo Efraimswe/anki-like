@@ -11,13 +11,14 @@ import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { getNow, getNowMs, isTestClockEnabled, getTestClockStartIso } from '@/lib/clock';
 import type { DueCard, DueCardsResponse, Rating } from '@/types';
+import { useTranslations } from 'next-intl';
 
-const RATINGS: { value: Rating; label: string; color: string }[] = [
-  { value: 'again', label: 'Again', color: 'bg-(--color-rating-again) hover:bg-(--color-rating-again-hover)' },
-  { value: 'hard', label: 'Hard', color: 'bg-(--color-rating-hard) hover:bg-(--color-rating-hard-hover)' },
-  { value: 'good', label: 'Good', color: 'bg-(--color-rating-good) hover:bg-(--color-rating-good-hover)' },
-  { value: 'easy', label: 'Easy', color: 'bg-(--color-rating-easy) hover:bg-(--color-rating-easy-hover)' },
-];
+const RATING_COLORS: Record<Rating, string> = {
+  again: 'bg-(--color-rating-again) hover:bg-(--color-rating-again-hover)',
+  hard:  'bg-(--color-rating-hard) hover:bg-(--color-rating-hard-hover)',
+  good:  'bg-(--color-rating-good) hover:bg-(--color-rating-good-hover)',
+  easy:  'bg-(--color-rating-easy) hover:bg-(--color-rating-easy-hover)',
+};
 
 function findNextDueIndex(cards: DueCard[], startIndex: number): number {
   const now = getNow();
@@ -39,6 +40,7 @@ function getNextDueTime(cards: DueCard[], startIndex: number): Date | null {
 }
 
 export default function ReviewSession() {
+  const t = useTranslations('review');
   const { deckId } = useParams<{ deckId: string }>();
   const queryClient = useQueryClient();
   const [cards, setCards] = useState<DueCard[]>([]);
@@ -157,9 +159,9 @@ export default function ReviewSession() {
     return (
       <div className="text-center py-16">
         <div className="text-5xl mb-4">⏳</div>
-        <h2 className="text-2xl font-bold text-(--color-text-primary)">Waiting for learning cards...</h2>
-        <p className="text-(--color-text-tertiary) mt-2">Next card due in <span className="font-mono text-(--color-accent-text) text-lg">{mins > 0 ? `${mins}m ` : ''}{secs.toString().padStart(2, '0')}s</span></p>
-        <p className="text-(--color-text-muted) mt-1 text-sm">You&apos;ve reviewed {reviewedCount} card{reviewedCount !== 1 ? 's' : ''} so far.</p>
+        <h2 className="text-2xl font-bold text-(--color-text-primary)">{t('waitingTitle')}</h2>
+        <p className="text-(--color-text-tertiary) mt-2">{t('waitingMessage')} <span className="font-mono text-(--color-accent-text) text-lg">{mins > 0 ? `${mins}m ` : ''}{secs.toString().padStart(2, '0')}s</span></p>
+        <p className="text-(--color-text-muted) mt-1 text-sm">{t('waitingReviewed', { count: reviewedCount })}</p>
       </div>
     );
   }
@@ -168,9 +170,9 @@ export default function ReviewSession() {
     return (
       <div className="text-center py-16">
         <div className="text-5xl mb-4">🎉</div>
-        <h2 className="text-2xl font-bold text-(--color-text-primary)">Session Complete!</h2>
-        <p className="text-(--color-text-tertiary) mt-2">You reviewed {reviewedCount} card{reviewedCount !== 1 ? 's' : ''}.</p>
-        <Link href={`/decks/${deckId}`} className="inline-block mt-6 px-6 py-2 bg-(--color-accent) text-white rounded-md hover:bg-(--color-accent-hover) transition-colors">Back to Deck</Link>
+        <h2 className="text-2xl font-bold text-(--color-text-primary)">{t('completedTitle')}</h2>
+        <p className="text-(--color-text-tertiary) mt-2">{t('completedMessage', { count: reviewedCount })}</p>
+        <Link href={`/decks/${deckId}`} className="inline-block mt-6 px-6 py-2 bg-(--color-accent) text-white rounded-md hover:bg-(--color-accent-hover) transition-colors">{t('completedBack')}</Link>
       </div>
     );
   }
@@ -182,19 +184,19 @@ export default function ReviewSession() {
       <div className="flex items-center justify-between mb-10">
         <Link href={`/decks/${deckId}`} className="flex items-center gap-2 text-sm font-bold text-(--color-text-secondary) hover:text-(--color-accent) transition-colors">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-          Back to Collection
+          {t('backButton')}
         </Link>
         <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">
-          <span className="text-(--color-text-primary)">{currentIndex + 1} of {cards.length}</span>
+          <span className="text-(--color-text-primary)">{currentIndex + 1} {t('of')} {cards.length}</span>
           <span className="w-1 h-1 rounded-full bg-gray-300" />
-          <span>{remainingNew} New</span>
+          <span>{remainingNew} {t('newCards')}</span>
           <span className="w-1 h-1 rounded-full bg-gray-300" />
-          <span>{remainingReviews} Reviews</span>
+          <span>{remainingReviews} {t('reviewCards')}</span>
         </div>
       </div>
       {isTestClockEnabled() && (
         <div className="mb-6 rounded-2xl border border-amber-300/50 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900 dark:border-amber-500/30 dark:bg-amber-950/30 dark:text-amber-200">
-          Test clock enabled: simulating time from {getTestClockStartIso()}
+          {t('testClockWarning', { time: getTestClockStartIso() })}
         </div>
       )}
 
@@ -209,17 +211,17 @@ export default function ReviewSession() {
           <div className="flex-1 flex flex-col justify-center w-full py-10">
             <h2 className="text-4xl font-bold text-(--color-text-primary) heading whitespace-pre-wrap leading-tight">{card.front}</h2>
             {!revealed ? (
-              <button onClick={() => setRevealed(true)} className="mt-12 button-primary px-12 py-4 shadow-xl shadow-orange-500/20 text-lg">Reveal Answer</button>
+              <button onClick={() => setRevealed(true)} className="mt-12 button-primary px-12 py-4 shadow-xl shadow-orange-500/20 text-lg">{t('revealButton')}</button>
             ) : (
               <div className="mt-12 w-full">
                 <div className="h-px bg-linear-to-r from-transparent via-(--color-border) to-transparent mb-12" />
                 <p className="text-2xl text-(--color-text-secondary) font-medium whitespace-pre-wrap leading-relaxed">{card.back}</p>
                 <div className="mt-16 flex flex-wrap justify-center gap-4">
-                  {RATINGS.map((r) => {
-                    const hint = card.intervalHints?.[r.value];
+                  {(['again', 'hard', 'good', 'easy'] as const).map((rating) => {
+                    const hint = card.intervalHints?.[rating];
                     return (
-                      <button key={r.value} disabled={submitReview.isPending} onClick={() => handleRate(r.value)} className={`flex flex-col items-center px-8 py-4 text-white text-sm font-bold rounded-2xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-lg ${r.color}`}>
-                        <span>{r.label}</span>
+                      <button key={rating} disabled={submitReview.isPending} onClick={() => handleRate(rating)} className={`flex flex-col items-center px-8 py-4 text-white text-sm font-bold rounded-2xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-lg ${RATING_COLORS[rating]}`}>
+                        <span>{t(rating)}</span>
                         {hint && <span className="text-[10px] opacity-80 mt-1 uppercase tracking-tighter">{hint}</span>}
                       </button>
                     );
@@ -231,7 +233,7 @@ export default function ReviewSession() {
         </div>
       </div>
       <div className="mt-10 text-center">
-        <p className="text-xs font-bold text-(--color-text-muted) uppercase tracking-widest">Press Space to reveal &middot; Keys 1-4 to rate</p>
+        <p className="text-xs font-bold text-(--color-text-muted) uppercase tracking-widest">{t('keyboardHint')}</p>
       </div>
     </div>
   );

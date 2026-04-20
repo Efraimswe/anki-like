@@ -7,8 +7,10 @@ import { fetchApi } from '@/hooks/use-auth';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import type { DeckFsrsConfig, DeckFsrsOptimizationResult } from '@/types';
+import { useTranslations } from 'next-intl';
 
 export default function DeckFsrsSettingsPage() {
+  const t = useTranslations('fsrs');
   const { id } = useParams<{ id: string }>();
   const [config, setConfig] = useState<DeckFsrsConfig | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,7 @@ export default function DeckFsrsSettingsPage() {
       if (result.config) {
         setConfig(result.config);
       }
-      setMessage(`Optimized from ${result.reviewCount} reviews across ${result.cardCount} cards.`);
+      setMessage(t('optimizeSuccess', { reviewCount: result.reviewCount, cardCount: result.cardCount }));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Optimization failed');
     } finally {
@@ -50,43 +52,40 @@ export default function DeckFsrsSettingsPage() {
     <div className="max-w-2xl space-y-6">
       <Link href={`/decks/${id}`} className="inline-flex items-center gap-2 text-sm font-bold text-(--color-text-secondary) hover:text-(--color-text-primary)">
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
-        Back to deck
+        {t('backButton')}
       </Link>
 
       <div className="premium-card space-y-6 p-8">
         <div className="space-y-2">
-          <p className="text-xs font-bold uppercase tracking-[0.28em] text-(--color-text-muted)">Deck scheduler</p>
-          <h1 className="text-3xl font-bold heading text-(--color-text-primary)">FSRS Options</h1>
-          <p className="text-sm text-(--color-text-secondary)">
-            This deck uses the server-side FSRS scheduler. Review buttons render server-computed intervals, and optimization updates this deck&apos;s weights immediately.
-          </p>
+          <h1 className="text-3xl font-bold heading text-(--color-text-primary)">{t('heading')}</h1>
+          <p className="text-sm text-(--color-text-secondary)">{t('description')}</p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="rounded-3xl border border-(--color-border) bg-(--color-bg-page) p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">Desired retention</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('desiredRetention')}</p>
             <p className="mt-2 text-2xl font-bold text-(--color-text-primary)">{Math.round(config.desiredRetention * 100)}%</p>
           </div>
           <div className="rounded-3xl border border-(--color-border) bg-(--color-bg-page) p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">Maximum interval</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('maximumInterval')}</p>
             <p className="mt-2 text-2xl font-bold text-(--color-text-primary)">{config.maximumInterval}d</p>
           </div>
           <div className="rounded-3xl border border-(--color-border) bg-(--color-bg-page) p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">Parameter source</p>
-            <p className="mt-2 text-2xl font-bold text-(--color-text-primary)">{config.isOptimized ? 'Optimized' : 'Default'}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('parameterSource')}</p>
+            <p className="mt-2 text-2xl font-bold text-(--color-text-primary)">{config.isOptimized ? t('sourceOptimized') : t('sourceDefault')}</p>
           </div>
           <div className="rounded-3xl border border-(--color-border) bg-(--color-bg-page) p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">Last optimization</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('lastOptimization')}</p>
             <p className="mt-2 text-sm font-bold text-(--color-text-primary)">
-              {config.lastOptimizedAt ? new Date(config.lastOptimizedAt).toLocaleString() : 'Never'}
+              {config.lastOptimizedAt ? new Date(config.lastOptimizedAt).toLocaleString() : t('never')}
             </p>
           </div>
         </div>
 
         <div className="rounded-3xl border border-(--color-border) bg-(--color-bg-page) p-5">
-          <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">Weights</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('weightsLabel')}</p>
           <p className="mt-2 text-sm text-(--color-text-secondary)">
-            {config.weights.length ? `${config.weights.length} FSRS parameters stored for this deck.` : 'Using default Anki-style FSRS parameters.'}
+            {config.weights.length ? t('weightsCount', { count: config.weights.length }) : t('defaultWeights')}
           </p>
         </div>
 
@@ -99,7 +98,7 @@ export default function DeckFsrsSettingsPage() {
             disabled={optimizing}
             className="button-primary px-8 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {optimizing ? 'Optimizing...' : 'Optimize for This Deck'}
+            {optimizing ? t('optimizing') : t('optimizeButton')}
           </button>
         </div>
       </div>

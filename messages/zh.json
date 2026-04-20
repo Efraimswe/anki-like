@@ -1,0 +1,332 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "continue": "继续 →",
+    "back": "返回",
+    "loading": "加载中…",
+    "saving": "保存中…",
+    "error": "出了点问题",
+    "retry": "重试",
+    "yes": "是",
+    "no": "否",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "optional": "可选"
+  },
+  "auth": {
+    "signIn": {
+      "title": "登录",
+      "emailLabel": "电子邮件地址",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "密码",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "进入账户",
+      "authenticating": "登录中...",
+      "noAccount": "初次来访？",
+      "signUpLink": "创建账户"
+    },
+    "signUp": {
+      "title": "注册",
+      "emailLabel": "电子邮件地址",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "新密码",
+      "passwordPlaceholder": "至少8个字符",
+      "submitButton": "开始",
+      "creatingAccount": "创建账户中...",
+      "passwordError": "密码至少需要8个字符",
+      "hasAccount": "已有账户？",
+      "signInLink": "登录"
+    },
+    "errors": {
+      "invalidCredentials": "邮箱或密码无效",
+      "emailTaken": "该邮箱已被注册",
+      "sessionExpired": "您的会话已过期，请重新登录。",
+      "unauthorized": "未授权",
+      "network": "网络错误，请重试。"
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "leoSpeech": "你好！我是Leo。我会用真正有效的方式教你英语。",
+      "title": "您的母语是什么？",
+      "description": "我们会翻译界面并用您的语言与您交流。",
+      "searchPlaceholder": "搜索 {count} 种语言…",
+      "noResults": "未找到语言",
+      "continueButton": "继续 →",
+      "savingButton": "保存中…"
+    },
+    "step2": {
+      "leoSpeech": "诚实的选择胜过完美的选择。不确定？选低一级——随时可以更新。",
+      "title": "您的英语水平如何？",
+      "description": "不确定？选低一级——随时可以更新。",
+      "continueButton": "继续 →",
+      "savingButton": "保存中…"
+    },
+    "step3": {
+      "leoSpeech": "要具体——「找一份科技行业的远程工作」比「提高我的英语」更好。我会根据您的目标来定制。",
+      "title": "您为什么学英语？",
+      "description": "具体说明——这有助于Leo为您定制课程。"
+    },
+    "step4": {
+      "celebrationChip": "准备就绪",
+      "headline": "准备就绪",
+      "sub": "Leo将从现在起个性化您的英语学习之旅。",
+      "cta": "开始学习英语",
+      "starting": "启动中…",
+      "summaryNativeLanguage": "母语",
+      "summaryEnglishLevel": "英语水平",
+      "summaryMainGoal": "主要目标"
+    },
+    "goals": {
+      "primaryGoalLabel": "主要目标",
+      "primaryGoalPlaceholder": "例如：找一份科技行业的远程工作",
+      "primaryGoalError": "请告诉我们您的主要目标",
+      "quickPicksLabel": "快速选择",
+      "continueButton": "继续 →",
+      "savingButton": "保存中…",
+      "presets": {
+        "remoteJob": "找一份科技行业的远程工作",
+        "ielts": "通过雅思/托福",
+        "travel": "无语言障碍地旅行",
+        "shows": "看剧不用字幕",
+        "moveAbroad": "移居海外",
+        "readBooks": "读英文书籍",
+        "confident": "在工作中更自信地表达",
+        "friends": "与国际朋友交流"
+      }
+    },
+    "levels": {
+      "groups": {
+        "Beginner": "初级",
+        "Intermediate": "中级",
+        "Advanced": "高级",
+        "Fluent": "流利"
+      },
+      "A1": {
+        "title": "入门",
+        "sub": "刚刚开始",
+        "desc": "基础词汇，简单短语"
+      },
+      "A1 solid": {
+        "title": "扎实入门",
+        "sub": "掌握基础",
+        "desc": "简单句子，熟悉话题"
+      },
+      "A2": {
+        "title": "初级",
+        "sub": "能处理日常话题",
+        "desc": "简短对话，日常任务"
+      },
+      "A2 solid": {
+        "title": "扎实初级",
+        "sub": "接近准中级",
+        "desc": "熟悉情境，直接信息"
+      },
+      "B1": {
+        "title": "中级",
+        "sub": "能应对大多数情况",
+        "desc": "要点清晰，常见话题"
+      },
+      "B1 solid": {
+        "title": "扎实中级",
+        "sub": "对话中感到自在",
+        "desc": "相当流利，有些欠缺"
+      },
+      "B2": {
+        "title": "中高级",
+        "sub": "能处理复杂语言",
+        "desc": "与母语者流利交流"
+      },
+      "B2 solid": {
+        "title": "扎实中高级",
+        "sub": "接近高级",
+        "desc": "自然、细腻的沟通"
+      },
+      "C1": {
+        "title": "高级",
+        "sub": "表达力强且精准",
+        "desc": "灵活有效地使用语言"
+      },
+      "C1 solid": {
+        "title": "扎实高级",
+        "sub": "接近精通",
+        "desc": "清晰、结构良好、细腻"
+      },
+      "C2": {
+        "title": "精通",
+        "sub": "接近母语精准度",
+        "desc": "毫不费力，适用所有场景"
+      },
+      "C2 solid": {
+        "title": "扎实精通",
+        "sub": "与母语者无异",
+        "desc": "对语言的完美掌握"
+      },
+      "Fluent": {
+        "title": "如母语者",
+        "sub": "完全流利",
+        "desc": "母语或接近母语水平"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": "强势开始！",
+    "subtitle": "欢迎回来。准备好迎接今天的挑战了吗？",
+    "newDeckButton": "+ 新卡组",
+    "emptyTitle": "暂无收藏",
+    "emptyDescription": "从创建您的第一个闪卡组开始。",
+    "emptyAction": "创建我的第一个卡组",
+    "createDeckHeading": "创建新卡组",
+    "createDeckPlaceholder": "例如：西班牙语词汇",
+    "createDeckSubmit": "创建",
+    "deleteDeckTitle": "删除卡组",
+    "deleteDeckMessage": "删除「{name}」？其中所有卡片也将被删除。",
+    "editDeckTitle": "编辑卡组",
+    "cardCount": "卡片",
+    "dueCount": "待复习",
+    "finished": "完成",
+    "mastery": "掌握度",
+    "new": "新卡"
+  },
+  "deckDetail": {
+    "backButton": "返回收藏",
+    "cardsTotal": "张卡片",
+    "dueNow": "现在待复习",
+    "startSession": "开始学习",
+    "fsrsSettings": "FSRS设置",
+    "addCard": "+ 添加卡片",
+    "createCardHeading": "创建新卡片",
+    "frontLabel": "正面",
+    "frontPlaceholder": "问题或提示...",
+    "backLabel": "背面",
+    "backPlaceholder": "答案...",
+    "typeLabel": "卡片类型",
+    "typeBasic": "基础",
+    "typeReverse": "反向",
+    "typeCloze": "填空",
+    "createCardSubmit": "创建卡片",
+    "memoryStack": "记忆栈",
+    "emptyStackTitle": "空栈",
+    "emptyStackDescription": "此收藏目前为空。开始添加知识吧！",
+    "emptyStackAction": "创建我的第一张卡片",
+    "saveChanges": "保存更改",
+    "archiveCard": "归档卡片",
+    "archiveCardMessage": "从记忆栈中移除「{front}」？"
+  },
+  "review": {
+    "backButton": "返回收藏",
+    "of": "/",
+    "newCards": "新卡",
+    "reviewCards": "复习",
+    "revealButton": "显示答案",
+    "keyboardHint": "空格键显示 · 1–4 评分",
+    "again": "再来",
+    "hard": "困难",
+    "good": "良好",
+    "easy": "简单",
+    "waitingTitle": "等待学习卡片...",
+    "waitingMessage": "下一张卡片将在",
+    "waitingReviewed": "您已复习了 {count} 张卡片。",
+    "completedTitle": "学习完成！",
+    "completedMessage": "您复习了 {count} 张卡片。",
+    "completedBack": "返回卡组",
+    "testClockWarning": "测试时钟已启用：从 {time} 模拟时间"
+  },
+  "settings": {
+    "title": "设置",
+    "profileLabel": "个人资料",
+    "profileDescription": "更新您的显示名称和账户详情",
+    "sessionsLabel": "会话",
+    "sessionsDescription": "查看活跃设备并撤销访问权限",
+    "languageLabel": "界面语言",
+    "languageDescription": "选择应用界面语言",
+    "englishToggleLabel": "使用英文界面",
+    "interfaceLanguageDropdownLabel": "界面语言",
+    "profile": {
+      "backButton": "返回设置",
+      "heading": "个人资料",
+      "description": "管理您的个人信息。",
+      "fullNameLabel": "全名",
+      "fullNamePlaceholder": "张三",
+      "emailLabel": "电子邮件地址",
+      "updateButton": "更新资料",
+      "savingButton": "保存中...",
+      "successMessage": "个人资料更新成功！",
+      "errorMessage": "更新个人资料失败"
+    },
+    "sessions": {
+      "backButton": "返回设置",
+      "heading": "活跃访问令牌",
+      "activeNow": "当前活跃",
+      "lastActive": "最后活跃",
+      "revokeButton": "终止",
+      "noSessions": "未找到活跃会话。",
+      "authorizedDevice": "已授权设备"
+    },
+    "interfaceLanguageLabel": "界面语言",
+    "interfaceLanguageDescription": "选择菜单和标签的语言。",
+    "useEnglishToggle": "使用英文界面",
+    "chooseLanguage": "选择语言"
+  },
+  "nav": {
+    "decks": "卡组",
+    "rephrasings": "改写练习",
+    "fairyTales": "童话故事",
+    "settings": "设置",
+    "lightMode": "浅色模式",
+    "darkMode": "深色模式",
+    "signOut": "退出登录"
+  },
+  "fsrs": {
+    "backButton": "返回卡组",
+    "heading": "FSRS选项",
+    "description": "此卡组使用服务器端FSRS调度器。",
+    "desiredRetention": "目标记忆率",
+    "maximumInterval": "最大间隔",
+    "parameterSource": "参数来源",
+    "lastOptimization": "最后优化",
+    "sourceDefault": "默认",
+    "sourceOptimized": "已优化",
+    "never": "从未",
+    "weightsLabel": "权重",
+    "weightsCount": "此卡组存储了 {count} 个FSRS参数。",
+    "defaultWeights": "使用默认FSRS参数。",
+    "optimizeButton": "为此卡组优化",
+    "optimizing": "优化中...",
+    "optimizeSuccess": "已根据 {cardCount} 张卡片的 {reviewCount} 次复习进行优化。"
+  },
+  "statistics": {
+    "heading": "统计",
+    "weekButton": "周",
+    "monthButton": "月",
+    "allButton": "全部",
+    "totalReviews": "复习次数",
+    "accuracy": "准确率",
+    "retention": "记忆率",
+    "studyTime": "学习时间",
+    "dailyBreakdown": "每日详情"
+  },
+  "translate": {
+    "buttonLabel": "翻译",
+    "translating": "翻译中..."
+  },
+  "rephrase": {
+    "eyebrow": "改写练习",
+    "title": "改写训练",
+    "description": "从本地 3,000 词库中随机抽取一个词，以此为基础进行改写练习。",
+    "wordViewLabel": "当前词汇",
+    "pressRandomize": "点击随机",
+    "sourcePool": "词库：{count} 个精选 B1–B2 风格词汇。",
+    "randomizeButton": "随机",
+    "wordsLabel": "词汇"
+  },
+  "errors": {
+    "network": "网络错误，请重试。",
+    "unauthorized": "未授权",
+    "sessionExpired": "您的会话已过期，请重新登录。",
+    "unknown": "出了点问题，请重试。",
+    "onboardingIncomplete": "请先完成引导流程。"
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "common": {
+    "save": "Uložiť",
+    "cancel": "Zrušiť",
+    "continue": "Pokračovať →",
+    "back": "Back",
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "yes": "Yes",
+    "no": "No",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "optional": "optional"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Prihlásiť sa",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Prihlásiť sa",
+      "authenticating": "Prihlásiť sa...",
+      "noAccount": "Brand new here?",
+      "signUpLink": "Create an account"
+    },
+    "signUp": {
+      "title": "Zaregistrovať sa",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "New Password",
+      "passwordPlaceholder": "Minimum 8 characters",
+      "submitButton": "Poďme sa učiť po anglicky",
+      "creatingAccount": "Building Account...",
+      "passwordError": "Password must be at least 8 characters",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign in instead"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "emailTaken": "An account with this email already exists",
+      "sessionExpired": "Your session has expired. Please sign in again.",
+      "unauthorized": "Unauthorized",
+      "network": "Network error. Please try again."
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "leoSpeech": "Ahoj! Som Leo. Naučím ťa angličtinu spôsobom, ktorý skutočne funguje.",
+      "title": "Aký je váš rodný jazyk?",
+      "description": "We'll translate the UI and speak to you in this language.",
+      "searchPlaceholder": "Search {count} languages…",
+      "noResults": "No languages found",
+      "continueButton": "Continue →",
+      "savingButton": "Saving…"
+    },
+    "step2": {
+      "leoSpeech": "Honest pick beats a perfect one. Not sure? Go one lower — you can update anytime.",
+      "title": "Ako dobre hovoríte po anglicky?",
+      "description": "Not sure? Pick a lower level — you can update anytime.",
+      "continueButton": "Continue →",
+      "savingButton": "Saving…"
+    },
+    "step3": {
+      "leoSpeech": "Be specific — \"get a remote job in tech\" beats \"improve English\". I'll personalise around it.",
+      "title": "Prečo sa učíte angličtinu?",
+      "description": "Be specific — it helps Leo tailor lessons to you."
+    },
+    "step4": {
+      "celebrationChip": "Všetko pripravené!",
+      "headline": "Všetko pripravené!",
+      "sub": "Leo will personalise your English journey from here.",
+      "cta": "Poďme sa učiť po anglicky",
+      "starting": "Starting…",
+      "summaryNativeLanguage": "Native language",
+      "summaryEnglishLevel": "English level",
+      "summaryMainGoal": "Main goal"
+    },
+    "goals": {
+      "primaryGoalLabel": "Primary goal",
+      "primaryGoalPlaceholder": "e.g. Get a remote job in tech",
+      "primaryGoalError": "Please tell us your primary goal",
+      "quickPicksLabel": "Quick picks",
+      "continueButton": "Continue →",
+      "savingButton": "Saving…",
+      "presets": {
+        "remoteJob": "Get a remote job in tech",
+        "ielts": "Pass IELTS / TOEFL",
+        "travel": "Travel without language barriers",
+        "shows": "Watch shows without subtitles",
+        "moveAbroad": "Move abroad",
+        "readBooks": "Read books in English",
+        "confident": "Sound more confident at work",
+        "friends": "Talk to international friends"
+      }
+    },
+    "levels": {
+      "groups": {
+        "Beginner": "Beginner",
+        "Intermediate": "Intermediate",
+        "Advanced": "Advanced",
+        "Fluent": "Fluent"
+      },
+      "A1": {
+        "title": "Beginner",
+        "sub": "Just starting out",
+        "desc": "Basic words, simple phrases"
+      },
+      "A1 solid": {
+        "title": "Strong beginner",
+        "sub": "Getting the basics down",
+        "desc": "Simple sentences, familiar topics"
+      },
+      "A2": {
+        "title": "Elementary",
+        "sub": "Can handle everyday topics",
+        "desc": "Short exchanges, routine tasks"
+      },
+      "A2 solid": {
+        "title": "Strong elementary",
+        "sub": "Almost pre-intermediate",
+        "desc": "Familiar situations, direct info"
+      },
+      "B1": {
+        "title": "Intermediate",
+        "sub": "Can navigate most situations",
+        "desc": "Main points clear, common topics"
+      },
+      "B1 solid": {
+        "title": "Strong intermediate",
+        "sub": "Comfortable in conversation",
+        "desc": "Fairly fluent, some gaps remain"
+      },
+      "B2": {
+        "title": "Upper-intermediate",
+        "sub": "Handles complex language",
+        "desc": "Fluent with native speakers"
+      },
+      "B2 solid": {
+        "title": "Strong upper-intermediate",
+        "sub": "Near advanced",
+        "desc": "Spontaneous, nuanced communication"
+      },
+      "C1": {
+        "title": "Advanced",
+        "sub": "Expressive and precise",
+        "desc": "Flexible, effective use of language"
+      },
+      "C1 solid": {
+        "title": "Strong advanced",
+        "sub": "Almost mastery",
+        "desc": "Clear, well-structured, nuanced"
+      },
+      "C2": {
+        "title": "Mastery",
+        "sub": "Near native precision",
+        "desc": "Effortless, all contexts"
+      },
+      "C2 solid": {
+        "title": "Strong mastery",
+        "sub": "Indistinguishable from native",
+        "desc": "Perfect command of language"
+      },
+      "Fluent": {
+        "title": "Native-like",
+        "sub": "Fully fluent",
+        "desc": "Native or near-native proficiency"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": "Začnime silno!",
+    "subtitle": "Welcome back. Ready for your daily challenge?",
+    "newDeckButton": "+ New Deck",
+    "emptyTitle": "No collections yet",
+    "emptyDescription": "Start by creating your first deck of flashcards.",
+    "emptyAction": "Craft Your First Deck",
+    "createDeckHeading": "Create New Deck",
+    "createDeckPlaceholder": "e.g. Spanish Vocabulary",
+    "createDeckSubmit": "Create",
+    "deleteDeckTitle": "Delete Deck",
+    "deleteDeckMessage": "Are you sure you want to delete \"{name}\"? This will also delete all its cards.",
+    "editDeckTitle": "Edit Deck",
+    "cardCount": "Cards",
+    "dueCount": "Due",
+    "finished": "Finished",
+    "mastery": "Mastery",
+    "new": "New"
+  },
+  "deckDetail": {
+    "backButton": "Back to Collections",
+    "cardsTotal": "cards total",
+    "dueNow": "due now",
+    "startSession": "Start Session",
+    "fsrsSettings": "FSRS Settings",
+    "addCard": "+ Add Card",
+    "createCardHeading": "Craft a New Card",
+    "frontLabel": "Front side",
+    "frontPlaceholder": "Question or prompt...",
+    "backLabel": "Back side",
+    "backPlaceholder": "Answer...",
+    "typeLabel": "Card Type",
+    "typeBasic": "Basic",
+    "typeReverse": "Reverse",
+    "typeCloze": "Cloze",
+    "createCardSubmit": "Create Card",
+    "memoryStack": "Memory Stack",
+    "emptyStackTitle": "Empty stack",
+    "emptyStackDescription": "This collection is currently empty. Start adding some knowledge!",
+    "emptyStackAction": "Craft Your First Card",
+    "saveChanges": "Save Changes",
+    "archiveCard": "Archive Card",
+    "archiveCardMessage": "Are you sure you want to remove \"{front}\" from the memory stack?"
+  },
+  "review": {
+    "backButton": "Back to Collection",
+    "of": "of",
+    "newCards": "New",
+    "reviewCards": "Reviews",
+    "revealButton": "Reveal Answer",
+    "keyboardHint": "Press Space to reveal · Keys 1-4 to rate",
+    "again": "Znova",
+    "hard": "Ťažké",
+    "good": "Dobre",
+    "easy": "Ľahké",
+    "waitingTitle": "Waiting for learning cards...",
+    "waitingMessage": "Next card due in",
+    "waitingReviewed": "You've reviewed {count, plural, one {# card} other {# cards}} so far.",
+    "completedTitle": "Session Complete!",
+    "completedMessage": "You reviewed {count, plural, one {# card} other {# cards}}.",
+    "completedBack": "Back to Deck",
+    "testClockWarning": "Test clock enabled: simulating time from {time}"
+  },
+  "settings": {
+    "title": "Nastavenia",
+    "profileLabel": "Profile",
+    "profileDescription": "Update your display name and account details",
+    "sessionsLabel": "Sessions",
+    "sessionsDescription": "Review active devices and revoke access",
+    "languageLabel": "Interface language",
+    "languageDescription": "Choose the language for the app interface",
+    "englishToggleLabel": "Používať anglické rozhranie",
+    "interfaceLanguageDropdownLabel": "Interface language",
+    "profile": {
+      "backButton": "Back to settings",
+      "heading": "Profile",
+      "description": "Manage your personal information and public presence.",
+      "fullNameLabel": "Full name",
+      "fullNamePlaceholder": "John Doe",
+      "emailLabel": "Email address",
+      "updateButton": "Update Profile",
+      "savingButton": "Saving...",
+      "successMessage": "Profile updated successfully!",
+      "errorMessage": "Failed to update profile"
+    },
+    "sessions": {
+      "backButton": "Back to settings",
+      "heading": "Active Access Tokens",
+      "activeNow": "Active Now",
+      "lastActive": "Last active",
+      "revokeButton": "Terminate",
+      "noSessions": "No active sessions found.",
+      "authorizedDevice": "Authorized Device"
+    },
+    "interfaceLanguageLabel": "Interface Language",
+    "interfaceLanguageDescription": "Choose the language used for menus and labels.",
+    "useEnglishToggle": "Use English interface",
+    "chooseLanguage": "Choose language"
+  },
+  "nav": {
+    "decks": "Balíčky",
+    "rephrasings": "Rephrasings",
+    "fairyTales": "Fairy Tales",
+    "settings": "Nastavenia",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "signOut": "Odhlásiť sa"
+  },
+  "fsrs": {
+    "backButton": "Back to deck",
+    "heading": "FSRS Options",
+    "description": "This deck uses the server-side FSRS scheduler. Review buttons render server-computed intervals, and optimization updates this deck's weights immediately.",
+    "desiredRetention": "Desired retention",
+    "maximumInterval": "Maximum interval",
+    "parameterSource": "Parameter source",
+    "lastOptimization": "Last optimization",
+    "sourceDefault": "Default",
+    "sourceOptimized": "Optimized",
+    "never": "Never",
+    "weightsLabel": "Weights",
+    "weightsCount": "{count} FSRS parameters stored for this deck.",
+    "defaultWeights": "Using default Anki-style FSRS parameters.",
+    "optimizeButton": "Optimize for This Deck",
+    "optimizing": "Optimizing...",
+    "optimizeSuccess": "Optimized from {reviewCount} reviews across {cardCount} cards."
+  },
+  "statistics": {
+    "heading": "Statistics",
+    "weekButton": "Week",
+    "monthButton": "Month",
+    "allButton": "All",
+    "totalReviews": "Reviews",
+    "accuracy": "Accuracy",
+    "retention": "Retention",
+    "studyTime": "Study Time",
+    "dailyBreakdown": "Daily Breakdown"
+  },
+  "translate": {
+    "buttonLabel": "Translate",
+    "translating": "Translating..."
+  },
+  "rephrase": {
+    "eyebrow": "Rephrasings",
+    "title": "Rephrase practice",
+    "description": "Pull a random prompt word from the local 3,000-word bank and use it as the base for your rephrasing exercises.",
+    "wordViewLabel": "Word View",
+    "pressRandomize": "Press Randomize",
+    "sourcePool": "Source pool: {count} curated B1-B2 style words.",
+    "randomizeButton": "Randomize",
+    "wordsLabel": "Words"
+  },
+  "errors": {
+    "network": "Network error. Please try again.",
+    "unauthorized": "Unauthorized",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "unknown": "Something went wrong. Please try again.",
+    "onboardingIncomplete": "Please complete onboarding first."
+  }
+}

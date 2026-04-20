@@ -125,7 +125,8 @@ function calculateLearning(state: CardState, rating: Rating): Sm2Result {
 
 function calculateReview(state: CardState, rating: Rating): Sm2Result {
   const quality = rating as number;
-  let { interval, easeFactor, repetitions } = state;
+  let { interval, repetitions } = state;
+  const { easeFactor } = state;
 
   const newEaseFactor = Math.max(
     1.3,

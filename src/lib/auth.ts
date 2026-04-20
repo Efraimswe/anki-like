@@ -6,20 +6,29 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'dev-secret-ch
 export interface TokenPayload {
   sub: string;
   sid: string;
+  onboardingCompleted: boolean;
 }
 
-export async function signAccessToken(userId: string, sessionId: string): Promise<string> {
-  return new SignJWT({ sub: userId, sid: sessionId })
+export async function signAccessToken(
+  userId: string,
+  sessionId: string,
+  onboardingCompleted: boolean = false
+): Promise<string> {
+  return new SignJWT({ sub: userId, sid: sessionId, onboardingCompleted })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime(process.env.JWT_EXPIRY || '15m')
+    .setExpirationTime((process.env.JWT_EXPIRY || '15m').trim())
     .sign(secret);
 }
 
 export async function verifyAccessToken(token: string): Promise<TokenPayload | null> {
   try {
     const { payload } = await jwtVerify(token, secret);
-    return { sub: payload.sub as string, sid: payload.sid as string };
+    return {
+      sub: payload.sub as string,
+      sid: payload.sid as string,
+      onboardingCompleted: payload.onboardingCompleted as boolean ?? false,
+    };
   } catch {
     return null;
   }

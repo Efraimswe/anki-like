@@ -47,6 +47,7 @@ export const updateDailyLimitsSchema = z.object({
 export const updateProfileSchema = z.object({
   displayName: z.string().min(1).max(100).optional(),
   password: z.string().min(8).optional(),
+  interfaceLanguage: z.string().min(2).max(10).optional(),
 });
 
 export const statisticsQuerySchema = z.object({

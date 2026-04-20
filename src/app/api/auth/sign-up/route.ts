@@ -23,16 +23,19 @@ export async function POST(request: NextRequest) {
   const passwordHash = await bcrypt.hash(password, 12);
   const user = await prisma.user.create({
     data: { email, passwordHash, displayName: displayName || null },
-    select: { id: true, email: true, displayName: true, createdAt: true },
+    select: { id: true, email: true, displayName: true, createdAt: true, onboardingCompleted: true },
   });
 
   const ua = request.headers.get('user-agent');
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || null;
   const { session, rawToken } = await createSession(user.id, parseUserAgent(ua), ip);
 
-  const accessToken = await signAccessToken(user.id, session.id);
+  const accessToken = await signAccessToken(user.id, session.id, user.onboardingCompleted);
   const csrfToken = crypto.randomUUID();
   await setAuthCookies(accessToken, rawToken, csrfToken);
 
-  return NextResponse.json({ user });
+  return NextResponse.json({
+    user,
+    redirectTo: user.onboardingCompleted ? '/dashboard' : '/onboarding',
+  });
 }

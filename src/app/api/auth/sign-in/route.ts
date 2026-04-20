@@ -29,11 +29,17 @@ export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || null;
   const { session, rawToken } = await createSession(user.id, parseUserAgent(ua), ip);
 
-  const accessToken = await signAccessToken(user.id, session.id);
+  const accessToken = await signAccessToken(user.id, session.id, user.onboardingCompleted);
   const csrfToken = crypto.randomUUID();
   await setAuthCookies(accessToken, rawToken, csrfToken);
 
   return NextResponse.json({
-    user: { id: user.id, email: user.email, displayName: user.displayName, createdAt: user.createdAt },
+    user: {
+      id: user.id,
+      email: user.email,
+      displayName: user.displayName,
+      createdAt: user.createdAt,
+      onboardingCompleted: user.onboardingCompleted,
+    },
   });
 }

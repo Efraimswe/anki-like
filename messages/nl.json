@@ -1,0 +1,332 @@
+{
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "continue": "Doorgaan →",
+    "back": "Terug",
+    "loading": "Laden…",
+    "saving": "Opslaan…",
+    "error": "Er ging iets mis",
+    "retry": "Opnieuw proberen",
+    "yes": "Ja",
+    "no": "Nee",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "create": "Aanmaken",
+    "optional": "optioneel"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Inloggen",
+      "emailLabel": "E-mailadres",
+      "emailPlaceholder": "jij@voorbeeld.nl",
+      "passwordLabel": "Wachtwoord",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Toegang tot account",
+      "authenticating": "Authenticeren...",
+      "noAccount": "Nieuw hier?",
+      "signUpLink": "Account aanmaken"
+    },
+    "signUp": {
+      "title": "Registreren",
+      "emailLabel": "E-mailadres",
+      "emailPlaceholder": "jij@voorbeeld.nl",
+      "passwordLabel": "Nieuw wachtwoord",
+      "passwordPlaceholder": "Minimaal 8 tekens",
+      "submitButton": "Beginnen",
+      "creatingAccount": "Account aanmaken...",
+      "passwordError": "Wachtwoord moet minimaal 8 tekens bevatten",
+      "hasAccount": "Al een account?",
+      "signInLink": "Inloggen"
+    },
+    "errors": {
+      "invalidCredentials": "Ongeldig e-mailadres of wachtwoord",
+      "emailTaken": "Er bestaat al een account met dit e-mailadres",
+      "sessionExpired": "Je sessie is verlopen. Log opnieuw in.",
+      "unauthorized": "Niet bevoegd",
+      "network": "Netwerkfout. Probeer het opnieuw."
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "leoSpeech": "Hoi! Ik ben Leo. Ik leer je Engels op een manier die echt werkt.",
+      "title": "Wat is je moedertaal?",
+      "description": "We vertalen de interface en spreken met je in jouw taal.",
+      "searchPlaceholder": "Zoek in {count} talen…",
+      "noResults": "Geen talen gevonden",
+      "continueButton": "Doorgaan →",
+      "savingButton": "Opslaan…"
+    },
+    "step2": {
+      "leoSpeech": "Een eerlijke keuze is beter dan een perfecte. Twijfel je? Kies lager — je kunt het altijd aanpassen.",
+      "title": "Hoe goed spreek je Engels?",
+      "description": "Twijfel je? Kies een lager niveau — je kunt het altijd aanpassen.",
+      "continueButton": "Doorgaan →",
+      "savingButton": "Opslaan…"
+    },
+    "step3": {
+      "leoSpeech": "Wees specifiek — 'een remote baan vinden in tech' is beter dan 'mijn Engels verbeteren'. Ik pas me aan aan jouw doelen.",
+      "title": "Waarom leer je Engels?",
+      "description": "Wees specifiek — dat helpt Leo lessen op maat te maken."
+    },
+    "step4": {
+      "celebrationChip": "Je bent er klaar voor!",
+      "headline": "Je bent er klaar voor!",
+      "sub": "Leo personaliseert jouw Engelse reis vanaf nu.",
+      "cta": "Engels leren",
+      "starting": "Bezig met starten…",
+      "summaryNativeLanguage": "Moedertaal",
+      "summaryEnglishLevel": "Engelsniveau",
+      "summaryMainGoal": "Hoofddoel"
+    },
+    "goals": {
+      "primaryGoalLabel": "Hoofddoel",
+      "primaryGoalPlaceholder": "bijv. Een remote baan vinden in tech",
+      "primaryGoalError": "Vertel ons je hoofddoel",
+      "quickPicksLabel": "Snelle keuzes",
+      "continueButton": "Doorgaan →",
+      "savingButton": "Opslaan…",
+      "presets": {
+        "remoteJob": "Een remote baan vinden in tech",
+        "ielts": "IELTS / TOEFL halen",
+        "travel": "Reizen zonder taalbarrières",
+        "shows": "Series kijken zonder ondertitels",
+        "moveAbroad": "Naar het buitenland verhuizen",
+        "readBooks": "Boeken in het Engels lezen",
+        "confident": "Zelfverzekerder klinken op het werk",
+        "friends": "Praten met internationale vrienden"
+      }
+    },
+    "levels": {
+      "groups": {
+        "Beginner": "Beginner",
+        "Intermediate": "Gemiddeld",
+        "Advanced": "Gevorderd",
+        "Fluent": "Vloeiend"
+      },
+      "A1": {
+        "title": "Beginner",
+        "sub": "Net begonnen",
+        "desc": "Basiswoorden, eenvoudige zinnen"
+      },
+      "A1 solid": {
+        "title": "Stevige beginner",
+        "sub": "Basiskennis verwerven",
+        "desc": "Eenvoudige zinnen, bekende onderwerpen"
+      },
+      "A2": {
+        "title": "Elementair",
+        "sub": "Dagelijkse onderwerpen behandelen",
+        "desc": "Korte gesprekken, routinetaken"
+      },
+      "A2 solid": {
+        "title": "Stevig elementair",
+        "sub": "Bijna pre-gemiddeld",
+        "desc": "Bekende situaties, directe informatie"
+      },
+      "B1": {
+        "title": "Gemiddeld",
+        "sub": "Meeste situaties aankunnen",
+        "desc": "Hoofdpunten duidelijk, algemene onderwerpen"
+      },
+      "B1 solid": {
+        "title": "Stevig gemiddeld",
+        "sub": "Comfortabel in gesprek",
+        "desc": "Redelijk vloeiend, enkele hiaten"
+      },
+      "B2": {
+        "title": "Boven gemiddeld",
+        "sub": "Complexe taal aankunnen",
+        "desc": "Vloeiend met moedertaalsprekers"
+      },
+      "B2 solid": {
+        "title": "Stevig boven gemiddeld",
+        "sub": "Bijna gevorderd",
+        "desc": "Spontane, genuanceerde communicatie"
+      },
+      "C1": {
+        "title": "Gevorderd",
+        "sub": "Expressief en precies",
+        "desc": "Flexibel, effectief taalgebruik"
+      },
+      "C1 solid": {
+        "title": "Stevig gevorderd",
+        "sub": "Bijna meesterschap",
+        "desc": "Helder, goed gestructureerd, genuanceerd"
+      },
+      "C2": {
+        "title": "Meesterschap",
+        "sub": "Bijna moedertaalprecisie",
+        "desc": "Moeiteloos in alle contexten"
+      },
+      "C2 solid": {
+        "title": "Stevig meesterschap",
+        "sub": "Niet te onderscheiden van moedertaalspreker",
+        "desc": "Perfecte taalbeheersing"
+      },
+      "Fluent": {
+        "title": "Als een moedertaalspreker",
+        "sub": "Volledig vloeiend",
+        "desc": "Moedertaalniveau of dichtbij"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": "Laten we sterk beginnen!",
+    "subtitle": "Welkom terug. Klaar voor de uitdaging van vandaag?",
+    "newDeckButton": "+ Nieuw deck",
+    "emptyTitle": "Nog geen collecties",
+    "emptyDescription": "Begin met het aanmaken van je eerste kaartendeck.",
+    "emptyAction": "Mijn eerste deck aanmaken",
+    "createDeckHeading": "Nieuw deck aanmaken",
+    "createDeckPlaceholder": "bijv. Spaans woordenschat",
+    "createDeckSubmit": "Aanmaken",
+    "deleteDeckTitle": "Deck verwijderen",
+    "deleteDeckMessage": "«{name}» verwijderen? Alle kaarten worden ook verwijderd.",
+    "editDeckTitle": "Deck bewerken",
+    "cardCount": "Kaarten",
+    "dueCount": "Te herhalen",
+    "finished": "Klaar",
+    "mastery": "Beheersing",
+    "new": "Nieuw"
+  },
+  "deckDetail": {
+    "backButton": "Terug naar collecties",
+    "cardsTotal": "kaarten in totaal",
+    "dueNow": "nu te herhalen",
+    "startSession": "Sessie starten",
+    "fsrsSettings": "FSRS-instellingen",
+    "addCard": "+ Kaart toevoegen",
+    "createCardHeading": "Nieuwe kaart aanmaken",
+    "frontLabel": "Voorkant",
+    "frontPlaceholder": "Vraag of aanwijzing...",
+    "backLabel": "Achterkant",
+    "backPlaceholder": "Antwoord...",
+    "typeLabel": "Kaarttype",
+    "typeBasic": "Basis",
+    "typeReverse": "Omgekeerd",
+    "typeCloze": "Invuloefening",
+    "createCardSubmit": "Kaart aanmaken",
+    "memoryStack": "Geheugenstack",
+    "emptyStackTitle": "Lege stack",
+    "emptyStackDescription": "Deze collectie is leeg. Begin met kennis toevoegen!",
+    "emptyStackAction": "Mijn eerste kaart aanmaken",
+    "saveChanges": "Wijzigingen opslaan",
+    "archiveCard": "Kaart archiveren",
+    "archiveCardMessage": "«{front}» uit de geheugenstack verwijderen?"
+  },
+  "review": {
+    "backButton": "Terug naar collectie",
+    "of": "van",
+    "newCards": "Nieuw",
+    "reviewCards": "Herhalingen",
+    "revealButton": "Antwoord tonen",
+    "keyboardHint": "Spatie om te tonen · 1–4 om te beoordelen",
+    "again": "Opnieuw",
+    "hard": "Moeilijk",
+    "good": "Goed",
+    "easy": "Gemakkelijk",
+    "waitingTitle": "Wachten op leerkaarten...",
+    "waitingMessage": "Volgende kaart over",
+    "waitingReviewed": "Je hebt {count} kaart(en) herhaald tot nu toe.",
+    "completedTitle": "Sessie voltooid!",
+    "completedMessage": "Je hebt {count} kaart(en) herhaald.",
+    "completedBack": "Terug naar deck",
+    "testClockWarning": "Testklok ingeschakeld: tijd gesimuleerd vanaf {time}"
+  },
+  "settings": {
+    "title": "Instellingen",
+    "profileLabel": "Profiel",
+    "profileDescription": "Werk je weergavenaam en accountgegevens bij",
+    "sessionsLabel": "Sessies",
+    "sessionsDescription": "Bekijk actieve apparaten en trek toegang in",
+    "languageLabel": "Interfacetaal",
+    "languageDescription": "Kies de taal van de app-interface",
+    "englishToggleLabel": "Engelse interface gebruiken",
+    "interfaceLanguageDropdownLabel": "Interfacetaal",
+    "profile": {
+      "backButton": "Terug naar instellingen",
+      "heading": "Profiel",
+      "description": "Beheer je persoonlijke informatie.",
+      "fullNameLabel": "Volledige naam",
+      "fullNamePlaceholder": "Jan Jansen",
+      "emailLabel": "E-mailadres",
+      "updateButton": "Profiel bijwerken",
+      "savingButton": "Opslaan...",
+      "successMessage": "Profiel succesvol bijgewerkt!",
+      "errorMessage": "Profiel bijwerken mislukt"
+    },
+    "sessions": {
+      "backButton": "Terug naar instellingen",
+      "heading": "Actieve toegangstokens",
+      "activeNow": "Nu actief",
+      "lastActive": "Laatste activiteit",
+      "revokeButton": "Beëindigen",
+      "noSessions": "Geen actieve sessies gevonden.",
+      "authorizedDevice": "Geautoriseerd apparaat"
+    },
+    "interfaceLanguageLabel": "Interfacetaal",
+    "interfaceLanguageDescription": "Kies de taal van de menu's.",
+    "useEnglishToggle": "Engelse interface",
+    "chooseLanguage": "Kies taal"
+  },
+  "nav": {
+    "decks": "Decks",
+    "rephrasings": "Herformuleringen",
+    "fairyTales": "Sprookjes",
+    "settings": "Instellingen",
+    "lightMode": "Lichte modus",
+    "darkMode": "Donkere modus",
+    "signOut": "Uitloggen"
+  },
+  "fsrs": {
+    "backButton": "Terug naar deck",
+    "heading": "FSRS-opties",
+    "description": "Dit deck gebruikt de server-side FSRS-planner.",
+    "desiredRetention": "Gewenste retentie",
+    "maximumInterval": "Maximaal interval",
+    "parameterSource": "Parameterbron",
+    "lastOptimization": "Laatste optimalisatie",
+    "sourceDefault": "Standaard",
+    "sourceOptimized": "Geoptimaliseerd",
+    "never": "Nooit",
+    "weightsLabel": "Gewichten",
+    "weightsCount": "{count} FSRS-parameters voor dit deck.",
+    "defaultWeights": "Standaard FSRS-parameters gebruiken.",
+    "optimizeButton": "Optimaliseren voor dit deck",
+    "optimizing": "Optimaliseren...",
+    "optimizeSuccess": "Geoptimaliseerd op basis van {reviewCount} herhalingen over {cardCount} kaarten."
+  },
+  "statistics": {
+    "heading": "Statistieken",
+    "weekButton": "Week",
+    "monthButton": "Maand",
+    "allButton": "Alles",
+    "totalReviews": "Herhalingen",
+    "accuracy": "Nauwkeurigheid",
+    "retention": "Retentie",
+    "studyTime": "Studietijd",
+    "dailyBreakdown": "Dagelijkse uitsplitsing"
+  },
+  "translate": {
+    "buttonLabel": "Vertalen",
+    "translating": "Vertalen..."
+  },
+  "rephrase": {
+    "eyebrow": "Herformuleringen",
+    "title": "Herformuleringsoefening",
+    "description": "Trek een willekeurig woord uit de lokale bank van 3.000 woorden en gebruik het als basis voor je herformuleringsoefeningen.",
+    "wordViewLabel": "Woordweergave",
+    "pressRandomize": "Druk op Willekeurig",
+    "sourcePool": "Woordbank: {count} geselecteerde B1–B2-woorden.",
+    "randomizeButton": "Willekeurig",
+    "wordsLabel": "Woorden"
+  },
+  "errors": {
+    "network": "Netwerkfout. Probeer het opnieuw.",
+    "unauthorized": "Niet bevoegd",
+    "sessionExpired": "Je sessie is verlopen. Log opnieuw in.",
+    "unknown": "Er ging iets mis. Probeer het opnieuw.",
+    "onboardingIncomplete": "Voltooi eerst de onboarding."
+  }
+}

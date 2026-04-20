@@ -1,0 +1,332 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "continue": "続ける →",
+    "back": "戻る",
+    "loading": "読み込み中…",
+    "saving": "保存中…",
+    "error": "問題が発生しました",
+    "retry": "再試行",
+    "yes": "はい",
+    "no": "いいえ",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "optional": "任意"
+  },
+  "auth": {
+    "signIn": {
+      "title": "ログイン",
+      "emailLabel": "メールアドレス",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "パスワード",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "アカウントにアクセス",
+      "authenticating": "認証中...",
+      "noAccount": "初めてですか？",
+      "signUpLink": "アカウントを作成"
+    },
+    "signUp": {
+      "title": "登録",
+      "emailLabel": "メールアドレス",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "新しいパスワード",
+      "passwordPlaceholder": "8文字以上",
+      "submitButton": "始める",
+      "creatingAccount": "アカウント作成中...",
+      "passwordError": "パスワードは8文字以上必要です",
+      "hasAccount": "すでにアカウントをお持ちですか？",
+      "signInLink": "ログイン"
+    },
+    "errors": {
+      "invalidCredentials": "メールまたはパスワードが無効です",
+      "emailTaken": "このメールアドレスはすでに使用されています",
+      "sessionExpired": "セッションが期限切れです。再度ログインしてください。",
+      "unauthorized": "未承認",
+      "network": "ネットワークエラーです。もう一度お試しください。"
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "leoSpeech": "こんにちは！レオです。本当に効果的な方法で英語を教えます。",
+      "title": "あなたの母国語は何ですか？",
+      "description": "UIを翻訳し、あなたの言語でお話しします。",
+      "searchPlaceholder": "{count}言語を検索…",
+      "noResults": "言語が見つかりません",
+      "continueButton": "続ける →",
+      "savingButton": "保存中…"
+    },
+    "step2": {
+      "leoSpeech": "正直な選択が完璧な選択より優れています。迷ったら低めに — いつでも更新できます。",
+      "title": "英語のレベルはどのくらいですか？",
+      "description": "迷ったら低めのレベルを選んでください — いつでも更新できます。",
+      "continueButton": "続ける →",
+      "savingButton": "保存中…"
+    },
+    "step3": {
+      "leoSpeech": "具体的に — 「テック企業のリモートワークを見つける」は「英語を上達させる」より良いです。あなたの目標に合わせてカスタマイズします。",
+      "title": "なぜ英語を学んでいますか？",
+      "description": "具体的に教えてください — レオがレッスンをカスタマイズするのに役立ちます。"
+    },
+    "step4": {
+      "celebrationChip": "準備完了！",
+      "headline": "準備完了！",
+      "sub": "レオがここからあなたの英語の旅をパーソナライズします。",
+      "cta": "英語を学ぼう",
+      "starting": "開始中…",
+      "summaryNativeLanguage": "母国語",
+      "summaryEnglishLevel": "英語レベル",
+      "summaryMainGoal": "主な目標"
+    },
+    "goals": {
+      "primaryGoalLabel": "主な目標",
+      "primaryGoalPlaceholder": "例：テック企業のリモートワークを見つける",
+      "primaryGoalError": "主な目標を教えてください",
+      "quickPicksLabel": "クイック選択",
+      "continueButton": "続ける →",
+      "savingButton": "保存中…",
+      "presets": {
+        "remoteJob": "テック企業のリモートワークを見つける",
+        "ielts": "IELTS / TOEFLに合格する",
+        "travel": "言語の壁なく旅行する",
+        "shows": "字幕なしで番組を見る",
+        "moveAbroad": "海外に移住する",
+        "readBooks": "英語の本を読む",
+        "confident": "仕事でもっと自信を持って話す",
+        "friends": "外国の友達と話す"
+      }
+    },
+    "levels": {
+      "groups": {
+        "Beginner": "初級",
+        "Intermediate": "中級",
+        "Advanced": "上級",
+        "Fluent": "流暢"
+      },
+      "A1": {
+        "title": "入門",
+        "sub": "始めたばかり",
+        "desc": "基本的な語彙、簡単なフレーズ"
+      },
+      "A1 solid": {
+        "title": "確かな入門",
+        "sub": "基本を習得中",
+        "desc": "簡単な文、身近なトピック"
+      },
+      "A2": {
+        "title": "初歩",
+        "sub": "日常的なトピックを扱える",
+        "desc": "短い会話、日常的なタスク"
+      },
+      "A2 solid": {
+        "title": "確かな初歩",
+        "sub": "準中級に近い",
+        "desc": "身近な場面、直接的な情報"
+      },
+      "B1": {
+        "title": "中級",
+        "sub": "ほとんどの場面に対応できる",
+        "desc": "要点が明確、一般的なトピック"
+      },
+      "B1 solid": {
+        "title": "確かな中級",
+        "sub": "会話に慣れている",
+        "desc": "かなり流暢だが、若干の課題あり"
+      },
+      "B2": {
+        "title": "中上級",
+        "sub": "複雑な言語を扱える",
+        "desc": "ネイティブとの会話も流暢"
+      },
+      "B2 solid": {
+        "title": "確かな中上級",
+        "sub": "上級に近い",
+        "desc": "自然で細やかなコミュニケーション"
+      },
+      "C1": {
+        "title": "上級",
+        "sub": "表現力豊かで正確",
+        "desc": "柔軟で効果的な言語使用"
+      },
+      "C1 solid": {
+        "title": "確かな上級",
+        "sub": "熟達に近い",
+        "desc": "明確で構造的、細やか"
+      },
+      "C2": {
+        "title": "熟達",
+        "sub": "ネイティブに近い精度",
+        "desc": "どんな状況でも難なく話せる"
+      },
+      "C2 solid": {
+        "title": "確かな熟達",
+        "sub": "ネイティブと区別がつかない",
+        "desc": "言語の完璧な習得"
+      },
+      "Fluent": {
+        "title": "ネイティブ並み",
+        "sub": "完全に流暢",
+        "desc": "ネイティブまたはそれに近いレベル"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": "力強くスタートしよう！",
+    "subtitle": "おかえりなさい。今日の挑戦の準備はできていますか？",
+    "newDeckButton": "+ 新しいデッキ",
+    "emptyTitle": "まだコレクションがありません",
+    "emptyDescription": "最初のフラッシュカードデッキを作って始めましょう。",
+    "emptyAction": "最初のデッキを作る",
+    "createDeckHeading": "新しいデッキを作成",
+    "createDeckPlaceholder": "例：スペイン語の語彙",
+    "createDeckSubmit": "作成",
+    "deleteDeckTitle": "デッキを削除",
+    "deleteDeckMessage": "「{name}」を削除しますか？カードもすべて削除されます。",
+    "editDeckTitle": "デッキを編集",
+    "cardCount": "カード",
+    "dueCount": "期限",
+    "finished": "完了",
+    "mastery": "習熟度",
+    "new": "新規"
+  },
+  "deckDetail": {
+    "backButton": "コレクションに戻る",
+    "cardsTotal": "枚のカード",
+    "dueNow": "今すぐ復習",
+    "startSession": "学習開始",
+    "fsrsSettings": "FSRS設定",
+    "addCard": "+ カードを追加",
+    "createCardHeading": "新しいカードを作成",
+    "frontLabel": "表面",
+    "frontPlaceholder": "質問またはヒント...",
+    "backLabel": "裏面",
+    "backPlaceholder": "答え...",
+    "typeLabel": "カードタイプ",
+    "typeBasic": "基本",
+    "typeReverse": "逆向き",
+    "typeCloze": "穴埋め",
+    "createCardSubmit": "カードを作成",
+    "memoryStack": "メモリスタック",
+    "emptyStackTitle": "スタックが空です",
+    "emptyStackDescription": "このコレクションは空です。知識を追加してください！",
+    "emptyStackAction": "最初のカードを作る",
+    "saveChanges": "変更を保存",
+    "archiveCard": "カードをアーカイブ",
+    "archiveCardMessage": "「{front}」をメモリスタックから削除しますか？"
+  },
+  "review": {
+    "backButton": "コレクションに戻る",
+    "of": "/",
+    "newCards": "新規",
+    "reviewCards": "復習",
+    "revealButton": "答えを表示",
+    "keyboardHint": "スペースで表示 · 1–4で評価",
+    "again": "もう一度",
+    "hard": "難しい",
+    "good": "良い",
+    "easy": "簡単",
+    "waitingTitle": "学習カードを待機中...",
+    "waitingMessage": "次のカードまで",
+    "waitingReviewed": "{count}枚のカードを復習しました。",
+    "completedTitle": "学習完了！",
+    "completedMessage": "{count}枚のカードを復習しました。",
+    "completedBack": "デッキに戻る",
+    "testClockWarning": "テスト時計が有効：{time}からの時間をシミュレート中"
+  },
+  "settings": {
+    "title": "設定",
+    "profileLabel": "プロフィール",
+    "profileDescription": "表示名とアカウント情報を更新",
+    "sessionsLabel": "セッション",
+    "sessionsDescription": "アクティブデバイスを確認してアクセスを取り消す",
+    "languageLabel": "インターフェース言語",
+    "languageDescription": "アプリのインターフェース言語を選択",
+    "englishToggleLabel": "英語インターフェースを使用",
+    "interfaceLanguageDropdownLabel": "インターフェース言語",
+    "profile": {
+      "backButton": "設定に戻る",
+      "heading": "プロフィール",
+      "description": "個人情報を管理します。",
+      "fullNameLabel": "氏名",
+      "fullNamePlaceholder": "山田太郎",
+      "emailLabel": "メールアドレス",
+      "updateButton": "プロフィールを更新",
+      "savingButton": "保存中...",
+      "successMessage": "プロフィールが更新されました！",
+      "errorMessage": "プロフィールの更新に失敗しました"
+    },
+    "sessions": {
+      "backButton": "設定に戻る",
+      "heading": "アクティブなアクセストークン",
+      "activeNow": "現在アクティブ",
+      "lastActive": "最終アクティブ",
+      "revokeButton": "終了",
+      "noSessions": "アクティブなセッションが見つかりません。",
+      "authorizedDevice": "認証済みデバイス"
+    },
+    "interfaceLanguageLabel": "インターフェース言語",
+    "interfaceLanguageDescription": "メニューの言語を選択してください。",
+    "useEnglishToggle": "英語インターフェース",
+    "chooseLanguage": "言語を選択"
+  },
+  "nav": {
+    "decks": "デッキ",
+    "rephrasings": "言い換え練習",
+    "fairyTales": "童話",
+    "settings": "設定",
+    "lightMode": "ライトモード",
+    "darkMode": "ダークモード",
+    "signOut": "ログアウト"
+  },
+  "fsrs": {
+    "backButton": "デッキに戻る",
+    "heading": "FSRSオプション",
+    "description": "このデッキはサーバー側FSRSスケジューラーを使用しています。",
+    "desiredRetention": "目標記憶率",
+    "maximumInterval": "最大間隔",
+    "parameterSource": "パラメータソース",
+    "lastOptimization": "最後の最適化",
+    "sourceDefault": "デフォルト",
+    "sourceOptimized": "最適化済み",
+    "never": "なし",
+    "weightsLabel": "重み",
+    "weightsCount": "このデッキには{count}個のFSRSパラメータが保存されています。",
+    "defaultWeights": "デフォルトのFSRSパラメータを使用しています。",
+    "optimizeButton": "このデッキ用に最適化",
+    "optimizing": "最適化中...",
+    "optimizeSuccess": "{cardCount}枚のカードの{reviewCount}回の復習から最適化しました。"
+  },
+  "statistics": {
+    "heading": "統計",
+    "weekButton": "週",
+    "monthButton": "月",
+    "allButton": "全期間",
+    "totalReviews": "復習回数",
+    "accuracy": "正確率",
+    "retention": "記憶率",
+    "studyTime": "学習時間",
+    "dailyBreakdown": "日別内訳"
+  },
+  "translate": {
+    "buttonLabel": "翻訳",
+    "translating": "翻訳中..."
+  },
+  "rephrase": {
+    "eyebrow": "言い換え練習",
+    "title": "言い換えトレーニング",
+    "description": "3,000語のローカル単語バンクからランダムにワードを取り出し、言い換え練習の基にしましょう。",
+    "wordViewLabel": "表示中のワード",
+    "pressRandomize": "ランダムを押してください",
+    "sourcePool": "単語バンク：B1–B2レベルの厳選 {count} 語。",
+    "randomizeButton": "ランダム",
+    "wordsLabel": "単語"
+  },
+  "errors": {
+    "network": "ネットワークエラーです。もう一度お試しください。",
+    "unauthorized": "未承認",
+    "sessionExpired": "セッションが期限切れです。再度ログインしてください。",
+    "unknown": "問題が発生しました。もう一度お試しください。",
+    "onboardingIncomplete": "最初にオンボーディングを完了してください。"
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "continue": "Continuer →",
+    "back": "Retour",
+    "loading": "Chargement…",
+    "saving": "Enregistrement…",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "yes": "Oui",
+    "no": "Non",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "optional": "facultatif"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Connexion",
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "vous@exemple.com",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Accéder au compte",
+      "authenticating": "Connexion en cours...",
+      "noAccount": "Nouveau ici ?",
+      "signUpLink": "Créer un compte"
+    },
+    "signUp": {
+      "title": "Inscription",
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "vous@exemple.com",
+      "passwordLabel": "Nouveau mot de passe",
+      "passwordPlaceholder": "8 caractères minimum",
+      "submitButton": "Commencer",
+      "creatingAccount": "Création du compte...",
+      "passwordError": "Le mot de passe doit comporter au moins 8 caractères",
+      "hasAccount": "Déjà un compte ?",
+      "signInLink": "Se connecter"
+    },
+    "errors": {
+      "invalidCredentials": "E-mail ou mot de passe incorrect",
+      "emailTaken": "Un compte avec cet e-mail existe déjà",
+      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+      "unauthorized": "Non autorisé",
+      "network": "Erreur réseau. Veuillez réessayer."
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "leoSpeech": "Salut ! Je suis Leo. Je vais t'apprendre l'anglais d'une façon qui fonctionne vraiment.",
+      "title": "Quelle est votre langue maternelle ?",
+      "description": "Nous traduirons l'interface et vous parlerons dans votre langue.",
+      "searchPlaceholder": "Rechercher parmi {count} langues…",
+      "noResults": "Aucune langue trouvée",
+      "continueButton": "Continuer →",
+      "savingButton": "Enregistrement…"
+    },
+    "step2": {
+      "leoSpeech": "Un choix honnête vaut mieux qu'un choix parfait. Pas sûr ? Choisissez en dessous — vous pouvez changer à tout moment.",
+      "title": "À quel niveau parlez-vous anglais ?",
+      "description": "Pas sûr ? Choisissez un niveau inférieur — vous pouvez changer à tout moment.",
+      "continueButton": "Continuer →",
+      "savingButton": "Enregistrement…"
+    },
+    "step3": {
+      "leoSpeech": "Soyez précis — « décrocher un emploi à distance en tech » vaut mieux qu'« améliorer mon anglais ». Je m'adapterai à vos objectifs.",
+      "title": "Pourquoi apprenez-vous l'anglais ?",
+      "description": "Soyez précis — cela aide Leo à adapter les leçons."
+    },
+    "step4": {
+      "celebrationChip": "C'est parti !",
+      "headline": "C'est parti !",
+      "sub": "Leo va personnaliser votre parcours en anglais à partir de maintenant.",
+      "cta": "Apprendre l'anglais",
+      "starting": "Démarrage…",
+      "summaryNativeLanguage": "Langue maternelle",
+      "summaryEnglishLevel": "Niveau d'anglais",
+      "summaryMainGoal": "Objectif principal"
+    },
+    "goals": {
+      "primaryGoalLabel": "Objectif principal",
+      "primaryGoalPlaceholder": "ex. Décrocher un emploi à distance en tech",
+      "primaryGoalError": "Veuillez indiquer votre objectif principal",
+      "quickPicksLabel": "Sélection rapide",
+      "continueButton": "Continuer →",
+      "savingButton": "Enregistrement…",
+      "presets": {
+        "remoteJob": "Décrocher un emploi à distance en tech",
+        "ielts": "Réussir l'IELTS / TOEFL",
+        "travel": "Voyager sans barrière linguistique",
+        "shows": "Regarder des séries sans sous-titres",
+        "moveAbroad": "S'expatrier",
+        "readBooks": "Lire des livres en anglais",
+        "confident": "Paraître plus confiant au travail",
+        "friends": "Parler avec des amis internationaux"
+      }
+    },
+    "levels": {
+      "groups": {
+        "Beginner": "Débutant",
+        "Intermediate": "Intermédiaire",
+        "Advanced": "Avancé",
+        "Fluent": "Courant"
+      },
+      "A1": {
+        "title": "Débutant",
+        "sub": "Je commence tout juste",
+        "desc": "Mots de base, phrases simples"
+      },
+      "A1 solid": {
+        "title": "Débutant confirmé",
+        "sub": "Je maîtrise les bases",
+        "desc": "Phrases simples, sujets familiers"
+      },
+      "A2": {
+        "title": "Élémentaire",
+        "sub": "Je gère les sujets quotidiens",
+        "desc": "Échanges courts, tâches routinières"
+      },
+      "A2 solid": {
+        "title": "Élémentaire confirmé",
+        "sub": "Presque pré-intermédiaire",
+        "desc": "Situations familières, informations directes"
+      },
+      "B1": {
+        "title": "Intermédiaire",
+        "sub": "Je gère la plupart des situations",
+        "desc": "Idées principales claires, sujets courants"
+      },
+      "B1 solid": {
+        "title": "Intermédiaire confirmé",
+        "sub": "À l'aise en conversation",
+        "desc": "Assez fluide, quelques lacunes"
+      },
+      "B2": {
+        "title": "Intermédiaire supérieur",
+        "sub": "Je maîtrise le langage complexe",
+        "desc": "Fluide avec les locuteurs natifs"
+      },
+      "B2 solid": {
+        "title": "Intermédiaire supérieur confirmé",
+        "sub": "Presque avancé",
+        "desc": "Communication spontanée et nuancée"
+      },
+      "C1": {
+        "title": "Avancé",
+        "sub": "Expressif et précis",
+        "desc": "Utilisation flexible et efficace de la langue"
+      },
+      "C1 solid": {
+        "title": "Avancé confirmé",
+        "sub": "Presque maîtrise",
+        "desc": "Clair, structuré, nuancé"
+      },
+      "C2": {
+        "title": "Maîtrise",
+        "sub": "Précision quasi native",
+        "desc": "Sans effort, dans tous les contextes"
+      },
+      "C2 solid": {
+        "title": "Maîtrise confirmée",
+        "sub": "Indiscernable d'un natif",
+        "desc": "Maîtrise parfaite de la langue"
+      },
+      "Fluent": {
+        "title": "Comme un natif",
+        "sub": "Parfaitement courant",
+        "desc": "Niveau natif ou quasi natif"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": "Partons sur les chapeaux de roue !",
+    "subtitle": "Bon retour. Prêt pour le défi du jour ?",
+    "newDeckButton": "+ Nouveau paquet",
+    "emptyTitle": "Aucune collection pour l'instant",
+    "emptyDescription": "Commencez par créer votre premier paquet de cartes.",
+    "emptyAction": "Créer mon premier paquet",
+    "createDeckHeading": "Créer un nouveau paquet",
+    "createDeckPlaceholder": "ex. Vocabulaire espagnol",
+    "createDeckSubmit": "Créer",
+    "deleteDeckTitle": "Supprimer le paquet",
+    "deleteDeckMessage": "Supprimer « {name} » ? Toutes ses cartes seront également supprimées.",
+    "editDeckTitle": "Modifier le paquet",
+    "cardCount": "Cartes",
+    "dueCount": "À revoir",
+    "finished": "Terminé",
+    "mastery": "Maîtrise",
+    "new": "Nouvelles"
+  },
+  "deckDetail": {
+    "backButton": "Retour aux collections",
+    "cardsTotal": "cartes au total",
+    "dueNow": "à revoir maintenant",
+    "startSession": "Démarrer la session",
+    "fsrsSettings": "Paramètres FSRS",
+    "addCard": "+ Ajouter une carte",
+    "createCardHeading": "Créer une nouvelle carte",
+    "frontLabel": "Recto",
+    "frontPlaceholder": "Question ou invite...",
+    "backLabel": "Verso",
+    "backPlaceholder": "Réponse...",
+    "typeLabel": "Type de carte",
+    "typeBasic": "Basique",
+    "typeReverse": "Inversée",
+    "typeCloze": "Lacunaire",
+    "createCardSubmit": "Créer la carte",
+    "memoryStack": "Pile de mémoire",
+    "emptyStackTitle": "Pile vide",
+    "emptyStackDescription": "Cette collection est vide. Commencez à ajouter des connaissances !",
+    "emptyStackAction": "Créer ma première carte",
+    "saveChanges": "Enregistrer les modifications",
+    "archiveCard": "Archiver la carte",
+    "archiveCardMessage": "Retirer « {front} » de la pile de mémoire ?"
+  },
+  "review": {
+    "backButton": "Retour à la collection",
+    "of": "sur",
+    "newCards": "Nouvelles",
+    "reviewCards": "Révisions",
+    "revealButton": "Afficher la réponse",
+    "keyboardHint": "Espace pour afficher · 1–4 pour noter",
+    "again": "À revoir",
+    "hard": "Difficile",
+    "good": "Bien",
+    "easy": "Facile",
+    "waitingTitle": "En attente des cartes d'apprentissage...",
+    "waitingMessage": "Prochaine carte dans",
+    "waitingReviewed": "Vous avez revu {count, plural, one {# carte} other {# cartes}} jusqu'ici.",
+    "completedTitle": "Session terminée !",
+    "completedMessage": "Vous avez revu {count, plural, one {# carte} other {# cartes}}.",
+    "completedBack": "Retour au paquet",
+    "testClockWarning": "Horloge de test activée : simulation depuis {time}"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profileLabel": "Profil",
+    "profileDescription": "Mettez à jour votre nom et vos informations de compte",
+    "sessionsLabel": "Sessions",
+    "sessionsDescription": "Vérifiez les appareils actifs et révoquez l'accès",
+    "languageLabel": "Langue de l'interface",
+    "languageDescription": "Choisissez la langue de l'interface de l'application",
+    "englishToggleLabel": "Utiliser l'interface en anglais",
+    "interfaceLanguageDropdownLabel": "Langue de l'interface",
+    "profile": {
+      "backButton": "Retour aux paramètres",
+      "heading": "Profil",
+      "description": "Gérez vos informations personnelles.",
+      "fullNameLabel": "Nom complet",
+      "fullNamePlaceholder": "Jean Dupont",
+      "emailLabel": "Adresse e-mail",
+      "updateButton": "Mettre à jour le profil",
+      "savingButton": "Enregistrement...",
+      "successMessage": "Profil mis à jour avec succès !",
+      "errorMessage": "Échec de la mise à jour du profil"
+    },
+    "sessions": {
+      "backButton": "Retour aux paramètres",
+      "heading": "Jetons d'accès actifs",
+      "activeNow": "Actif maintenant",
+      "lastActive": "Dernière activité",
+      "revokeButton": "Révoquer",
+      "noSessions": "Aucune session active.",
+      "authorizedDevice": "Appareil autorisé"
+    },
+    "interfaceLanguageLabel": "Langue de l'interface",
+    "interfaceLanguageDescription": "Choisissez la langue des menus.",
+    "useEnglishToggle": "Interface en anglais",
+    "chooseLanguage": "Choisir la langue"
+  },
+  "nav": {
+    "decks": "Paquets",
+    "rephrasings": "Reformulations",
+    "fairyTales": "Contes de fées",
+    "settings": "Paramètres",
+    "lightMode": "Mode clair",
+    "darkMode": "Mode sombre",
+    "signOut": "Déconnexion"
+  },
+  "fsrs": {
+    "backButton": "Retour au paquet",
+    "heading": "Options FSRS",
+    "description": "Ce paquet utilise le planificateur FSRS côté serveur.",
+    "desiredRetention": "Rétention souhaitée",
+    "maximumInterval": "Intervalle maximum",
+    "parameterSource": "Source des paramètres",
+    "lastOptimization": "Dernière optimisation",
+    "sourceDefault": "Par défaut",
+    "sourceOptimized": "Optimisé",
+    "never": "Jamais",
+    "weightsLabel": "Poids",
+    "weightsCount": "{count} paramètres FSRS pour ce paquet.",
+    "defaultWeights": "Utilisation des paramètres FSRS par défaut.",
+    "optimizeButton": "Optimiser pour ce paquet",
+    "optimizing": "Optimisation...",
+    "optimizeSuccess": "Optimisé à partir de {reviewCount} révisions sur {cardCount} cartes."
+  },
+  "statistics": {
+    "heading": "Statistiques",
+    "weekButton": "Semaine",
+    "monthButton": "Mois",
+    "allButton": "Tout",
+    "totalReviews": "Révisions",
+    "accuracy": "Précision",
+    "retention": "Rétention",
+    "studyTime": "Temps d'étude",
+    "dailyBreakdown": "Répartition quotidienne"
+  },
+  "translate": {
+    "buttonLabel": "Traduire",
+    "translating": "Traduction..."
+  },
+  "rephrase": {
+    "eyebrow": "Reformulations",
+    "title": "Pratique de reformulation",
+    "description": "Tirez un mot aléatoire de la banque de 3 000 mots et utilisez-le comme base pour vos exercices de reformulation.",
+    "wordViewLabel": "Mot affiché",
+    "pressRandomize": "Appuyer sur Aléatoire",
+    "sourcePool": "Banque de mots : {count} mots B1–B2 sélectionnés.",
+    "randomizeButton": "Aléatoire",
+    "wordsLabel": "Mots"
+  },
+  "errors": {
+    "network": "Erreur réseau. Veuillez réessayer.",
+    "unauthorized": "Non autorisé",
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+    "unknown": "Une erreur s'est produite. Veuillez réessayer.",
+    "onboardingIncomplete": "Veuillez d'abord terminer l'intégration."
+  }
+}

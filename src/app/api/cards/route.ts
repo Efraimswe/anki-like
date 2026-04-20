@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 import { requireAuth, jsonError } from '@/lib/api-utils';
 import { createCardSchema } from '@/lib/validations';
 import type { TokenPayload } from '@/lib/auth';
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (type === 'reverse') {
-    const cards = await prisma.$transaction(async (tx) => {
+    const cards = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const forward = await tx.card.create({
         data: { deckId, front, back, type: 'reverse', tags },
         select: { id: true, deckId: true, front: true, back: true, type: true, tags: true, createdAt: true },
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(cards, { status: 201 });
   }
 
-  const card = await prisma.$transaction(async (tx) => {
+  const card = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const c = await tx.card.create({
       data: { deckId, front, back, type, tags },
       select: { id: true, deckId: true, front: true, back: true, type: true, tags: true, createdAt: true },

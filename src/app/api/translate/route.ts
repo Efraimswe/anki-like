@@ -1,22 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { jsonError } from '@/lib/api-utils';
+import { callLLMCompletion } from '@/lib/llm';
 
 const translateSchema = z.object({
   text: z.string().trim().min(1, 'Text is required').max(500, 'Text is too long'),
   appName: z.string().trim().min(1, 'App name is required').max(100, 'App name is too long'),
   nativeLanguage: z.string().trim().min(1, 'Native language is required').max(50, 'Native language is too long'),
 });
-
-type LlmChoice = {
-  message?: {
-    content?: string | null;
-  };
-};
-
-type LlmResponse = {
-  choices?: LlmChoice[];
-};
 
 function buildTranslationMessages(appName: string, nativeLanguage: string, text: string) {
   return [
@@ -60,42 +51,15 @@ export async function POST(request: NextRequest) {
     return jsonError(400, parsed.error.issues[0]?.message || 'Invalid input');
   }
 
-  const apiKey = process.env.LLM_API_KEY;
-
-  if (!apiKey) {
-    return jsonError(500, 'LLM_API_KEY is not configured');
-  }
-
   const { text, appName, nativeLanguage } = parsed.data;
 
-  const response = await fetch('https://api.llmapi.ai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: 'gemini-2.0-flash-lite',
-      temperature: 0,
-      messages: buildTranslationMessages(appName, nativeLanguage, text),
-    }),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => '');
-    return jsonError(502, errorText || 'Translation provider request failed');
+  try {
+    const translation = await callLLMCompletion(
+      buildTranslationMessages(appName, nativeLanguage, text),
+    );
+    return NextResponse.json({ translation, nativeLanguage, appName });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Translation failed';
+    return jsonError(502, message);
   }
-
-  const data = (await response.json().catch(() => null)) as LlmResponse | null;
-  const translation = data?.choices?.[0]?.message?.content?.trim();
-
-  if (!translation) {
-    return jsonError(502, 'Translation provider returned an empty response');
-  }
-
-  return NextResponse.json({
-    translation,
-    nativeLanguage,
-    appName,
-  });
 }

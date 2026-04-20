@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 import { requireAuth, jsonError } from '@/lib/api-utils';
 import { updateDeckSchema } from '@/lib/validations';
 import type { TokenPayload } from '@/lib/auth';
@@ -62,7 +63,7 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
   const { id } = await params;
 
   const now = new Date();
-  const result = await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.card.updateMany({
       where: { deckId: id, deck: { userId: user.sub }, deletedAt: null },
       data: { deletedAt: now },

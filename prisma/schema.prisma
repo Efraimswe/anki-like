@@ -8,12 +8,19 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email        String    @unique @db.VarChar(255)
-  passwordHash String    @map("password_hash")
-  displayName  String?   @map("display_name") @db.VarChar(100)
-  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email               String    @unique @db.VarChar(255)
+  passwordHash        String    @map("password_hash")
+  displayName         String?   @map("display_name") @db.VarChar(100)
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt           DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+
+  // Onboarding
+  onboardingCompleted Boolean   @default(false) @map("onboarding_completed")
+  nativeLanguage      String?   @map("native_language") @db.VarChar(10)
+  interfaceLanguage   String?   @map("interface_language") @db.VarChar(10)
+  englishLevel        String?   @map("english_level") @db.VarChar(20)
+  goals               Json?     @map("goals")
 
   decks    Deck[]
   sessions Session[]

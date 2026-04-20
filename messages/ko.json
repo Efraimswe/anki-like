@@ -1,0 +1,332 @@
+{
+  "common": {
+    "save": "저장",
+    "cancel": "취소",
+    "continue": "계속 →",
+    "back": "뒤로",
+    "loading": "로딩 중…",
+    "saving": "저장 중…",
+    "error": "문제가 발생했습니다",
+    "retry": "다시 시도",
+    "yes": "예",
+    "no": "아니요",
+    "delete": "삭제",
+    "edit": "편집",
+    "create": "만들기",
+    "optional": "선택 사항"
+  },
+  "auth": {
+    "signIn": {
+      "title": "로그인",
+      "emailLabel": "이메일 주소",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "비밀번호",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "계정 접속",
+      "authenticating": "인증 중...",
+      "noAccount": "처음 오셨나요?",
+      "signUpLink": "계정 만들기"
+    },
+    "signUp": {
+      "title": "회원가입",
+      "emailLabel": "이메일 주소",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "새 비밀번호",
+      "passwordPlaceholder": "최소 8자",
+      "submitButton": "시작하기",
+      "creatingAccount": "계정 생성 중...",
+      "passwordError": "비밀번호는 최소 8자 이상이어야 합니다",
+      "hasAccount": "이미 계정이 있으신가요?",
+      "signInLink": "로그인"
+    },
+    "errors": {
+      "invalidCredentials": "이메일 또는 비밀번호가 잘못되었습니다",
+      "emailTaken": "이미 이 이메일로 등록된 계정이 있습니다",
+      "sessionExpired": "세션이 만료되었습니다. 다시 로그인해 주세요.",
+      "unauthorized": "권한 없음",
+      "network": "네트워크 오류입니다. 다시 시도해 주세요."
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "leoSpeech": "안녕하세요! 저는 레오입니다. 진짜 효과적인 방법으로 영어를 가르쳐 드릴게요.",
+      "title": "모국어가 무엇인가요?",
+      "description": "UI를 번역하고 여러분의 언어로 소통하겠습니다.",
+      "searchPlaceholder": "{count}개 언어 검색…",
+      "noResults": "언어를 찾을 수 없습니다",
+      "continueButton": "계속 →",
+      "savingButton": "저장 중…"
+    },
+    "step2": {
+      "leoSpeech": "솔직한 선택이 완벽한 선택보다 낫습니다. 확실하지 않으면 낮게 선택하세요 — 언제든지 업데이트할 수 있습니다.",
+      "title": "영어 실력이 어느 정도인가요?",
+      "description": "확실하지 않으면 낮은 레벨을 선택하세요 — 언제든지 업데이트할 수 있습니다.",
+      "continueButton": "계속 →",
+      "savingButton": "저장 중…"
+    },
+    "step3": {
+      "leoSpeech": "구체적으로 말씀해주세요 — '기술 분야 원격 근무 찾기'가 '영어 향상'보다 낫습니다. 목표에 맞게 맞춤화해 드리겠습니다.",
+      "title": "영어를 배우는 이유는 무엇인가요?",
+      "description": "구체적으로 말씀해주세요 — 레오가 맞춤 수업을 만드는 데 도움이 됩니다."
+    },
+    "step4": {
+      "celebrationChip": "준비 완료!",
+      "headline": "준비 완료!",
+      "sub": "레오가 지금부터 여러분의 영어 학습 여정을 개인화해 드립니다.",
+      "cta": "영어 배우기",
+      "starting": "시작 중…",
+      "summaryNativeLanguage": "모국어",
+      "summaryEnglishLevel": "영어 수준",
+      "summaryMainGoal": "주요 목표"
+    },
+    "goals": {
+      "primaryGoalLabel": "주요 목표",
+      "primaryGoalPlaceholder": "예: 기술 분야 원격 근무 찾기",
+      "primaryGoalError": "주요 목표를 알려주세요",
+      "quickPicksLabel": "빠른 선택",
+      "continueButton": "계속 →",
+      "savingButton": "저장 중…",
+      "presets": {
+        "remoteJob": "기술 분야 원격 근무 찾기",
+        "ielts": "IELTS / TOEFL 합격",
+        "travel": "언어 장벽 없이 여행하기",
+        "shows": "자막 없이 드라마 보기",
+        "moveAbroad": "해외 이주",
+        "readBooks": "영어 책 읽기",
+        "confident": "직장에서 더 자신감 있게 말하기",
+        "friends": "외국 친구들과 이야기하기"
+      }
+    },
+    "levels": {
+      "groups": {
+        "Beginner": "초급",
+        "Intermediate": "중급",
+        "Advanced": "고급",
+        "Fluent": "유창"
+      },
+      "A1": {
+        "title": "입문",
+        "sub": "이제 막 시작",
+        "desc": "기본 단어, 간단한 구문"
+      },
+      "A1 solid": {
+        "title": "탄탄한 입문",
+        "sub": "기초 다지는 중",
+        "desc": "간단한 문장, 친숙한 주제"
+      },
+      "A2": {
+        "title": "초급",
+        "sub": "일상 주제 다룰 수 있음",
+        "desc": "짧은 대화, 일상적인 과제"
+      },
+      "A2 solid": {
+        "title": "탄탄한 초급",
+        "sub": "준중급에 가까움",
+        "desc": "친숙한 상황, 직접적인 정보"
+      },
+      "B1": {
+        "title": "중급",
+        "sub": "대부분의 상황 대처 가능",
+        "desc": "주요 내용 명확, 일반 주제"
+      },
+      "B1 solid": {
+        "title": "탄탄한 중급",
+        "sub": "대화에 편안함",
+        "desc": "꽤 유창하지만 부족한 부분 있음"
+      },
+      "B2": {
+        "title": "중상급",
+        "sub": "복잡한 언어 다룰 수 있음",
+        "desc": "원어민과 유창하게 소통"
+      },
+      "B2 solid": {
+        "title": "탄탄한 중상급",
+        "sub": "고급에 가까움",
+        "desc": "자연스럽고 세밀한 소통"
+      },
+      "C1": {
+        "title": "고급",
+        "sub": "표현력 풍부하고 정확함",
+        "desc": "유연하고 효과적인 언어 사용"
+      },
+      "C1 solid": {
+        "title": "탄탄한 고급",
+        "sub": "마스터리에 가까움",
+        "desc": "명확하고 구조적이며 세밀함"
+      },
+      "C2": {
+        "title": "마스터리",
+        "sub": "원어민에 가까운 정확도",
+        "desc": "모든 상황에서 거침없이"
+      },
+      "C2 solid": {
+        "title": "탄탄한 마스터리",
+        "sub": "원어민과 구분 불가",
+        "desc": "언어의 완벽한 구사"
+      },
+      "Fluent": {
+        "title": "원어민 수준",
+        "sub": "완전히 유창함",
+        "desc": "원어민 수준 또는 그에 가까움"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": "힘차게 시작해봐요!",
+    "subtitle": "돌아오셨군요. 오늘의 도전 준비됐나요?",
+    "newDeckButton": "+ 새 덱",
+    "emptyTitle": "아직 컬렉션이 없습니다",
+    "emptyDescription": "첫 번째 플래시카드 덱을 만들어 시작하세요.",
+    "emptyAction": "첫 번째 덱 만들기",
+    "createDeckHeading": "새 덱 만들기",
+    "createDeckPlaceholder": "예: 스페인어 어휘",
+    "createDeckSubmit": "만들기",
+    "deleteDeckTitle": "덱 삭제",
+    "deleteDeckMessage": "「{name}」을 삭제하시겠습니까? 모든 카드도 삭제됩니다.",
+    "editDeckTitle": "덱 편집",
+    "cardCount": "카드",
+    "dueCount": "복습 예정",
+    "finished": "완료",
+    "mastery": "숙달도",
+    "new": "신규"
+  },
+  "deckDetail": {
+    "backButton": "컬렉션으로 돌아가기",
+    "cardsTotal": "장의 카드",
+    "dueNow": "지금 복습 예정",
+    "startSession": "학습 시작",
+    "fsrsSettings": "FSRS 설정",
+    "addCard": "+ 카드 추가",
+    "createCardHeading": "새 카드 만들기",
+    "frontLabel": "앞면",
+    "frontPlaceholder": "질문 또는 힌트...",
+    "backLabel": "뒷면",
+    "backPlaceholder": "정답...",
+    "typeLabel": "카드 유형",
+    "typeBasic": "기본",
+    "typeReverse": "역방향",
+    "typeCloze": "빈칸 채우기",
+    "createCardSubmit": "카드 만들기",
+    "memoryStack": "기억 스택",
+    "emptyStackTitle": "빈 스택",
+    "emptyStackDescription": "이 컬렉션은 비어 있습니다. 지식을 추가해 보세요!",
+    "emptyStackAction": "첫 번째 카드 만들기",
+    "saveChanges": "변경사항 저장",
+    "archiveCard": "카드 보관",
+    "archiveCardMessage": "「{front}」를 기억 스택에서 제거하시겠습니까?"
+  },
+  "review": {
+    "backButton": "컬렉션으로 돌아가기",
+    "of": "/",
+    "newCards": "신규",
+    "reviewCards": "복습",
+    "revealButton": "정답 보기",
+    "keyboardHint": "스페이스로 표시 · 1–4로 평가",
+    "again": "다시",
+    "hard": "어려움",
+    "good": "좋음",
+    "easy": "쉬움",
+    "waitingTitle": "학습 카드 대기 중...",
+    "waitingMessage": "다음 카드까지",
+    "waitingReviewed": "지금까지 {count}장의 카드를 복습했습니다.",
+    "completedTitle": "학습 완료!",
+    "completedMessage": "{count}장의 카드를 복습했습니다.",
+    "completedBack": "덱으로 돌아가기",
+    "testClockWarning": "테스트 시계 활성화: {time}부터 시간 시뮬레이션 중"
+  },
+  "settings": {
+    "title": "설정",
+    "profileLabel": "프로필",
+    "profileDescription": "표시 이름 및 계정 정보 업데이트",
+    "sessionsLabel": "세션",
+    "sessionsDescription": "활성 기기 확인 및 접근 취소",
+    "languageLabel": "인터페이스 언어",
+    "languageDescription": "앱 인터페이스 언어 선택",
+    "englishToggleLabel": "영어 인터페이스 사용",
+    "interfaceLanguageDropdownLabel": "인터페이스 언어",
+    "profile": {
+      "backButton": "설정으로 돌아가기",
+      "heading": "프로필",
+      "description": "개인 정보를 관리합니다.",
+      "fullNameLabel": "전체 이름",
+      "fullNamePlaceholder": "홍길동",
+      "emailLabel": "이메일 주소",
+      "updateButton": "프로필 업데이트",
+      "savingButton": "저장 중...",
+      "successMessage": "프로필이 업데이트되었습니다!",
+      "errorMessage": "프로필 업데이트에 실패했습니다"
+    },
+    "sessions": {
+      "backButton": "설정으로 돌아가기",
+      "heading": "활성 액세스 토큰",
+      "activeNow": "현재 활성",
+      "lastActive": "마지막 활성",
+      "revokeButton": "종료",
+      "noSessions": "활성 세션이 없습니다.",
+      "authorizedDevice": "인증된 기기"
+    },
+    "interfaceLanguageLabel": "인터페이스 언어",
+    "interfaceLanguageDescription": "메뉴 언어를 선택하세요.",
+    "useEnglishToggle": "영어 인터페이스",
+    "chooseLanguage": "언어 선택"
+  },
+  "nav": {
+    "decks": "덱",
+    "rephrasings": "바꿔 말하기",
+    "fairyTales": "동화",
+    "settings": "설정",
+    "lightMode": "라이트 모드",
+    "darkMode": "다크 모드",
+    "signOut": "로그아웃"
+  },
+  "fsrs": {
+    "backButton": "덱으로 돌아가기",
+    "heading": "FSRS 옵션",
+    "description": "이 덱은 서버 측 FSRS 스케줄러를 사용합니다.",
+    "desiredRetention": "목표 기억률",
+    "maximumInterval": "최대 간격",
+    "parameterSource": "매개변수 출처",
+    "lastOptimization": "마지막 최적화",
+    "sourceDefault": "기본값",
+    "sourceOptimized": "최적화됨",
+    "never": "없음",
+    "weightsLabel": "가중치",
+    "weightsCount": "이 덱에 {count}개의 FSRS 매개변수가 저장되어 있습니다.",
+    "defaultWeights": "기본 FSRS 매개변수를 사용 중입니다.",
+    "optimizeButton": "이 덱에 최적화",
+    "optimizing": "최적화 중...",
+    "optimizeSuccess": "{cardCount}장 카드의 {reviewCount}번 복습으로 최적화했습니다."
+  },
+  "statistics": {
+    "heading": "통계",
+    "weekButton": "주",
+    "monthButton": "월",
+    "allButton": "전체",
+    "totalReviews": "복습 횟수",
+    "accuracy": "정확도",
+    "retention": "기억률",
+    "studyTime": "학습 시간",
+    "dailyBreakdown": "일별 내역"
+  },
+  "translate": {
+    "buttonLabel": "번역",
+    "translating": "번역 중..."
+  },
+  "rephrase": {
+    "eyebrow": "패러프레이징",
+    "title": "패러프레이징 연습",
+    "description": "로컬 3,000단어 은행에서 임의 단어를 가져와 패러프레이징 연습의 기반으로 사용하세요.",
+    "wordViewLabel": "단어 보기",
+    "pressRandomize": "랜덤 버튼을 누르세요",
+    "sourcePool": "단어 은행: B1–B2 수준 선별 {count}개.",
+    "randomizeButton": "랜덤",
+    "wordsLabel": "단어"
+  },
+  "errors": {
+    "network": "네트워크 오류입니다. 다시 시도해 주세요.",
+    "unauthorized": "권한 없음",
+    "sessionExpired": "세션이 만료되었습니다. 다시 로그인해 주세요.",
+    "unknown": "문제가 발생했습니다. 다시 시도해 주세요.",
+    "onboardingIncomplete": "먼저 온보딩을 완료해 주세요."
+  }
+}

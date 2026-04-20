@@ -31,3 +31,4 @@ coverage/
 # Misc
 *.tmp
 tsconfig.tsbuildinfo
+.vercel

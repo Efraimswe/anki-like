@@ -1,0 +1,332 @@
+{
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "continue": "Продолжить →",
+    "back": "Назад",
+    "loading": "Загрузка…",
+    "saving": "Сохранение…",
+    "error": "Что-то пошло не так",
+    "retry": "Повторить",
+    "yes": "Да",
+    "no": "Нет",
+    "delete": "Удалить",
+    "edit": "Изменить",
+    "create": "Создать",
+    "optional": "необязательно"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Вход",
+      "emailLabel": "Электронная почта",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Войти",
+      "authenticating": "Выполняется вход...",
+      "noAccount": "Впервые здесь?",
+      "signUpLink": "Создать аккаунт"
+    },
+    "signUp": {
+      "title": "Регистрация",
+      "emailLabel": "Электронная почта",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Новый пароль",
+      "passwordPlaceholder": "Минимум 8 символов",
+      "submitButton": "Начать",
+      "creatingAccount": "Создание аккаунта...",
+      "passwordError": "Пароль должен содержать не менее 8 символов",
+      "hasAccount": "Уже есть аккаунт?",
+      "signInLink": "Войти"
+    },
+    "errors": {
+      "invalidCredentials": "Неверный email или пароль",
+      "emailTaken": "Аккаунт с таким email уже существует",
+      "sessionExpired": "Сессия истекла. Войдите снова.",
+      "unauthorized": "Нет доступа",
+      "network": "Ошибка сети. Попробуйте ещё раз."
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "leoSpeech": "Привет! Я Лео. Я научу тебя английскому так, чтобы это действительно работало.",
+      "title": "Какой у вас родной язык?",
+      "description": "Мы переведём интерфейс и будем общаться на вашем языке.",
+      "searchPlaceholder": "Поиск среди {count} языков…",
+      "noResults": "Языки не найдены",
+      "continueButton": "Продолжить →",
+      "savingButton": "Сохранение…"
+    },
+    "step2": {
+      "leoSpeech": "Честный выбор лучше идеального. Не уверены? Выберите ниже — можно изменить в любое время.",
+      "title": "Насколько хорошо вы говорите по-английски?",
+      "description": "Не уверены? Выберите уровень ниже — можно изменить в любое время.",
+      "continueButton": "Продолжить →",
+      "savingButton": "Сохранение…"
+    },
+    "step3": {
+      "leoSpeech": "Будьте конкретны — «найти удалённую работу в IT» лучше, чем «улучшить английский». Я подстроюсь под ваши цели.",
+      "title": "Зачем вы изучаете английский?",
+      "description": "Будьте конкретны — это поможет Лео адаптировать уроки под вас."
+    },
+    "step4": {
+      "celebrationChip": "Всё готово",
+      "headline": "Всё готово",
+      "sub": "Лео персонализирует ваш путь в английском с этого момента.",
+      "cta": "Начать учиться",
+      "starting": "Начинаем…",
+      "summaryNativeLanguage": "Родной язык",
+      "summaryEnglishLevel": "Уровень английского",
+      "summaryMainGoal": "Главная цель"
+    },
+    "goals": {
+      "primaryGoalLabel": "Главная цель",
+      "primaryGoalPlaceholder": "например: Получить удалённую работу в IT",
+      "primaryGoalError": "Пожалуйста, укажите вашу главную цель",
+      "quickPicksLabel": "Быстрый выбор",
+      "continueButton": "Продолжить →",
+      "savingButton": "Сохранение…",
+      "presets": {
+        "remoteJob": "Получить удалённую работу в IT",
+        "ielts": "Сдать IELTS / TOEFL",
+        "travel": "Путешествовать без языкового барьера",
+        "shows": "Смотреть сериалы без субтитров",
+        "moveAbroad": "Переехать за рубеж",
+        "readBooks": "Читать книги на английском",
+        "confident": "Увереннее говорить на работе",
+        "friends": "Общаться с иностранными друзьями"
+      }
+    },
+    "levels": {
+      "groups": {
+        "Beginner": "Начинающий",
+        "Intermediate": "Средний",
+        "Advanced": "Продвинутый",
+        "Fluent": "Свободный"
+      },
+      "A1": {
+        "title": "Начинающий",
+        "sub": "Только начинаю",
+        "desc": "Базовые слова, простые фразы"
+      },
+      "A1 solid": {
+        "title": "Уверенный начинающий",
+        "sub": "Осваиваю основы",
+        "desc": "Простые предложения, знакомые темы"
+      },
+      "A2": {
+        "title": "Элементарный",
+        "sub": "Справляюсь с повседневными темами",
+        "desc": "Короткие диалоги, рутинные задачи"
+      },
+      "A2 solid": {
+        "title": "Уверенный элементарный",
+        "sub": "Почти пред-средний",
+        "desc": "Знакомые ситуации, прямая информация"
+      },
+      "B1": {
+        "title": "Средний",
+        "sub": "Справляюсь с большинством ситуаций",
+        "desc": "Основные мысли понятны, общие темы"
+      },
+      "B1 solid": {
+        "title": "Уверенный средний",
+        "sub": "Уверен в разговоре",
+        "desc": "Достаточно беглый, есть пробелы"
+      },
+      "B2": {
+        "title": "Выше среднего",
+        "sub": "Работаю со сложным языком",
+        "desc": "Свободно с носителями"
+      },
+      "B2 solid": {
+        "title": "Уверенный выше среднего",
+        "sub": "Почти продвинутый",
+        "desc": "Спонтанное, нюансированное общение"
+      },
+      "C1": {
+        "title": "Продвинутый",
+        "sub": "Выразительный и точный",
+        "desc": "Гибкое, эффективное использование языка"
+      },
+      "C1 solid": {
+        "title": "Уверенный продвинутый",
+        "sub": "Почти мастерский",
+        "desc": "Чёткий, структурированный, нюансированный"
+      },
+      "C2": {
+        "title": "Мастерский",
+        "sub": "Почти как у носителя",
+        "desc": "Легко, в любом контексте"
+      },
+      "C2 solid": {
+        "title": "Уверенный мастерский",
+        "sub": "Неотличим от носителя",
+        "desc": "Безупречное владение языком"
+      },
+      "Fluent": {
+        "title": "Как носитель",
+        "sub": "Полностью свободный",
+        "desc": "Уровень носителя или близко к нему"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": "Начнём активно!",
+    "subtitle": "С возвращением. Готовы к ежедневному вызову?",
+    "newDeckButton": "+ Новая колода",
+    "emptyTitle": "Пока нет коллекций",
+    "emptyDescription": "Начните с создания первой колоды карточек.",
+    "emptyAction": "Создать первую колоду",
+    "createDeckHeading": "Создать новую колоду",
+    "createDeckPlaceholder": "например: Испанский словарь",
+    "createDeckSubmit": "Создать",
+    "deleteDeckTitle": "Удалить колоду",
+    "deleteDeckMessage": "Удалить «{name}»? Все карточки будут также удалены.",
+    "editDeckTitle": "Изменить колоду",
+    "cardCount": "Карточки",
+    "dueCount": "К повторению",
+    "finished": "Завершено",
+    "mastery": "Освоение",
+    "new": "Новые"
+  },
+  "deckDetail": {
+    "backButton": "К коллекциям",
+    "cardsTotal": "карточек всего",
+    "dueNow": "к повторению сейчас",
+    "startSession": "Начать сессию",
+    "fsrsSettings": "Настройки FSRS",
+    "addCard": "+ Добавить карточку",
+    "createCardHeading": "Создать новую карточку",
+    "frontLabel": "Лицевая сторона",
+    "frontPlaceholder": "Вопрос или подсказка...",
+    "backLabel": "Обратная сторона",
+    "backPlaceholder": "Ответ...",
+    "typeLabel": "Тип карточки",
+    "typeBasic": "Базовый",
+    "typeReverse": "Обратный",
+    "typeCloze": "Клоуз",
+    "createCardSubmit": "Создать карточку",
+    "memoryStack": "Стек памяти",
+    "emptyStackTitle": "Стек пуст",
+    "emptyStackDescription": "Коллекция пуста. Начните добавлять знания!",
+    "emptyStackAction": "Создать первую карточку",
+    "saveChanges": "Сохранить изменения",
+    "archiveCard": "Архивировать карточку",
+    "archiveCardMessage": "Удалить «{front}» из стека памяти?"
+  },
+  "review": {
+    "backButton": "К коллекции",
+    "of": "из",
+    "newCards": "Новые",
+    "reviewCards": "Повторение",
+    "revealButton": "Показать ответ",
+    "keyboardHint": "Пробел — показать · 1–4 — оценить",
+    "again": "Снова",
+    "hard": "Сложно",
+    "good": "Хорошо",
+    "easy": "Легко",
+    "waitingTitle": "Ожидание карточек для обучения...",
+    "waitingMessage": "Следующая карточка через",
+    "waitingReviewed": "Вы повторили {count, plural, one {# карточку} few {# карточки} other {# карточек}}.",
+    "completedTitle": "Сессия завершена!",
+    "completedMessage": "Вы повторили {count, plural, one {# карточку} few {# карточки} other {# карточек}}.",
+    "completedBack": "К колоде",
+    "testClockWarning": "Тестовые часы: симуляция времени от {time}"
+  },
+  "settings": {
+    "title": "Настройки",
+    "profileLabel": "Профиль",
+    "profileDescription": "Обновите имя и данные аккаунта",
+    "sessionsLabel": "Сессии",
+    "sessionsDescription": "Просмотр активных устройств и отзыв доступа",
+    "languageLabel": "Язык интерфейса",
+    "languageDescription": "Выберите язык интерфейса приложения",
+    "englishToggleLabel": "Использовать английский интерфейс",
+    "interfaceLanguageDropdownLabel": "Язык интерфейса",
+    "profile": {
+      "backButton": "К настройкам",
+      "heading": "Профиль",
+      "description": "Управляйте личной информацией.",
+      "fullNameLabel": "Полное имя",
+      "fullNamePlaceholder": "Иван Иванов",
+      "emailLabel": "Электронная почта",
+      "updateButton": "Обновить профиль",
+      "savingButton": "Сохранение...",
+      "successMessage": "Профиль успешно обновлён!",
+      "errorMessage": "Не удалось обновить профиль"
+    },
+    "sessions": {
+      "backButton": "К настройкам",
+      "heading": "Активные токены доступа",
+      "activeNow": "Активен сейчас",
+      "lastActive": "Последняя активность",
+      "revokeButton": "Завершить",
+      "noSessions": "Активных сессий нет.",
+      "authorizedDevice": "Авторизованное устройство"
+    },
+    "interfaceLanguageLabel": "Язык интерфейса",
+    "interfaceLanguageDescription": "Выберите язык меню и подписей.",
+    "useEnglishToggle": "Английский интерфейс",
+    "chooseLanguage": "Выбрать язык"
+  },
+  "nav": {
+    "decks": "Колоды",
+    "rephrasings": "Перефразирование",
+    "fairyTales": "Сказки",
+    "settings": "Настройки",
+    "lightMode": "Светлая тема",
+    "darkMode": "Тёмная тема",
+    "signOut": "Выйти"
+  },
+  "fsrs": {
+    "backButton": "К колоде",
+    "heading": "Параметры FSRS",
+    "description": "Эта колода использует серверный планировщик FSRS.",
+    "desiredRetention": "Желаемое удержание",
+    "maximumInterval": "Максимальный интервал",
+    "parameterSource": "Источник параметров",
+    "lastOptimization": "Последняя оптимизация",
+    "sourceDefault": "По умолчанию",
+    "sourceOptimized": "Оптимизировано",
+    "never": "Никогда",
+    "weightsLabel": "Веса",
+    "weightsCount": "{count} параметров FSRS для этой колоды.",
+    "defaultWeights": "Используются параметры FSRS по умолчанию.",
+    "optimizeButton": "Оптимизировать для этой колоды",
+    "optimizing": "Оптимизация...",
+    "optimizeSuccess": "Оптимизировано по {reviewCount} повторениям и {cardCount} карточкам."
+  },
+  "statistics": {
+    "heading": "Статистика",
+    "weekButton": "Неделя",
+    "monthButton": "Месяц",
+    "allButton": "Всё",
+    "totalReviews": "Повторений",
+    "accuracy": "Точность",
+    "retention": "Удержание",
+    "studyTime": "Время учёбы",
+    "dailyBreakdown": "По дням"
+  },
+  "translate": {
+    "buttonLabel": "Перевести",
+    "translating": "Перевод..."
+  },
+  "rephrase": {
+    "eyebrow": "Перефразирование",
+    "title": "Практика перефразирования",
+    "description": "Возьми случайное слово из банка 3 000 слов и используй его как основу для упражнений по перефразированию.",
+    "wordViewLabel": "Слово",
+    "pressRandomize": "Нажми «Случайное»",
+    "sourcePool": "Банк слов: {count} слов уровня B1–B2.",
+    "randomizeButton": "Случайное",
+    "wordsLabel": "Слова"
+  },
+  "errors": {
+    "network": "Ошибка сети. Попробуйте ещё раз.",
+    "unauthorized": "Нет доступа",
+    "sessionExpired": "Сессия истекла. Войдите снова.",
+    "unknown": "Что-то пошло не так. Попробуйте ещё раз.",
+    "onboardingIncomplete": "Сначала завершите онбординг."
+  }
+}

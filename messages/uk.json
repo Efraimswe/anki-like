@@ -1,0 +1,332 @@
+{
+  "common": {
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "continue": "Продовжити →",
+    "back": "Назад",
+    "loading": "Завантаження…",
+    "saving": "Збереження…",
+    "error": "Щось пішло не так",
+    "retry": "Спробувати знову",
+    "yes": "Так",
+    "no": "Ні",
+    "delete": "Видалити",
+    "edit": "Змінити",
+    "create": "Створити",
+    "optional": "необов'язково"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Вхід",
+      "emailLabel": "Електронна пошта",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Увійти",
+      "authenticating": "Виконується вхід...",
+      "noAccount": "Вперше тут?",
+      "signUpLink": "Створити акаунт"
+    },
+    "signUp": {
+      "title": "Реєстрація",
+      "emailLabel": "Електронна пошта",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Новий пароль",
+      "passwordPlaceholder": "Мінімум 8 символів",
+      "submitButton": "Почати",
+      "creatingAccount": "Створення акаунту...",
+      "passwordError": "Пароль має містити не менше 8 символів",
+      "hasAccount": "Вже є акаунт?",
+      "signInLink": "Увійти"
+    },
+    "errors": {
+      "invalidCredentials": "Невірний email або пароль",
+      "emailTaken": "Акаунт з таким email вже існує",
+      "sessionExpired": "Сесія закінчилася. Увійдіть знову.",
+      "unauthorized": "Немає доступу",
+      "network": "Помилка мережі. Спробуйте ще раз."
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "leoSpeech": "Привіт! Я Лео. Я навчу тебе англійської так, щоб це дійсно працювало.",
+      "title": "Яка ваша рідна мова?",
+      "description": "Ми перекладемо інтерфейс і будемо спілкуватись вашою мовою.",
+      "searchPlaceholder": "Пошук серед {count} мов…",
+      "noResults": "Мови не знайдено",
+      "continueButton": "Продовжити →",
+      "savingButton": "Збереження…"
+    },
+    "step2": {
+      "leoSpeech": "Чесний вибір краще ідеального. Не впевнені? Оберіть нижче — можна змінити будь-коли.",
+      "title": "Наскільки добре ви говорите англійською?",
+      "description": "Не впевнені? Оберіть рівень нижче — можна змінити будь-коли.",
+      "continueButton": "Продовжити →",
+      "savingButton": "Збереження…"
+    },
+    "step3": {
+      "leoSpeech": "Будьте конкретні — «знайти дистанційну роботу в IT» краще, ніж «покращити англійську». Я підлаштуюсь під ваші цілі.",
+      "title": "Чому ви вивчаєте англійську?",
+      "description": "Будьте конкретні — це допоможе Лео адаптувати уроки під вас."
+    },
+    "step4": {
+      "celebrationChip": "Все готово",
+      "headline": "Все готово",
+      "sub": "Лео персоналізує ваш шлях в англійській з цього моменту.",
+      "cta": "Почати навчання",
+      "starting": "Починаємо…",
+      "summaryNativeLanguage": "Рідна мова",
+      "summaryEnglishLevel": "Рівень англійської",
+      "summaryMainGoal": "Головна мета"
+    },
+    "goals": {
+      "primaryGoalLabel": "Головна мета",
+      "primaryGoalPlaceholder": "наприклад: Знайти дистанційну роботу в IT",
+      "primaryGoalError": "Будь ласка, вкажіть вашу головну мету",
+      "quickPicksLabel": "Швидкий вибір",
+      "continueButton": "Продовжити →",
+      "savingButton": "Збереження…",
+      "presets": {
+        "remoteJob": "Знайти дистанційну роботу в IT",
+        "ielts": "Скласти IELTS / TOEFL",
+        "travel": "Подорожувати без мовного бар'єру",
+        "shows": "Дивитись серіали без субтитрів",
+        "moveAbroad": "Переїхати за кордон",
+        "readBooks": "Читати книги англійською",
+        "confident": "Впевненіше говорити на роботі",
+        "friends": "Спілкуватись з іноземними друзями"
+      }
+    },
+    "levels": {
+      "groups": {
+        "Beginner": "Початківець",
+        "Intermediate": "Середній",
+        "Advanced": "Просунутий",
+        "Fluent": "Вільний"
+      },
+      "A1": {
+        "title": "Початківець",
+        "sub": "Тільки починаю",
+        "desc": "Базові слова, прості фрази"
+      },
+      "A1 solid": {
+        "title": "Впевнений початківець",
+        "sub": "Засвоюю основи",
+        "desc": "Прості речення, знайомі теми"
+      },
+      "A2": {
+        "title": "Елементарний",
+        "sub": "Справляюсь з повсякденними темами",
+        "desc": "Короткі діалоги, рутинні завдання"
+      },
+      "A2 solid": {
+        "title": "Впевнений елементарний",
+        "sub": "Майже пред-середній",
+        "desc": "Знайомі ситуації, пряма інформація"
+      },
+      "B1": {
+        "title": "Середній",
+        "sub": "Справляюсь з більшістю ситуацій",
+        "desc": "Основні думки зрозумілі, загальні теми"
+      },
+      "B1 solid": {
+        "title": "Впевнений середній",
+        "sub": "Впевнений у розмові",
+        "desc": "Досить вільний, є прогалини"
+      },
+      "B2": {
+        "title": "Вище середнього",
+        "sub": "Працюю зі складною мовою",
+        "desc": "Вільно з носіями"
+      },
+      "B2 solid": {
+        "title": "Впевнений вище середнього",
+        "sub": "Майже просунутий",
+        "desc": "Спонтанне, нюансоване спілкування"
+      },
+      "C1": {
+        "title": "Просунутий",
+        "sub": "Виразний і точний",
+        "desc": "Гнучке, ефективне використання мови"
+      },
+      "C1 solid": {
+        "title": "Впевнений просунутий",
+        "sub": "Майже майстерний",
+        "desc": "Чіткий, структурований, нюансований"
+      },
+      "C2": {
+        "title": "Майстерний",
+        "sub": "Майже як у носія",
+        "desc": "Легко, в будь-якому контексті"
+      },
+      "C2 solid": {
+        "title": "Впевнений майстерний",
+        "sub": "Невідмінний від носія",
+        "desc": "Бездоганне володіння мовою"
+      },
+      "Fluent": {
+        "title": "Як носій",
+        "sub": "Повністю вільний",
+        "desc": "Рівень носія або близько до нього"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": "Почнемо активно!",
+    "subtitle": "З поверненням. Готові до щоденного виклику?",
+    "newDeckButton": "+ Нова колода",
+    "emptyTitle": "Поки немає колекцій",
+    "emptyDescription": "Почніть зі створення першої колоди карток.",
+    "emptyAction": "Створити першу колоду",
+    "createDeckHeading": "Створити нову колоду",
+    "createDeckPlaceholder": "наприклад: Іспанський словник",
+    "createDeckSubmit": "Створити",
+    "deleteDeckTitle": "Видалити колоду",
+    "deleteDeckMessage": "Видалити «{name}»? Всі картки також будуть видалені.",
+    "editDeckTitle": "Змінити колоду",
+    "cardCount": "Картки",
+    "dueCount": "До повторення",
+    "finished": "Завершено",
+    "mastery": "Засвоєння",
+    "new": "Нові"
+  },
+  "deckDetail": {
+    "backButton": "До колекцій",
+    "cardsTotal": "карток всього",
+    "dueNow": "до повторення зараз",
+    "startSession": "Почати сесію",
+    "fsrsSettings": "Налаштування FSRS",
+    "addCard": "+ Додати картку",
+    "createCardHeading": "Створити нову картку",
+    "frontLabel": "Лицьова сторона",
+    "frontPlaceholder": "Питання або підказка...",
+    "backLabel": "Зворотна сторона",
+    "backPlaceholder": "Відповідь...",
+    "typeLabel": "Тип картки",
+    "typeBasic": "Базовий",
+    "typeReverse": "Зворотний",
+    "typeCloze": "Клоуз",
+    "createCardSubmit": "Створити картку",
+    "memoryStack": "Стек пам'яті",
+    "emptyStackTitle": "Стек порожній",
+    "emptyStackDescription": "Колекція порожня. Почніть додавати знання!",
+    "emptyStackAction": "Створити першу картку",
+    "saveChanges": "Зберегти зміни",
+    "archiveCard": "Архівувати картку",
+    "archiveCardMessage": "Видалити «{front}» зі стеку пам'яті?"
+  },
+  "review": {
+    "backButton": "До колекції",
+    "of": "з",
+    "newCards": "Нові",
+    "reviewCards": "Повторення",
+    "revealButton": "Показати відповідь",
+    "keyboardHint": "Пробіл — показати · 1–4 — оцінити",
+    "again": "Знову",
+    "hard": "Складно",
+    "good": "Добре",
+    "easy": "Легко",
+    "waitingTitle": "Очікування карток для навчання...",
+    "waitingMessage": "Наступна картка через",
+    "waitingReviewed": "Ви повторили {count, plural, one {# картку} few {# картки} other {# карток}}.",
+    "completedTitle": "Сесію завершено!",
+    "completedMessage": "Ви повторили {count, plural, one {# картку} few {# картки} other {# карток}}.",
+    "completedBack": "До колоди",
+    "testClockWarning": "Тестовий годинник: симуляція часу від {time}"
+  },
+  "settings": {
+    "title": "Налаштування",
+    "profileLabel": "Профіль",
+    "profileDescription": "Оновіть ім'я та дані акаунту",
+    "sessionsLabel": "Сесії",
+    "sessionsDescription": "Перегляд активних пристроїв та відкликання доступу",
+    "languageLabel": "Мова інтерфейсу",
+    "languageDescription": "Оберіть мову інтерфейсу додатку",
+    "englishToggleLabel": "Використовувати англійський інтерфейс",
+    "interfaceLanguageDropdownLabel": "Мова інтерфейсу",
+    "profile": {
+      "backButton": "До налаштувань",
+      "heading": "Профіль",
+      "description": "Керуйте особистою інформацією.",
+      "fullNameLabel": "Повне ім'я",
+      "fullNamePlaceholder": "Іван Іванов",
+      "emailLabel": "Електронна пошта",
+      "updateButton": "Оновити профіль",
+      "savingButton": "Збереження...",
+      "successMessage": "Профіль успішно оновлено!",
+      "errorMessage": "Не вдалося оновити профіль"
+    },
+    "sessions": {
+      "backButton": "До налаштувань",
+      "heading": "Активні токени доступу",
+      "activeNow": "Активний зараз",
+      "lastActive": "Остання активність",
+      "revokeButton": "Завершити",
+      "noSessions": "Активних сесій немає.",
+      "authorizedDevice": "Авторизований пристрій"
+    },
+    "interfaceLanguageLabel": "Мова інтерфейсу",
+    "interfaceLanguageDescription": "Оберіть мову меню та підписів.",
+    "useEnglishToggle": "Англійський інтерфейс",
+    "chooseLanguage": "Обрати мову"
+  },
+  "nav": {
+    "decks": "Колоди",
+    "rephrasings": "Перефразування",
+    "fairyTales": "Казки",
+    "settings": "Налаштування",
+    "lightMode": "Світла тема",
+    "darkMode": "Темна тема",
+    "signOut": "Вийти"
+  },
+  "fsrs": {
+    "backButton": "До колоди",
+    "heading": "Параметри FSRS",
+    "description": "Ця колода використовує серверний планувальник FSRS.",
+    "desiredRetention": "Бажане утримання",
+    "maximumInterval": "Максимальний інтервал",
+    "parameterSource": "Джерело параметрів",
+    "lastOptimization": "Остання оптимізація",
+    "sourceDefault": "За замовчуванням",
+    "sourceOptimized": "Оптимізовано",
+    "never": "Ніколи",
+    "weightsLabel": "Ваги",
+    "weightsCount": "{count} параметрів FSRS для цієї колоди.",
+    "defaultWeights": "Використовуються параметри FSRS за замовчуванням.",
+    "optimizeButton": "Оптимізувати для цієї колоди",
+    "optimizing": "Оптимізація...",
+    "optimizeSuccess": "Оптимізовано за {reviewCount} повтореннями та {cardCount} картками."
+  },
+  "statistics": {
+    "heading": "Статистика",
+    "weekButton": "Тиждень",
+    "monthButton": "Місяць",
+    "allButton": "Все",
+    "totalReviews": "Повторень",
+    "accuracy": "Точність",
+    "retention": "Утримання",
+    "studyTime": "Час навчання",
+    "dailyBreakdown": "По днях"
+  },
+  "translate": {
+    "buttonLabel": "Перекласти",
+    "translating": "Переклад..."
+  },
+  "rephrase": {
+    "eyebrow": "Перефразування",
+    "title": "Практика перефразування",
+    "description": "Візьми випадкове слово з банку 3 000 слів і використай його як основу для вправ з перефразування.",
+    "wordViewLabel": "Слово",
+    "pressRandomize": "Натисни «Випадкове»",
+    "sourcePool": "Банк слів: {count} слів рівня B1–B2.",
+    "randomizeButton": "Випадкове",
+    "wordsLabel": "Слова"
+  },
+  "errors": {
+    "network": "Помилка мережі. Спробуйте ще раз.",
+    "unauthorized": "Немає доступу",
+    "sessionExpired": "Сесія закінчилася. Увійдіть знову.",
+    "unknown": "Щось пішло не так. Спробуйте ще раз.",
+    "onboardingIncomplete": "Спочатку завершіть онбординг."
+  }
+}

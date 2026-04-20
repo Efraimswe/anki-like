@@ -44,6 +44,7 @@ export async function getSessionsByUser(userId: string) {
 export function parseUserAgent(ua: string | null): string | null {
   if (!ua) return null;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const UAParser = require('ua-parser-js');
     const parser = new UAParser(ua);
     const browser = parser.getBrowser();

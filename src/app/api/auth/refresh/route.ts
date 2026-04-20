@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { signAccessToken, setAuthCookies } from '@/lib/auth';
 import { findSessionByRefreshToken, rotateRefreshToken } from '@/lib/session';
 import { jsonError } from '@/lib/api-utils';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   const refreshToken = request.cookies.get('refresh_token')?.value;
@@ -14,8 +15,14 @@ export async function POST(request: NextRequest) {
     return jsonError(401, 'Invalid refresh token');
   }
 
+  // Fetch user to get onboarding status
+  const user = await prisma.user.findUnique({
+    where: { id: session.userId },
+    select: { onboardingCompleted: true },
+  });
+
   const newRawToken = await rotateRefreshToken(session.id);
-  const accessToken = await signAccessToken(session.userId, session.id);
+  const accessToken = await signAccessToken(session.userId, session.id, user?.onboardingCompleted ?? false);
   const csrfToken = crypto.randomUUID();
   await setAuthCookies(accessToken, newRawToken, csrfToken);
 

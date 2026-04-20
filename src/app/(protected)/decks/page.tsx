@@ -11,6 +11,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import type { Deck } from '@/types';
+import { useTranslations } from 'next-intl';
 
 const deckAccentStyles = [
   { badgeClass: 'deck-icon-medical', textClass: 'text-[#b43b00]', progressClass: 'bg-[#b43b00]', Icon: Cross },
@@ -21,6 +22,8 @@ const deckAccentStyles = [
 ];
 
 export default function DeckListPage() {
+  const t = useTranslations('dashboard');
+  const tc = useTranslations('common');
   const queryClient = useQueryClient();
   const [newName, setNewName] = useState('');
   const [showCreate, setShowCreate] = useState(false);
@@ -122,21 +125,21 @@ export default function DeckListPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <h1 className="text-3xl md:text-5xl font-bold text-(--color-text-primary) tracking-tight">
-              Let&apos;s start <span className="text-(--color-accent)">strong!</span>
+              {t('greeting')}
             </h1>
-            <p className="text-sm md:text-base text-(--color-text-secondary) mt-2 font-medium">Welcome back. Ready for your daily challenge?</p>
+            <p className="text-sm md:text-base text-(--color-text-secondary) mt-2 font-medium">{t('subtitle')}</p>
           </div>
-          <button onClick={() => setShowCreate(true)} className="button-primary shadow-xl shadow-orange-500/20 py-3 md:py-2 whitespace-nowrap">+ New Deck</button>
+          <button onClick={() => setShowCreate(true)} className="button-primary shadow-xl shadow-orange-500/20 py-3 md:py-2 whitespace-nowrap">{t('newDeckButton')}</button>
         </div>
 
         {showCreate && (
           <div className="premium-card p-4 md:p-6 mb-4">
-            <h3 className="text-lg font-bold mb-4 heading">Create New Deck</h3>
+            <h3 className="text-lg font-bold mb-4 heading">{t('createDeckHeading')}</h3>
             <form onSubmit={handleCreate} className="flex flex-col md:flex-row gap-3">
-              <input autoFocus={showCreate} value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="e.g. Spanish Vocabulary" className="flex-1 px-4 py-3 bg-(--color-bg-page) border border-(--color-border) rounded-2xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none" />
+              <input autoFocus={showCreate} value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={t('createDeckPlaceholder')} className="flex-1 px-4 py-3 bg-(--color-bg-page) border border-(--color-border) rounded-2xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none" />
               <div className="flex gap-2">
-                <button type="submit" className="button-primary flex-1 md:flex-none px-8 py-3 md:py-2">Create</button>
-                <button type="button" onClick={() => { setShowCreate(false); setNewName(''); }} className="px-4 py-3 md:py-2 text-sm font-bold text-(--color-text-tertiary) hover:text-(--color-text-secondary) flex-1 md:flex-none">Cancel</button>
+                <button type="submit" className="button-primary flex-1 md:flex-none px-8 py-3 md:py-2">{t('createDeckSubmit')}</button>
+                <button type="button" onClick={() => { setShowCreate(false); setNewName(''); }} className="px-4 py-3 md:py-2 text-sm font-bold text-(--color-text-tertiary) hover:text-(--color-text-secondary) flex-1 md:flex-none">{tc('cancel')}</button>
               </div>
             </form>
           </div>
@@ -144,7 +147,7 @@ export default function DeckListPage() {
 
         <section className="pt-2">
           {decks.length === 0 ? (
-            <EmptyState title="No collections yet" description="Start by creating your first deck of flashcards." action={{ label: 'Craft Your First Deck', onClick: () => setShowCreate(true) }} />
+            <EmptyState title={t('emptyTitle')} description={t('emptyDescription')} action={{ label: t('emptyAction'), onClick: () => setShowCreate(true) }} />
           ) : (
             <div className="decks-grid">
               {decks.map((deck, index) => {
@@ -157,8 +160,8 @@ export default function DeckListPage() {
                     {editingId === deck.id ? (
                       <form onSubmit={(e) => { e.preventDefault(); handleUpdate(deck.id); }} className="flex-1 flex gap-2">
                         <input autoFocus value={editName} onChange={(e) => setEditName(e.target.value)} className="flex-1 px-4 py-2 bg-(--color-bg-page) border border-(--color-border) rounded-xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none" />
-                        <button type="submit" className="text-sm font-bold text-(--color-accent) hover:underline">Save</button>
-                        <button type="button" onClick={() => setEditingId(null)} className="text-sm font-bold text-(--color-text-muted)">Cancel</button>
+                        <button type="submit" className="text-sm font-bold text-(--color-accent) hover:underline">{tc('save')}</button>
+                        <button type="button" onClick={() => setEditingId(null)} className="text-sm font-bold text-(--color-text-muted)">{tc('cancel')}</button>
                       </form>
                     ) : (
                       <div className="deck-card-shell">
@@ -176,14 +179,14 @@ export default function DeckListPage() {
                         <Link href={`/decks/${deck.id}`} className="deck-card-link">
                           <h3 className="deck-card-title">{deck.name}</h3>
                           <div className="deck-card-meta">
-                            <div className="deck-card-stat"><span className="deck-card-dot deck-card-dot-cards" />{deck.cardCount.toLocaleString()} Cards</div>
+                            <div className="deck-card-stat"><span className="deck-card-dot deck-card-dot-cards" />{deck.cardCount.toLocaleString()} {t('cardCount')}</div>
                             <div className={`deck-card-stat ${deck.dueCount > 0 ? accent.textClass : 'text-(--color-success)'}`}>
                               <span className={`deck-card-dot ${deck.dueCount > 0 ? 'bg-(--color-accent)' : 'bg-(--color-success)'}`} />
-                              {deck.dueCount > 0 ? `${deck.dueCount} Due` : 'Finished'}
+                              {deck.dueCount > 0 ? `${deck.dueCount} ${t('dueCount')}` : t('finished')}
                             </div>
                           </div>
                           <div className="deck-card-progress">
-                            <div className="deck-card-progress-labels"><span>Mastery {mastery}%</span><span>{deck.newCount ?? 0} New</span></div>
+                            <div className="deck-card-progress-labels"><span>{t('mastery')} {mastery}%</span><span>{deck.newCount ?? 0} {t('new')}</span></div>
                             <div className="deck-card-progress-track"><div className={`deck-card-progress-fill ${accent.progressClass}`} style={{ width: `${mastery}%` }} /></div>
                           </div>
                         </Link>
@@ -198,7 +201,7 @@ export default function DeckListPage() {
       </div>
 
       {deletingDeck && (
-        <ConfirmDialog title="Delete Deck" message={`Are you sure you want to delete "${deletingDeck.name}"? This will also delete all its cards.`} onConfirm={handleDelete} onCancel={() => setDeletingDeck(null)} />
+        <ConfirmDialog title={t('deleteDeckTitle')} message={t('deleteDeckMessage', { name: deletingDeck.name })} onConfirm={handleDelete} onCancel={() => setDeletingDeck(null)} />
       )}
     </div>
   );

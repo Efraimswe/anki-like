@@ -13,12 +13,15 @@ import EmptyState from '@/components/ui/EmptyState';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import type { Card, Deck } from '@/types';
+import { useTranslations } from 'next-intl';
 
 interface DeckWithCards extends Deck {
   cards: Card[];
 }
 
 export default function DeckDetailPage() {
+  const t = useTranslations('deckDetail');
+  const tc = useTranslations('common');
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -135,56 +138,56 @@ export default function DeckDetailPage() {
       <div className="space-y-4">
         <Link href="/decks" className="flex items-center gap-2 text-sm font-bold text-(--color-text-secondary) hover:text-(--color-accent) transition-colors">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-          Back to Collections
+          {t('backButton')}
         </Link>
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-1">
             <h1 className="text-5xl font-bold text-(--color-text-primary) tracking-tight heading">{deck.name}</h1>
             <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">
-              <span>{cards.length} cards total</span>
+              <span>{cards.length} {t('cardsTotal')}</span>
               <span className="w-1.5 h-1.5 rounded-full bg-(--color-accent) opacity-50" />
-              <span className="text-(--color-accent)">{deck.dueCount} due now</span>
+              <span className="text-(--color-accent)">{deck.dueCount} {t('dueNow')}</span>
             </div>
           </div>
           <div className="flex gap-4">
             <button onClick={() => router.push(`/review/${id}`)} className="px-8 py-3 bg-(--color-accent) text-white font-bold rounded-2xl shadow-xl shadow-orange-500/20 hover:scale-105 transition-all flex items-center gap-2">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347c-.75.412-1.667-.13-1.667-.986V5.653z" /></svg>
-              Start Session
+              {t('startSession')}
             </button>
             <button onClick={() => router.push(`/decks/${id}/settings`)} className="px-8 py-3 bg-white dark:bg-white/10 text-(--color-text-primary) border border-(--color-border) font-bold rounded-2xl hover:bg-(--color-bg-surface-hover) transition-all">
-              FSRS Settings
+              {t('fsrsSettings')}
             </button>
-            <button onClick={() => setShowCreate(true)} className="px-8 py-3 bg-white dark:bg-white/10 text-(--color-text-primary) border border-(--color-border) font-bold rounded-2xl hover:bg-(--color-bg-surface-hover) transition-all">+ Add Card</button>
+            <button onClick={() => setShowCreate(true)} className="px-8 py-3 bg-white dark:bg-white/10 text-(--color-text-primary) border border-(--color-border) font-bold rounded-2xl hover:bg-(--color-bg-surface-hover) transition-all">{t('addCard')}</button>
           </div>
         </div>
       </div>
 
       {showCreate && (
         <div className="premium-card p-8 shadow-2xl">
-          <h3 className="text-xl font-bold mb-6 heading">Craft a New Card</h3>
+          <h3 className="text-xl font-bold mb-6 heading">{t('createCardHeading')}</h3>
           <form onSubmit={handleCreate} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">Front side</label>
-                <textarea autoFocus value={newFront} onChange={(e) => setNewFront(e.target.value)} placeholder="Question or prompt..." rows={3} className="w-full px-4 py-3 bg-(--color-bg-page) border border-(--color-border) rounded-2xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none resize-none" />
+                <label className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('frontLabel')}</label>
+                <textarea autoFocus value={newFront} onChange={(e) => setNewFront(e.target.value)} placeholder={t('frontPlaceholder')} rows={3} className="w-full px-4 py-3 bg-(--color-bg-page) border border-(--color-border) rounded-2xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none resize-none" />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">Back side</label>
-                <textarea value={newBack} onChange={(e) => setNewBack(e.target.value)} placeholder="Answer..." rows={3} className="w-full px-4 py-3 bg-(--color-bg-page) border border-(--color-border) rounded-2xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none resize-none" />
+                <label className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('backLabel')}</label>
+                <textarea value={newBack} onChange={(e) => setNewBack(e.target.value)} placeholder={t('backPlaceholder')} rows={3} className="w-full px-4 py-3 bg-(--color-bg-page) border border-(--color-border) rounded-2xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none resize-none" />
               </div>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <label className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">Card Type</label>
+                <label className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('typeLabel')}</label>
                 <select value={newType} onChange={(e) => setNewType(e.target.value)} className="bg-(--color-bg-page) border border-(--color-border) rounded-xl px-3 py-1.5 text-sm font-bold outline-none cursor-pointer">
-                  <option value="basic">Basic</option>
-                  <option value="reverse">Reverse</option>
-                  <option value="cloze">Cloze</option>
+                  <option value="basic">{t('typeBasic')}</option>
+                  <option value="reverse">{t('typeReverse')}</option>
+                  <option value="cloze">{t('typeCloze')}</option>
                 </select>
               </div>
               <div className="flex gap-4">
-                <button type="button" onClick={() => { setShowCreate(false); setNewFront(''); setNewBack(''); }} className="px-6 py-2 text-sm font-bold text-(--color-text-tertiary) hover:text-(--color-text-secondary)">Cancel</button>
-                <button type="submit" className="button-primary px-8">Create Card</button>
+                <button type="button" onClick={() => { setShowCreate(false); setNewFront(''); setNewBack(''); }} className="px-6 py-2 text-sm font-bold text-(--color-text-tertiary) hover:text-(--color-text-secondary)">{tc('cancel')}</button>
+                <button type="submit" className="button-primary px-8">{t('createCardSubmit')}</button>
               </div>
             </div>
           </form>
@@ -192,9 +195,9 @@ export default function DeckDetailPage() {
       )}
 
       <div className="space-y-4">
-        <h2 className="text-xl font-bold text-(--color-text-primary) px-2 heading">Memory Stack</h2>
+        <h2 className="text-xl font-bold text-(--color-text-primary) px-2 heading">{t('memoryStack')}</h2>
         {cards.length === 0 ? (
-          <EmptyState title="Empty stack" description="This collection is currently empty. Start adding some knowledge!" action={{ label: 'Craft Your First Card', onClick: () => setShowCreate(true) }} />
+          <EmptyState title={t('emptyStackTitle')} description={t('emptyStackDescription')} action={{ label: t('emptyStackAction'), onClick: () => setShowCreate(true) }} />
         ) : (
           <div className="grid grid-cols-1 gap-4">
             {cards.map((card) => (
@@ -206,8 +209,8 @@ export default function DeckDetailPage() {
                       <textarea value={editBack} onChange={(e) => setEditBack(e.target.value)} rows={2} className="w-full px-4 py-2 bg-(--color-bg-page) border border-(--color-border) rounded-xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none resize-none" />
                     </div>
                     <div className="flex gap-4">
-                      <button type="submit" className="text-sm font-bold text-(--color-accent) hover:underline">Save Changes</button>
-                      <button type="button" onClick={() => setEditingId(null)} className="text-sm font-bold text-(--color-text-muted)">Cancel</button>
+                      <button type="submit" className="text-sm font-bold text-(--color-accent) hover:underline">{t('saveChanges')}</button>
+                      <button type="button" onClick={() => setEditingId(null)} className="text-sm font-bold text-(--color-text-muted)">{tc('cancel')}</button>
                     </div>
                   </form>
                 ) : (
@@ -234,7 +237,7 @@ export default function DeckDetailPage() {
       </div>
 
       {deletingCard && (
-        <ConfirmDialog title="Archive Card" message={`Are you sure you want to remove "${deletingCard.front}" from the memory stack?`} onConfirm={handleDelete} onCancel={() => setDeletingCard(null)} />
+        <ConfirmDialog title={t('archiveCard')} message={t('archiveCardMessage', { front: deletingCard.front })} onConfirm={handleDelete} onCancel={() => setDeletingCard(null)} />
       )}
     </div>
   );

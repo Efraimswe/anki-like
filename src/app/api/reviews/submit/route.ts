@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Rating, type Grade } from 'ts-fsrs';
 import { prisma } from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 import { requireAuth, jsonError } from '@/lib/api-utils';
 import { checkLimits } from '@/lib/daily-limits';
 import { ensureDeckFsrsConfig } from '@/lib/fsrs-config';
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
 
   const newState = scheduleReview(currentState, rating, now, fsrsConfig);
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.cardState.update({
       where: { cardId },
       data: {

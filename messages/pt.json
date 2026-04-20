@@ -1,0 +1,332 @@
+{
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "continue": "Continuar →",
+    "back": "Voltar",
+    "loading": "Carregando…",
+    "saving": "Salvando…",
+    "error": "Algo deu errado",
+    "retry": "Tentar novamente",
+    "yes": "Sim",
+    "no": "Não",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "create": "Criar",
+    "optional": "opcional"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Entrar",
+      "emailLabel": "Endereço de e-mail",
+      "emailPlaceholder": "você@exemplo.com",
+      "passwordLabel": "Senha",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Acessar conta",
+      "authenticating": "Autenticando...",
+      "noAccount": "Novo por aqui?",
+      "signUpLink": "Criar uma conta"
+    },
+    "signUp": {
+      "title": "Cadastrar",
+      "emailLabel": "Endereço de e-mail",
+      "emailPlaceholder": "você@exemplo.com",
+      "passwordLabel": "Nova senha",
+      "passwordPlaceholder": "Mínimo 8 caracteres",
+      "submitButton": "Começar",
+      "creatingAccount": "Criando conta...",
+      "passwordError": "A senha deve ter pelo menos 8 caracteres",
+      "hasAccount": "Já tem uma conta?",
+      "signInLink": "Entrar"
+    },
+    "errors": {
+      "invalidCredentials": "E-mail ou senha inválidos",
+      "emailTaken": "Já existe uma conta com este e-mail",
+      "sessionExpired": "Sua sessão expirou. Por favor entre novamente.",
+      "unauthorized": "Não autorizado",
+      "network": "Erro de rede. Por favor tente novamente."
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "leoSpeech": "Olá! Sou o Leo. Vou te ensinar inglês de um jeito que realmente funciona.",
+      "title": "Qual é seu idioma nativo?",
+      "description": "Vamos traduzir a interface e falar com você no seu idioma.",
+      "searchPlaceholder": "Buscar em {count} idiomas…",
+      "noResults": "Nenhum idioma encontrado",
+      "continueButton": "Continuar →",
+      "savingButton": "Salvando…"
+    },
+    "step2": {
+      "leoSpeech": "Uma escolha honesta vale mais que uma perfeita. Não tem certeza? Escolha um nível abaixo — você pode atualizar a qualquer momento.",
+      "title": "Qual é o seu nível de inglês?",
+      "description": "Não tem certeza? Escolha um nível mais baixo — você pode atualizar a qualquer momento.",
+      "continueButton": "Continuar →",
+      "savingButton": "Salvando…"
+    },
+    "step3": {
+      "leoSpeech": "Seja específico — «conseguir um emprego remoto em tecnologia» supera «melhorar meu inglês». Vou personalizar com base nos seus objetivos.",
+      "title": "Por que você está aprendendo inglês?",
+      "description": "Seja específico — isso ajuda o Leo a personalizar as aulas para você."
+    },
+    "step4": {
+      "celebrationChip": "Tudo pronto!",
+      "headline": "Tudo pronto!",
+      "sub": "O Leo vai personalizar sua jornada no inglês a partir de agora.",
+      "cta": "Aprender inglês",
+      "starting": "Iniciando…",
+      "summaryNativeLanguage": "Idioma nativo",
+      "summaryEnglishLevel": "Nível de inglês",
+      "summaryMainGoal": "Objetivo principal"
+    },
+    "goals": {
+      "primaryGoalLabel": "Objetivo principal",
+      "primaryGoalPlaceholder": "ex. Conseguir um emprego remoto em tecnologia",
+      "primaryGoalError": "Por favor nos diga seu objetivo principal",
+      "quickPicksLabel": "Seleção rápida",
+      "continueButton": "Continuar →",
+      "savingButton": "Salvando…",
+      "presets": {
+        "remoteJob": "Conseguir emprego remoto em tecnologia",
+        "ielts": "Passar no IELTS / TOEFL",
+        "travel": "Viajar sem barreiras linguísticas",
+        "shows": "Assistir séries sem legendas",
+        "moveAbroad": "Morar no exterior",
+        "readBooks": "Ler livros em inglês",
+        "confident": "Parecer mais confiante no trabalho",
+        "friends": "Falar com amigos internacionais"
+      }
+    },
+    "levels": {
+      "groups": {
+        "Beginner": "Iniciante",
+        "Intermediate": "Intermediário",
+        "Advanced": "Avançado",
+        "Fluent": "Fluente"
+      },
+      "A1": {
+        "title": "Iniciante",
+        "sub": "Só estou começando",
+        "desc": "Palavras básicas, frases simples"
+      },
+      "A1 solid": {
+        "title": "Iniciante sólido",
+        "sub": "Dominando o básico",
+        "desc": "Frases simples, tópicos familiares"
+      },
+      "A2": {
+        "title": "Elementar",
+        "sub": "Consigo lidar com temas do dia a dia",
+        "desc": "Trocas curtas, tarefas rotineiras"
+      },
+      "A2 solid": {
+        "title": "Elementar sólido",
+        "sub": "Quase pré-intermediário",
+        "desc": "Situações familiares, informações diretas"
+      },
+      "B1": {
+        "title": "Intermediário",
+        "sub": "Consigo lidar com a maioria das situações",
+        "desc": "Pontos principais claros, temas comuns"
+      },
+      "B1 solid": {
+        "title": "Intermediário sólido",
+        "sub": "Confortável na conversa",
+        "desc": "Bastante fluente, algumas lacunas"
+      },
+      "B2": {
+        "title": "Intermediário avançado",
+        "sub": "Lido com linguagem complexa",
+        "desc": "Fluente com falantes nativos"
+      },
+      "B2 solid": {
+        "title": "Intermediário avançado sólido",
+        "sub": "Quase avançado",
+        "desc": "Comunicação espontânea e matizada"
+      },
+      "C1": {
+        "title": "Avançado",
+        "sub": "Expressivo e preciso",
+        "desc": "Uso flexível e eficaz do idioma"
+      },
+      "C1 solid": {
+        "title": "Avançado sólido",
+        "sub": "Quase domínio",
+        "desc": "Claro, bem estruturado, matizado"
+      },
+      "C2": {
+        "title": "Domínio",
+        "sub": "Precisão quase nativa",
+        "desc": "Sem esforço, em todos os contextos"
+      },
+      "C2 solid": {
+        "title": "Domínio sólido",
+        "sub": "Indistinguível de um nativo",
+        "desc": "Domínio perfeito do idioma"
+      },
+      "Fluent": {
+        "title": "Como nativo",
+        "sub": "Completamente fluente",
+        "desc": "Nível nativo ou quase nativo"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": "Vamos começar forte!",
+    "subtitle": "Bem-vindo de volta. Pronto para seu desafio diário?",
+    "newDeckButton": "+ Novo baralho",
+    "emptyTitle": "Nenhuma coleção ainda",
+    "emptyDescription": "Comece criando seu primeiro baralho de flashcards.",
+    "emptyAction": "Criar meu primeiro baralho",
+    "createDeckHeading": "Criar novo baralho",
+    "createDeckPlaceholder": "ex. Vocabulário em espanhol",
+    "createDeckSubmit": "Criar",
+    "deleteDeckTitle": "Excluir baralho",
+    "deleteDeckMessage": "Excluir «{name}»? Todos os seus cartões também serão excluídos.",
+    "editDeckTitle": "Editar baralho",
+    "cardCount": "Cartões",
+    "dueCount": "A revisar",
+    "finished": "Concluído",
+    "mastery": "Domínio",
+    "new": "Novos"
+  },
+  "deckDetail": {
+    "backButton": "Voltar às coleções",
+    "cardsTotal": "cartões no total",
+    "dueNow": "a revisar agora",
+    "startSession": "Iniciar sessão",
+    "fsrsSettings": "Configurações FSRS",
+    "addCard": "+ Adicionar cartão",
+    "createCardHeading": "Criar novo cartão",
+    "frontLabel": "Frente",
+    "frontPlaceholder": "Pergunta ou dica...",
+    "backLabel": "Verso",
+    "backPlaceholder": "Resposta...",
+    "typeLabel": "Tipo de cartão",
+    "typeBasic": "Básico",
+    "typeReverse": "Reverso",
+    "typeCloze": "Lacuna",
+    "createCardSubmit": "Criar cartão",
+    "memoryStack": "Pilha de memória",
+    "emptyStackTitle": "Pilha vazia",
+    "emptyStackDescription": "Esta coleção está vazia. Comece a adicionar conhecimento!",
+    "emptyStackAction": "Criar meu primeiro cartão",
+    "saveChanges": "Salvar alterações",
+    "archiveCard": "Arquivar cartão",
+    "archiveCardMessage": "Remover «{front}» da pilha de memória?"
+  },
+  "review": {
+    "backButton": "Voltar à coleção",
+    "of": "de",
+    "newCards": "Novos",
+    "reviewCards": "Revisões",
+    "revealButton": "Mostrar resposta",
+    "keyboardHint": "Espaço para mostrar · 1–4 para avaliar",
+    "again": "De novo",
+    "hard": "Difícil",
+    "good": "Bom",
+    "easy": "Fácil",
+    "waitingTitle": "Aguardando cartões de aprendizagem...",
+    "waitingMessage": "Próximo cartão em",
+    "waitingReviewed": "Você revisou {count, plural, one {# cartão} other {# cartões}} até agora.",
+    "completedTitle": "Sessão concluída!",
+    "completedMessage": "Você revisou {count, plural, one {# cartão} other {# cartões}}.",
+    "completedBack": "Voltar ao baralho",
+    "testClockWarning": "Relógio de teste ativado: simulando tempo desde {time}"
+  },
+  "settings": {
+    "title": "Configurações",
+    "profileLabel": "Perfil",
+    "profileDescription": "Atualize seu nome e dados da conta",
+    "sessionsLabel": "Sessões",
+    "sessionsDescription": "Revisar dispositivos ativos e revogar acesso",
+    "languageLabel": "Idioma da interface",
+    "languageDescription": "Escolha o idioma da interface do aplicativo",
+    "englishToggleLabel": "Usar interface em inglês",
+    "interfaceLanguageDropdownLabel": "Idioma da interface",
+    "profile": {
+      "backButton": "Voltar às configurações",
+      "heading": "Perfil",
+      "description": "Gerencie suas informações pessoais.",
+      "fullNameLabel": "Nome completo",
+      "fullNamePlaceholder": "João Silva",
+      "emailLabel": "Endereço de e-mail",
+      "updateButton": "Atualizar perfil",
+      "savingButton": "Salvando...",
+      "successMessage": "Perfil atualizado com sucesso!",
+      "errorMessage": "Falha ao atualizar o perfil"
+    },
+    "sessions": {
+      "backButton": "Voltar às configurações",
+      "heading": "Tokens de acesso ativos",
+      "activeNow": "Ativo agora",
+      "lastActive": "Última atividade",
+      "revokeButton": "Encerrar",
+      "noSessions": "Nenhuma sessão ativa encontrada.",
+      "authorizedDevice": "Dispositivo autorizado"
+    },
+    "interfaceLanguageLabel": "Idioma da interface",
+    "interfaceLanguageDescription": "Escolha o idioma dos menus.",
+    "useEnglishToggle": "Interface em inglês",
+    "chooseLanguage": "Escolher idioma"
+  },
+  "nav": {
+    "decks": "Baralhos",
+    "rephrasings": "Reformulações",
+    "fairyTales": "Contos de fadas",
+    "settings": "Configurações",
+    "lightMode": "Modo claro",
+    "darkMode": "Modo escuro",
+    "signOut": "Sair"
+  },
+  "fsrs": {
+    "backButton": "Voltar ao baralho",
+    "heading": "Opções FSRS",
+    "description": "Este baralho usa o agendador FSRS do servidor.",
+    "desiredRetention": "Retenção desejada",
+    "maximumInterval": "Intervalo máximo",
+    "parameterSource": "Fonte dos parâmetros",
+    "lastOptimization": "Última otimização",
+    "sourceDefault": "Padrão",
+    "sourceOptimized": "Otimizado",
+    "never": "Nunca",
+    "weightsLabel": "Pesos",
+    "weightsCount": "{count} parâmetros FSRS para este baralho.",
+    "defaultWeights": "Usando parâmetros FSRS padrão.",
+    "optimizeButton": "Otimizar para este baralho",
+    "optimizing": "Otimizando...",
+    "optimizeSuccess": "Otimizado a partir de {reviewCount} revisões em {cardCount} cartões."
+  },
+  "statistics": {
+    "heading": "Estatísticas",
+    "weekButton": "Semana",
+    "monthButton": "Mês",
+    "allButton": "Tudo",
+    "totalReviews": "Revisões",
+    "accuracy": "Precisão",
+    "retention": "Retenção",
+    "studyTime": "Tempo de estudo",
+    "dailyBreakdown": "Detalhamento diário"
+  },
+  "translate": {
+    "buttonLabel": "Traduzir",
+    "translating": "Traduzindo..."
+  },
+  "rephrase": {
+    "eyebrow": "Reformulações",
+    "title": "Prática de reformulação",
+    "description": "Escolha uma palavra aleatória do banco de 3 000 palavras e use-a como base para seus exercícios de reformulação.",
+    "wordViewLabel": "Visão da palavra",
+    "pressRandomize": "Pressione Aleatório",
+    "sourcePool": "Banco: {count} palavras B1–B2 selecionadas.",
+    "randomizeButton": "Aleatório",
+    "wordsLabel": "Palavras"
+  },
+  "errors": {
+    "network": "Erro de rede. Por favor tente novamente.",
+    "unauthorized": "Não autorizado",
+    "sessionExpired": "Sua sessão expirou. Por favor entre novamente.",
+    "unknown": "Algo deu errado. Por favor tente novamente.",
+    "onboardingIncomplete": "Por favor complete o onboarding primeiro."
+  }
+}

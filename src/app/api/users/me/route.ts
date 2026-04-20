@@ -12,7 +12,16 @@ export async function GET() {
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.sub },
-    select: { id: true, email: true, displayName: true, createdAt: true },
+    select: {
+      id: true,
+      email: true,
+      displayName: true,
+      createdAt: true,
+      onboardingCompleted: true,
+      nativeLanguage: true,
+      englishLevel: true,
+      goals: true,
+    },
   });
 
   if (!dbUser) return jsonError(404, 'User not found');
@@ -33,6 +42,7 @@ export async function PATCH(request: NextRequest) {
   const data: Record<string, unknown> = {};
   if (parsed.data.displayName !== undefined) data.displayName = parsed.data.displayName;
   if (parsed.data.password) data.passwordHash = await bcrypt.hash(parsed.data.password, 12);
+  if (parsed.data.interfaceLanguage !== undefined) data.interfaceLanguage = parsed.data.interfaceLanguage;
 
   const updated = await prisma.user.update({
     where: { id: user.sub },

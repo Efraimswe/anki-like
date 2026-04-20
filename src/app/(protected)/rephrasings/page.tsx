@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import words from '@/data/b1-b2-random-word-style.json';
 
 export default function RephrasingsPage() {
+  const t = useTranslations('rephrase');
   const [word, setWord] = useState('');
   const [checks, setChecks] = useState(() => Array.from({ length: 20 }, () => false));
 
@@ -21,12 +23,11 @@ export default function RephrasingsPage() {
       <div className="premium-card p-8 md:p-10">
         <div className="space-y-3">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-(--color-accent)">
-            Rephrasings
+            {t('eyebrow')}
           </p>
-          <h1 className="text-3xl font-bold heading">Rephrase practice</h1>
+          <h1 className="text-3xl font-bold heading">{t('title')}</h1>
           <p className="max-w-2xl text-(--color-text-secondary)">
-            Pull a random prompt word from the local 3,000-word bank and use it as the base for
-            your rephrasing exercises.
+            {t('description')}
           </p>
         </div>
       </div>
@@ -36,15 +37,15 @@ export default function RephrasingsPage() {
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-4">
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-(--color-text-muted)">
-                Word View
+                {t('wordViewLabel')}
               </p>
               <div className="min-h-32 rounded-[2rem] border border-(--color-border) bg-(--color-bg-page) px-6 py-8 md:px-8 flex items-center">
                 <span className="heading text-4xl md:text-6xl font-bold tracking-tight text-(--color-text-primary) break-all">
-                  {word || 'Press Randomize'}
+                  {word || t('pressRandomize')}
                 </span>
               </div>
               <p className="text-sm text-(--color-text-secondary)">
-                Source pool: {words.length} curated B1-B2 style words.
+                {t('sourcePool', { count: words.length })}
               </p>
             </div>
 
@@ -53,13 +54,13 @@ export default function RephrasingsPage() {
               onClick={randomizeWord}
               className="button-primary px-8 py-4 text-base md:text-lg self-start lg:self-auto"
             >
-              Randomize
+              {t('randomizeButton')}
             </button>
           </div>
 
           <div className="space-y-3">
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-(--color-text-muted)">
-              Words
+              {t('wordsLabel')}
             </p>
             <div className="grid grid-cols-5 gap-3 md:gap-4 w-fit">
               {checks.map((checked, index) => (
