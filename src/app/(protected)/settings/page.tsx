@@ -57,6 +57,7 @@ export default function SettingsPage() {
   const usingEnglish = currentInterface === 'en';
 
   const [showDropdown, setShowDropdown] = useState(false);
+  const [pendingLang, setPendingLang] = useState<string | null>(null);
 
   const handleToggle = () => {
     if (usingEnglish) {
@@ -64,6 +65,22 @@ export default function SettingsPage() {
     } else {
       updateLang.mutate('en');
     }
+  };
+
+  const openDropdown = () => {
+    setPendingLang(currentInterface);
+    setShowDropdown(true);
+  };
+
+  const handleSaveLang = () => {
+    if (pendingLang) {
+      updateLang.mutate(pendingLang, { onSuccess: () => setShowDropdown(false) });
+    }
+  };
+
+  const handleCancelLang = () => {
+    setShowDropdown(false);
+    setPendingLang(null);
   };
 
   return (
@@ -107,31 +124,52 @@ export default function SettingsPage() {
             </div>
           )}
 
-          <div className="flex items-center gap-2">
+          {!showDropdown && (
             <button
-              onClick={() => setShowDropdown((v) => !v)}
-              className="text-xs font-bold text-(--color-accent) hover:underline"
+              onClick={openDropdown}
+              className="self-start flex items-center gap-2 px-3 py-1.5 rounded-full border border-(--color-border) text-xs font-semibold text-(--color-text-primary) hover:border-(--color-border-strong) hover:bg-(--color-bg-surface-hover) transition-all"
             >
-              {t('chooseLanguage')} ({LANGUAGES.find((l) => l.code === currentInterface)?.nativeName ?? currentInterface})
+              <span>{LANGUAGES.find((l) => l.code === currentInterface)?.flag}</span>
+              <span>{LANGUAGES.find((l) => l.code === currentInterface)?.nativeName ?? currentInterface}</span>
+              <svg className="w-3 h-3 text-(--color-text-muted)" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
             </button>
-          </div>
+          )}
 
           {showDropdown && (
-            <select
-              value={currentInterface}
-              onChange={(e) => { updateLang.mutate(e.target.value); setShowDropdown(false); }}
-              className="w-full bg-(--color-bg-page) border border-(--color-border) rounded-xl px-3 py-2 text-sm font-medium outline-none cursor-pointer"
-              size={6}
-            >
-              {LOCALES.map((code) => {
-                const lang = LANGUAGES.find((l) => l.code === code);
-                return (
-                  <option key={code} value={code}>
-                    {lang ? `${lang.flag} ${lang.nativeName}` : code.toUpperCase()}
-                  </option>
-                );
-              })}
-            </select>
+            <div className="space-y-2">
+              <select
+                value={pendingLang ?? currentInterface}
+                onChange={(e) => setPendingLang(e.target.value)}
+                className="w-full bg-(--color-bg-page) border border-(--color-border) rounded-2xl px-4 py-2 text-sm font-medium text-(--color-text-primary) outline-none cursor-pointer focus:ring-2 focus:ring-(--color-accent-ring)"
+                size={7}
+              >
+                {LOCALES.map((code) => {
+                  const lang = LANGUAGES.find((l) => l.code === code);
+                  return (
+                    <option key={code} value={code}>
+                      {lang ? `${lang.flag}  ${lang.nativeName}` : code.toUpperCase()}
+                    </option>
+                  );
+                })}
+              </select>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSaveLang}
+                  disabled={updateLang.isPending || pendingLang === currentInterface}
+                  className="button-primary px-5 py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none shadow-lg shadow-orange-500/20"
+                >
+                  {updateLang.isPending ? 'Saving…' : t('chooseLanguage')}
+                </button>
+                <button
+                  onClick={handleCancelLang}
+                  className="px-4 py-2 rounded-full text-sm font-semibold text-(--color-text-muted) hover:text-(--color-text-secondary) transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>
