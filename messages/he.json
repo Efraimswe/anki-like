@@ -77,7 +77,8 @@
       "starting": "מתחיל…",
       "summaryNativeLanguage": "שפת אם",
       "summaryEnglishLevel": "רמת אנגלית",
-      "summaryMainGoal": "מטרה עיקרית"
+      "summaryMainGoal": "מטרה עיקרית",
+      "summarySkills": "Skill levels"
     },
     "goals": {
       "primaryGoalLabel": "מטרה עיקרית",
@@ -169,6 +170,13 @@
         "sub": "שוטף לחלוטין",
         "desc": "רמת שפת אם או קרוב לה"
       }
+    },
+    "skills": {
+      "reading": "Reading",
+      "listening": "Listening",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "placeholder": "—"
     }
   },
   "dashboard": {
@@ -277,7 +285,10 @@
     "settings": "הגדרות",
     "lightMode": "מצב בהיר",
     "darkMode": "מצב כהה",
-    "signOut": "התנתק"
+    "signOut": "התנתק",
+    "insights": "Insights",
+    "progress": "Progress",
+    "newBadge": "NEW"
   },
   "fsrs": {
     "backButton": "חזרה לחפיסה",

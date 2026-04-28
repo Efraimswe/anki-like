@@ -3,21 +3,22 @@ import { prisma } from '@/lib/prisma';
 import { getAuthUser, signAccessToken, setAuthCookies } from '@/lib/auth';
 import { jsonError } from '@/lib/api-utils';
 import { isValidLanguageCode } from '@/lib/onboarding/languages';
-import { isLevel } from '@/lib/onboarding/levels';
 import { GoalsSchema } from '@/lib/onboarding/goals';
+import { SkillLevelsSchema } from '@/lib/onboarding/skillLevels';
 
 export async function POST(request: NextRequest) {
   const user = await getAuthUser();
   if (!user) return jsonError(401, 'Unauthorized');
 
   const body = await request.json().catch(() => null);
-  const { nativeLanguage, englishLevel, goals } = body ?? {};
+  const { nativeLanguage, skillLevels, goals } = body ?? {};
 
   if (!nativeLanguage || !isValidLanguageCode(nativeLanguage)) {
     return jsonError(400, 'Invalid nativeLanguage');
   }
-  if (!englishLevel || !isLevel(englishLevel)) {
-    return jsonError(400, 'Invalid englishLevel');
+  const skillLevelsParsed = SkillLevelsSchema.safeParse(skillLevels);
+  if (!skillLevelsParsed.success) {
+    return jsonError(400, 'Invalid skillLevels');
   }
   const goalsParsed = GoalsSchema.safeParse(goals);
   if (!goalsParsed.success) {
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
     where: { id: user.sub },
     data: {
       nativeLanguage,
-      englishLevel,
+      skillLevels: skillLevelsParsed.data,
       goals: goalsParsed.data,
       onboardingCompleted: true,
       interfaceLanguage: nativeLanguage,

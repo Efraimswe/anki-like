@@ -34,7 +34,18 @@ export default function SettingsPage() {
   const updateLang = useMutation({
     mutationFn: (interfaceLanguage: string) =>
       fetchApi('/api/users/me', { method: 'PATCH', body: JSON.stringify({ interfaceLanguage }) }),
-    onSuccess: () => {
+    onMutate: async (interfaceLanguage) => {
+      await queryClient.cancelQueries({ queryKey: ['user'] });
+      const previous = queryClient.getQueryData<UserProfile>(['user']);
+      queryClient.setQueryData<UserProfile>(['user'], (old) =>
+        old ? { ...old, interfaceLanguage } : old,
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(['user'], ctx.previous);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       router.refresh();
     },

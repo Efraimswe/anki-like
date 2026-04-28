@@ -77,7 +77,8 @@
       "starting": "開始中…",
       "summaryNativeLanguage": "母国語",
       "summaryEnglishLevel": "英語レベル",
-      "summaryMainGoal": "主な目標"
+      "summaryMainGoal": "主な目標",
+      "summarySkills": "Skill levels"
     },
     "goals": {
       "primaryGoalLabel": "主な目標",
@@ -169,6 +170,13 @@
         "sub": "完全に流暢",
         "desc": "ネイティブまたはそれに近いレベル"
       }
+    },
+    "skills": {
+      "reading": "Reading",
+      "listening": "Listening",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "placeholder": "—"
     }
   },
   "dashboard": {
@@ -277,7 +285,10 @@
     "settings": "設定",
     "lightMode": "ライトモード",
     "darkMode": "ダークモード",
-    "signOut": "ログアウト"
+    "signOut": "ログアウト",
+    "insights": "Insights",
+    "progress": "Progress",
+    "newBadge": "NEW"
   },
   "fsrs": {
     "backButton": "デッキに戻る",

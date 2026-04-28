@@ -77,7 +77,8 @@
       "starting": "Uruchamianie…",
       "summaryNativeLanguage": "Język ojczysty",
       "summaryEnglishLevel": "Poziom angielskiego",
-      "summaryMainGoal": "Główny cel"
+      "summaryMainGoal": "Główny cel",
+      "summarySkills": "Skill levels"
     },
     "goals": {
       "primaryGoalLabel": "Główny cel",
@@ -169,6 +170,13 @@
         "sub": "Całkowicie płynny",
         "desc": "Poziom native speakera lub zbliżony"
       }
+    },
+    "skills": {
+      "reading": "Reading",
+      "listening": "Listening",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "placeholder": "—"
     }
   },
   "dashboard": {
@@ -277,7 +285,10 @@
     "settings": "Ustawienia",
     "lightMode": "Tryb jasny",
     "darkMode": "Tryb ciemny",
-    "signOut": "Wyloguj się"
+    "signOut": "Wyloguj się",
+    "insights": "Insights",
+    "progress": "Progress",
+    "newBadge": "NEW"
   },
   "fsrs": {
     "backButton": "Wróć do talii",

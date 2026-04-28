@@ -32,3 +32,4 @@ coverage/
 *.tmp
 tsconfig.tsbuildinfo
 .vercel
+.playwright-mcp/

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SkillLevelsSchema } from '@/lib/onboarding/skillLevels';
 
 export const signUpSchema = z.object({
   email: z.string().email(),
@@ -48,6 +49,7 @@ export const updateProfileSchema = z.object({
   displayName: z.string().min(1).max(100).optional(),
   password: z.string().min(8).optional(),
   interfaceLanguage: z.string().min(2).max(10).optional(),
+  skillLevels: SkillLevelsSchema.optional(),
 });
 
 export const statisticsQuerySchema = z.object({

@@ -1,9 +1,9 @@
-import type { Level } from './levels';
 import type { GoalsPayload } from './goals';
+import type { SkillLevels } from './skillLevels';
 
 export interface OnboardingDraft {
   nativeLanguage?: string;
-  englishLevel?: Level;
+  skillLevels?: Partial<SkillLevels>;
   goals?: GoalsPayload;
 }
 

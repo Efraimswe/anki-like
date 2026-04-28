@@ -1,6 +1,6 @@
 # anki-like Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-04-13
+Auto-generated from all feature plans. Last updated: 2026-04-22
 
 ## Active Technologies
 - TypeScript 5.x / Node.js 20+ + NestJS 10+, @nestjs/platform-fastify, prisma, @prisma/client (replacing pg) (002-prisma-migration)
@@ -17,6 +17,8 @@ Auto-generated from all feature plans. Last updated: 2026-04-13
 - PostgreSQL via Prisma (Neon serverless) (008-onboarding-flow)
 - TypeScript 5.x / Node.js 20+ + Next.js 15, React 19, TanStack Query v5, Prisma 6 (no AI SDK) (009-custom-llm-toolcall)
 - PostgreSQL via Prisma (no schema changes in this feature) (009-custom-llm-toolcall)
+- TypeScript 5.9, Node.js 20+ + Next.js 15 (App Router), React 19, TanStack Query v5, Prisma 6 (@prisma/client), jose (JWT session), Tailwind CSS 4, Zod, lucide-react (011-skill-map-canvas)
+- PostgreSQL (Neon serverless) via Prisma — new `SkillMap` model keyed 1:1 on `User.id`. Nodes and edges stored as `Json` columns. (011-skill-map-canvas)
 
 - TypeScript 5.x / Node.js 20+ + NestJS 10+, @nestjs/platform-fastify, pg (node-postgres) (001-nestjs-backend)
 
@@ -37,10 +39,9 @@ pnpm test && pnpm run lint
 TypeScript 5.x / Node.js 20+: Follow standard conventions
 
 ## Recent Changes
+- 011-skill-map-canvas: Added TypeScript 5.9, Node.js 20+ + Next.js 15 (App Router), React 19, TanStack Query v5, Prisma 6 (@prisma/client), jose (JWT session), Tailwind CSS 4, Zod, lucide-react
 - 010-manual-onboarding-llm: Manual onboarding — no LLM calls. CEFR 13-chip level picker (step 2) + goals form (step 3). Deleted chat routes, hooks, prompts, VoiceInput.
 - 009-custom-llm-toolcall: Added TypeScript 5.x / Node.js 20+ + Next.js 15, React 19, TanStack Query v5, Prisma 6 (no AI SDK)
-- 008-onboarding-flow: Added TypeScript 5.x / Node.js 20+ + Next.js 15, React 19, TanStack Query v5, Prisma 6, Vercel AI SDK (ai + @ai-sdk/google), jose (JWT), TailwindCSS 4
-- 007-tanstack-query-auth-migration: Added TypeScript 5.x / Node.js 20+ + Next.js 15, React 19, `@tanstack/react-query` v5, `@tanstack/react-query-devtools`, Prisma, jose (JWT)
 
 
 <!-- MANUAL ADDITIONS START -->

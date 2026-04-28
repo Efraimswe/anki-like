@@ -77,7 +77,8 @@
       "starting": "Starten…",
       "summaryNativeLanguage": "Muttersprache",
       "summaryEnglishLevel": "Englischniveau",
-      "summaryMainGoal": "Hauptziel"
+      "summaryMainGoal": "Hauptziel",
+      "summarySkills": "Skill levels"
     },
     "goals": {
       "primaryGoalLabel": "Hauptziel",
@@ -169,6 +170,13 @@
         "sub": "Vollständig fließend",
         "desc": "Muttersprachliches oder annähernd muttersprachliches Niveau"
       }
+    },
+    "skills": {
+      "reading": "Reading",
+      "listening": "Listening",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "placeholder": "—"
     }
   },
   "dashboard": {
@@ -277,7 +285,10 @@
     "settings": "Einstellungen",
     "lightMode": "Heller Modus",
     "darkMode": "Dunkler Modus",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "insights": "Insights",
+    "progress": "Progress",
+    "newBadge": "NEW"
   },
   "fsrs": {
     "backButton": "Zurück zum Deck",

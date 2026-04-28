@@ -1,18 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function DevResetButton() {
-  if (process.env.NODE_ENV !== 'development') return null;
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const pathname = usePathname();
   const router = useRouter();
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const queryClient = useQueryClient();
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+
+  if (process.env.NODE_ENV !== 'development' || pathname === '/map') return null;
 
   const handleReset = async () => {
     setStatus('loading');

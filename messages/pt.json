@@ -77,7 +77,8 @@
       "starting": "Iniciando…",
       "summaryNativeLanguage": "Idioma nativo",
       "summaryEnglishLevel": "Nível de inglês",
-      "summaryMainGoal": "Objetivo principal"
+      "summaryMainGoal": "Objetivo principal",
+      "summarySkills": "Skill levels"
     },
     "goals": {
       "primaryGoalLabel": "Objetivo principal",
@@ -169,6 +170,13 @@
         "sub": "Completamente fluente",
         "desc": "Nível nativo ou quase nativo"
       }
+    },
+    "skills": {
+      "reading": "Reading",
+      "listening": "Listening",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "placeholder": "—"
     }
   },
   "dashboard": {
@@ -277,7 +285,10 @@
     "settings": "Configurações",
     "lightMode": "Modo claro",
     "darkMode": "Modo escuro",
-    "signOut": "Sair"
+    "signOut": "Sair",
+    "insights": "Insights",
+    "progress": "Progress",
+    "newBadge": "NEW"
   },
   "fsrs": {
     "backButton": "Voltar ao baralho",

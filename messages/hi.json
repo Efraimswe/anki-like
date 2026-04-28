@@ -77,7 +77,8 @@
       "starting": "Starting…",
       "summaryNativeLanguage": "Native language",
       "summaryEnglishLevel": "English level",
-      "summaryMainGoal": "Main goal"
+      "summaryMainGoal": "Main goal",
+      "summarySkills": "Skill levels"
     },
     "goals": {
       "primaryGoalLabel": "Primary goal",
@@ -169,6 +170,13 @@
         "sub": "Fully fluent",
         "desc": "Native or near-native proficiency"
       }
+    },
+    "skills": {
+      "reading": "Reading",
+      "listening": "Listening",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "placeholder": "—"
     }
   },
   "dashboard": {
@@ -277,7 +285,10 @@
     "settings": "सेटिंग्स",
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode",
-    "signOut": "साइन आउट"
+    "signOut": "साइन आउट",
+    "insights": "Insights",
+    "progress": "Progress",
+    "newBadge": "NEW"
   },
   "fsrs": {
     "backButton": "Back to deck",

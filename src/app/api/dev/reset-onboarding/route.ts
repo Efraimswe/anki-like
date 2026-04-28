@@ -14,7 +14,7 @@ export async function POST() {
 
   await prisma.user.update({
     where: { id: user.sub },
-    data: { onboardingCompleted: false, nativeLanguage: null, englishLevel: null, goals: Prisma.JsonNull },
+    data: { onboardingCompleted: false, nativeLanguage: null, skillLevels: Prisma.JsonNull, goals: Prisma.JsonNull },
   });
 
   const newToken = await signAccessToken(user.sub, user.sid, false);

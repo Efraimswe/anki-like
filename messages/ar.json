@@ -77,7 +77,8 @@
       "starting": "جار البدء…",
       "summaryNativeLanguage": "اللغة الأم",
       "summaryEnglishLevel": "مستوى الإنجليزية",
-      "summaryMainGoal": "الهدف الرئيسي"
+      "summaryMainGoal": "الهدف الرئيسي",
+      "summarySkills": "Skill levels"
     },
     "goals": {
       "primaryGoalLabel": "الهدف الرئيسي",
@@ -169,6 +170,13 @@
         "sub": "طليق تماماً",
         "desc": "مستوى الناطق الأصلي أو ما يقاربه"
       }
+    },
+    "skills": {
+      "reading": "Reading",
+      "listening": "Listening",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "placeholder": "—"
     }
   },
   "dashboard": {
@@ -277,7 +285,10 @@
     "settings": "الإعدادات",
     "lightMode": "الوضع الفاتح",
     "darkMode": "الوضع الداكن",
-    "signOut": "تسجيل الخروج"
+    "signOut": "تسجيل الخروج",
+    "insights": "Insights",
+    "progress": "Progress",
+    "newBadge": "NEW"
   },
   "fsrs": {
     "backButton": "العودة للحزمة",

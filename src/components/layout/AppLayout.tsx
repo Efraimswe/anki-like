@@ -11,6 +11,16 @@ function useNavItems() {
   const t = useTranslations('nav');
   return [
   {
+    href: '/map',
+    label: t('progress'),
+    section: t('insights'),
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+      </svg>
+    ),
+  },
+  {
     href: '/decks',
     label: t('decks'),
     icon: (
@@ -111,12 +121,23 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </button>
         </div>
 
-        <nav className="flex-1 py-4 px-3 space-y-2 overflow-y-auto overflow-x-hidden">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined} className={`flex items-center gap-4 rounded-2xl ${collapsed ? 'justify-center p-3' : 'px-4 py-3'} ${isActive(item.href) ? 'bg-(--color-sidebar-active-bg) text-(--color-sidebar-text) shadow-lg' : 'text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-colors duration-200'}`}>
-              <span className="shrink-0">{item.icon}</span>
-              {!collapsed && <span className="text-sm font-semibold tracking-wide whitespace-nowrap">{item.label}</span>}
-            </Link>
+        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto overflow-x-hidden">
+          {navItems.map((item, i) => (
+            <div key={item.href}>
+              {!collapsed && item.section && (i === 0 || navItems[i - 1].section !== item.section) && (
+                <p className="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-(--color-sidebar-text-muted) opacity-60">
+                  {item.section}
+                </p>
+              )}
+              <Link href={item.href} title={collapsed ? item.label : undefined} className={`flex items-center gap-4 rounded-2xl ${collapsed ? 'justify-center p-3' : 'px-4 py-3'} ${isActive(item.href) ? 'bg-(--color-sidebar-active-bg) text-(--color-sidebar-text) shadow-lg' : 'text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-colors duration-200'}`}>
+                <span className="shrink-0">{item.icon}</span>
+                {!collapsed && (
+                  <span className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-sm font-semibold tracking-wide whitespace-nowrap">{item.label}</span>
+                  </span>
+                )}
+              </Link>
+            </div>
           ))}
         </nav>
 

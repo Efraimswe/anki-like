@@ -19,7 +19,8 @@ export async function GET() {
       createdAt: true,
       onboardingCompleted: true,
       nativeLanguage: true,
-      englishLevel: true,
+      interfaceLanguage: true,
+      skillLevels: true,
       goals: true,
     },
   });
@@ -43,6 +44,7 @@ export async function PATCH(request: NextRequest) {
   if (parsed.data.displayName !== undefined) data.displayName = parsed.data.displayName;
   if (parsed.data.password) data.passwordHash = await bcrypt.hash(parsed.data.password, 12);
   if (parsed.data.interfaceLanguage !== undefined) data.interfaceLanguage = parsed.data.interfaceLanguage;
+  if (parsed.data.skillLevels !== undefined) data.skillLevels = parsed.data.skillLevels;
 
   const updated = await prisma.user.update({
     where: { id: user.sub },

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { getLanguageByCode } from '@/lib/onboarding/languages';
 import { useTranslations } from 'next-intl';
 import { readDraft, clearDraft, type OnboardingDraft } from '@/lib/onboarding/clientState';
+import { SKILL_KEYS } from '@/lib/onboarding/skillLevels';
 
 export default function Step4Page() {
   const t = useTranslations('onboarding.step4');
@@ -19,7 +20,8 @@ export default function Step4Page() {
   useEffect(() => {
     setMounted(true);
     const d = readDraft();
-    if (!d.nativeLanguage || !d.englishLevel || !d.goals) {
+    const allSkillsSelected = d.skillLevels && SKILL_KEYS.every((k) => d.skillLevels![k]);
+    if (!d.nativeLanguage || !allSkillsSelected || !d.goals) {
       router.replace('/onboarding/step-1');
       return;
     }
@@ -36,7 +38,7 @@ export default function Step4Page() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nativeLanguage: draft.nativeLanguage,
-          englishLevel: draft.englishLevel,
+          skillLevels: draft.skillLevels,
           goals: draft.goals,
         }),
       });
@@ -60,12 +62,13 @@ export default function Step4Page() {
   const langCode = draft.nativeLanguage!;
   const nativeLang = getLanguageByCode(langCode)?.name ?? langCode;
   const nativeFlag = getLanguageByCode(langCode)?.flag ?? '';
-  const level = draft.englishLevel!;
+  const sl = draft.skillLevels!;
+  const skillSummary = `R: ${sl.reading} · L: ${sl.listening} · W: ${sl.writing} · S: ${sl.speaking}`;
   const primaryGoal = draft.goals!.primary;
 
   const summaryCards = [
     { label: t('summaryNativeLanguage'), value: `${nativeFlag} ${nativeLang}`.trim(), icon: '🌍', bg: 'var(--chip-blue)', fg: 'var(--chip-blue-text)' },
-    { label: t('summaryEnglishLevel'),   value: level,        icon: '📊', bg: 'var(--chip-purple)', fg: 'var(--chip-purple-text)' },
+    { label: t('summarySkills'),         value: skillSummary, icon: '📊', bg: 'var(--chip-purple)', fg: 'var(--chip-purple-text)' },
     { label: t('summaryMainGoal'),       value: primaryGoal,  icon: '🎯', bg: 'var(--chip-amber)',  fg: 'var(--chip-amber-text)' },
   ];
 

@@ -19,11 +19,12 @@ model User {
   onboardingCompleted Boolean   @default(false) @map("onboarding_completed")
   nativeLanguage      String?   @map("native_language") @db.VarChar(10)
   interfaceLanguage   String?   @map("interface_language") @db.VarChar(10)
-  englishLevel        String?   @map("english_level") @db.VarChar(20)
+  skillLevels         Json?     @map("skill_levels")
   goals               Json?     @map("goals")
 
   decks    Deck[]
   sessions Session[]
+  skillMap SkillMap?
 
   @@map("users")
 }
@@ -160,4 +161,18 @@ model DailyCounter {
 
   @@unique([userId, date], map: "idx_daily_counters_user_date")
   @@map("daily_counters")
+}
+
+model SkillMap {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+  title     String   @default("My Skill Map") @db.VarChar(255)
+  nodes     Json     @default("[]")
+  edges     Json     @default("[]")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("skill_maps")
 }

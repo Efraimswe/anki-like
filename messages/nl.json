@@ -77,7 +77,8 @@
       "starting": "Bezig met starten…",
       "summaryNativeLanguage": "Moedertaal",
       "summaryEnglishLevel": "Engelsniveau",
-      "summaryMainGoal": "Hoofddoel"
+      "summaryMainGoal": "Hoofddoel",
+      "summarySkills": "Skill levels"
     },
     "goals": {
       "primaryGoalLabel": "Hoofddoel",
@@ -169,6 +170,13 @@
         "sub": "Volledig vloeiend",
         "desc": "Moedertaalniveau of dichtbij"
       }
+    },
+    "skills": {
+      "reading": "Reading",
+      "listening": "Listening",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "placeholder": "—"
     }
   },
   "dashboard": {
@@ -277,7 +285,10 @@
     "settings": "Instellingen",
     "lightMode": "Lichte modus",
     "darkMode": "Donkere modus",
-    "signOut": "Uitloggen"
+    "signOut": "Uitloggen",
+    "insights": "Insights",
+    "progress": "Progress",
+    "newBadge": "NEW"
   },
   "fsrs": {
     "backButton": "Terug naar deck",

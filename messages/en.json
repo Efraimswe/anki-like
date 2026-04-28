@@ -58,9 +58,9 @@
       "savingButton": "Saving…"
     },
     "step2": {
-      "leoSpeech": "Honest pick beats a perfect one. Not sure? Go one lower — you can update anytime.",
-      "title": "How well do you speak English?",
-      "description": "Not sure? Pick a lower level — you can update anytime.",
+      "leoSpeech": "Be honest — it helps me tailor lessons to where you actually are.",
+      "title": "Rate your English skills",
+      "description": "Select your level for each skill. Not sure? Go one lower — you can update anytime.",
       "continueButton": "Continue →",
       "savingButton": "Saving…"
     },
@@ -77,7 +77,8 @@
       "starting": "Starting…",
       "summaryNativeLanguage": "Native language",
       "summaryEnglishLevel": "English level",
-      "summaryMainGoal": "Main goal"
+      "summaryMainGoal": "Main goal",
+      "summarySkills": "Skill levels"
     },
     "goals": {
       "primaryGoalLabel": "Primary goal",
@@ -169,6 +170,13 @@
         "sub": "Fully fluent",
         "desc": "Native or near-native proficiency"
       }
+    },
+    "skills": {
+      "reading": "Reading",
+      "listening": "Listening",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "placeholder": "—"
     }
   },
   "dashboard": {
@@ -277,7 +285,10 @@
     "settings": "Settings",
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "insights": "Insights",
+    "progress": "Progress",
+    "newBadge": "NEW"
   },
   "fsrs": {
     "backButton": "Back to deck",

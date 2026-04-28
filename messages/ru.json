@@ -77,7 +77,8 @@
       "starting": "Начинаем…",
       "summaryNativeLanguage": "Родной язык",
       "summaryEnglishLevel": "Уровень английского",
-      "summaryMainGoal": "Главная цель"
+      "summaryMainGoal": "Главная цель",
+      "summarySkills": "Skill levels"
     },
     "goals": {
       "primaryGoalLabel": "Главная цель",
@@ -169,6 +170,13 @@
         "sub": "Полностью свободный",
         "desc": "Уровень носителя или близко к нему"
       }
+    },
+    "skills": {
+      "reading": "Reading",
+      "listening": "Listening",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "placeholder": "—"
     }
   },
   "dashboard": {
@@ -277,7 +285,10 @@
     "settings": "Настройки",
     "lightMode": "Светлая тема",
     "darkMode": "Тёмная тема",
-    "signOut": "Выйти"
+    "signOut": "Выйти",
+    "insights": "Insights",
+    "progress": "Progress",
+    "newBadge": "NEW"
   },
   "fsrs": {
     "backButton": "К колоде",
