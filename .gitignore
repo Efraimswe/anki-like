@@ -33,3 +33,4 @@ coverage/
 tsconfig.tsbuildinfo
 .vercel
 .playwright-mcp/
+.mcp.json
