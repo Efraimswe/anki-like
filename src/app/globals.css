@@ -21,13 +21,13 @@
 	--color-text-muted: #999999;
 	--color-border: #e0e0e0;
 	--color-border-strong: #cccccc;
-	--color-accent: #f25b39;
-	--color-accent-hover: #e04a29;
-	--color-accent-muted: #ffece8;
-	--color-accent-text: #f25b39;
+	--color-accent: #1F4DFF;
+	--color-accent-hover: #1A3FD9;
+	--color-accent-muted: #E8EEFF;
+	--color-accent-text: #1F4DFF;
 	--color-accent-text-active: #ffffff;
-	--color-accent-ring: rgba(242, 91, 57, 0.3);
-	--color-accent-progress: #f25b39;
+	--color-accent-ring: rgba(31, 77, 255, 0.3);
+	--color-accent-progress: #1F4DFF;
 	--color-success: #10b981;
 	--color-danger: #ef4444;
 	--radius-xl: 2.5rem;
@@ -78,9 +78,9 @@
 	--color-text-tertiary: #777777;
 	--color-border: #222222;
 	--color-border-strong: #333333;
-	--color-accent: #f25b39;
-	--color-accent-hover: #ff7556;
-	--color-accent-muted: rgba(242, 91, 57, 0.14);
+	--color-accent: #1F4DFF;
+	--color-accent-hover: #4D72FF;
+	--color-accent-muted: rgba(31, 77, 255, 0.14);
 
 	/* Skill Map canvas — dark overrides */
 	--canvas-bg: #171717;
@@ -144,6 +144,47 @@ h1, h2, h3, .heading {
 	.sidebar-rail { border-radius: 0; }
 }
 
+/* ─── Notion-style collapsible sidebar (lg+) ─── */
+@media (min-width: 1024px) {
+	.nav-sidebar {
+		overflow: hidden;
+		transition: width 450ms cubic-bezier(.7, 0, .2, 1);
+	}
+	.app-stage[data-collapsed="false"] .nav-sidebar { width: 220px; }
+	.app-stage[data-collapsed="true"] .nav-sidebar { width: 64px; }
+
+	.nav-sidebar-inner {
+		min-width: 196px;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.nav-label {
+		transition: opacity 200ms ease;
+		opacity: 1;
+		white-space: nowrap;
+	}
+	.app-stage[data-collapsed="true"] .nav-label { opacity: 0; }
+
+	.app-main { transition: margin-left 450ms cubic-bezier(.7, 0, .2, 1); }
+	.app-stage[data-collapsed="false"] .app-main { margin-left: 220px; }
+	.app-stage[data-collapsed="true"] .app-main { margin-left: 64px; }
+
+	.nav-toggle {
+		position: absolute;
+		top: 28px;
+		transform: translateX(-50%);
+		transition: left 450ms cubic-bezier(.7, 0, .2, 1);
+	}
+	.app-stage[data-collapsed="false"] .nav-toggle { left: 220px; }
+	.app-stage[data-collapsed="true"] .nav-toggle { left: 64px; }
+
+	.nav-chevron { transition: transform 450ms cubic-bezier(.7, 0, .2, 1); }
+	.app-stage[data-collapsed="true"] .nav-chevron { transform: rotate(180deg); }
+}
+
 .button-primary {
 	background: var(--color-accent);
 	color: white;
@@ -160,16 +201,15 @@ h1, h2, h3, .heading {
 
 .progress-circle { transition: stroke-dashoffset 0.5s ease-out; }
 
-.decks-content-shell { width: fit-content; max-width: 100%; margin: 0 auto; }
+.decks-content-shell { width: 100%; max-width: 720px; margin: 0 auto; padding-inline: 8px; }
 
 .decks-grid {
 	display: grid;
-	grid-template-columns: repeat(2, 138px);
-	gap: 10px;
-	justify-content: center;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
 }
 
-.deck-card-compact { width: 138px; min-height: 170px; padding: 15px; }
+.deck-card-compact { width: 100%; min-height: 170px; padding: 15px; }
 .deck-card-shell { display: flex; flex-direction: column; height: 100%; }
 
 .deck-card-icon {
@@ -250,21 +290,18 @@ h1, h2, h3, .heading {
 
 .deck-card-progress-fill { height: 100%; border-radius: inherit; }
 
-@media (min-width: 480px) { .decks-grid { grid-template-columns: repeat(3, 138px); } }
-@media (min-width: 768px) {
-	.decks-grid { grid-template-columns: repeat(4, 172px); gap: 18px; }
-	.deck-card-compact { width: 172px; min-height: 192px; padding: 20px; }
-}
+@media (min-width: 640px) { .decks-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 1024px) {
-	.decks-grid { grid-template-columns: repeat(4, 172px); gap: 18px; }
-	.deck-card-compact { width: 172px; min-height: 192px; padding: 20px; }
+	.decks-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+	.deck-card-compact { min-height: 192px; padding: 20px; }
 }
-@media (min-width: 1440px) { .decks-grid { grid-template-columns: repeat(5, 172px); } }
 
 ::view-transition-old(root),
-::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
-::view-transition-old(root) { z-index: 1; }
-::view-transition-new(root) { z-index: 9999; }
+::view-transition-new(root) {
+	animation-duration: 0.45s;
+	animation-timing-function: cubic-bezier(.4, 0, .2, 1);
+	mix-blend-mode: normal;
+}
 
 /* ─── Leo Character Animations ─── */
 @keyframes float {
@@ -302,7 +339,7 @@ h1, h2, h3, .heading {
   --chip-green: #e6f9f0;
   --chip-green-text: #15803d;
   --shadow-card: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
-  --shadow-cta: 0 10px 24px -8px rgba(240,90,43,0.55), 0 2px 0 rgba(0,0,0,0.02);
+  --shadow-cta: 0 10px 24px -8px rgba(31,77,255,0.55), 0 2px 0 rgba(0,0,0,0.02);
 }
 
 .dark {
@@ -353,9 +390,9 @@ h1, h2, h3, .heading {
 }
 
 @keyframes pulse-rec {
-  0% { box-shadow: 0 0 0 0 rgba(242,91,57,0.5); }
-  70% { box-shadow: 0 0 0 12px rgba(242,91,57,0); }
-  100% { box-shadow: 0 0 0 0 rgba(242,91,57,0); }
+  0% { box-shadow: 0 0 0 0 rgba(31,77,255,0.5); }
+  70% { box-shadow: 0 0 0 12px rgba(31,77,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(31,77,255,0); }
 }
 
 @keyframes fadeIn {
@@ -819,7 +856,7 @@ h1, h2, h3, .heading {
 .onb-cta-xl:hover {
   background: var(--color-accent-hover);
   transform: translateY(-1px);
-  box-shadow: 0 14px 28px -8px rgba(240,90,43,0.6), 0 2px 0 rgba(0,0,0,0.03);
+  box-shadow: 0 14px 28px -8px rgba(31,77,255,0.6), 0 2px 0 rgba(0,0,0,0.03);
 }
 
 .onb-cta-xl:disabled {
