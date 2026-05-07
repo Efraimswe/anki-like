@@ -84,10 +84,10 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-2xl">
       {settingsLinks.map((link) => (
         <Link key={link.href} href={link.href} className="group flex w-full items-center gap-4 rounded-[2rem] border border-(--color-border) bg-(--color-bg-surface) px-5 py-4 transition-all hover:border-(--color-border-strong) hover:bg-(--color-bg-surface-hover)">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-(--color-accent) text-white shadow-[0_14px_28px_-16px_rgba(31,77,255,0.55)] transition-shadow group-hover:shadow-[0_18px_34px_-16px_rgba(31,77,255,0.62)] dark:text-(--color-bg-page)">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-(--color-accent) text-white shadow-[0_14px_28px_-16px_rgba(242,91,57,0.55)] transition-shadow group-hover:shadow-[0_18px_34px_-16px_rgba(242,91,57,0.62)] dark:text-(--color-bg-page)">
             <link.Icon className="h-5 w-5" strokeWidth={2} />
           </div>
           <div className="min-w-0 flex-1 text-left">
@@ -100,7 +100,7 @@ export default function SettingsPage() {
 
       {/* Interface language card */}
       <div className="flex w-full items-start gap-4 rounded-[2rem] border border-(--color-border) bg-(--color-bg-surface) px-5 py-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-(--color-accent) text-white shadow-[0_14px_28px_-16px_rgba(31,77,255,0.55)] dark:text-(--color-bg-page)">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-(--color-accent) text-white shadow-[0_14px_28px_-16px_rgba(242,91,57,0.55)] dark:text-(--color-bg-page)">
           <Globe className="h-5 w-5" strokeWidth={2} />
         </div>
         <div className="min-w-0 flex-1 space-y-3">
