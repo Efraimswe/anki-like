@@ -61,7 +61,7 @@
 	--skill-amber: #FDE68A;
 
 	/* Structural hierarchy line */
-	--structural-stroke: #BBBBBB;
+	--structural-stroke: #d14a2c;
 }
 
 .dark {
@@ -95,7 +95,7 @@
 	--skill-amber: #FBBF24;
 
 	/* Structural hierarchy line — dark */
-	--structural-stroke: #444444;
+	--structural-stroke: #d14a2c;
 }
 
 body {
@@ -142,6 +142,52 @@ h1, h2, h3, .heading {
 
 @media (min-width: 1024px) {
 	.sidebar-rail { border-radius: 0; }
+
+	/* Layout shell — sidebar/main coordination */
+	.nav-sidebar {
+		width: 16rem;
+		transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.app-stage[data-collapsed="true"] .nav-sidebar { width: 5rem; }
+
+	.nav-sidebar-inner {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden;
+	}
+
+	.app-main {
+		padding-left: 16rem;
+		transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.app-stage[data-collapsed="true"] .app-main { padding-left: 5rem; }
+
+	/* Collapse toggle pinned to sidebar/main boundary */
+	.nav-toggle {
+		position: fixed;
+		top: 4.5rem;
+		left: calc(16rem - 0.875rem);
+		transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.app-stage[data-collapsed="true"] .nav-toggle { left: calc(5rem - 0.875rem); }
+	.app-stage[data-collapsed="true"] .nav-chevron { transform: rotate(180deg); }
+
+	/* Labels: nowrap so they never reflow during the width transition. */
+	.nav-label {
+		white-space: nowrap;
+		min-width: 0;
+	}
+	.app-stage[data-collapsed="true"] .nav-label { display: none; }
+
+	/* When collapsed, links/buttons/pill shrink to their visible content
+	   so the active pill hugs the icon symmetrically. Icons keep their
+	   left-aligned position from the expanded state — no horizontal jump. */
+	.app-stage[data-collapsed="true"] .nav-sidebar nav a,
+	.app-stage[data-collapsed="true"] .nav-sidebar nav + div > button,
+	.app-stage[data-collapsed="true"] .nav-sidebar nav + div > div {
+		width: fit-content;
+	}
 }
 
 .button-primary {
@@ -164,12 +210,11 @@ h1, h2, h3, .heading {
 
 .decks-grid {
 	display: grid;
-	grid-template-columns: repeat(2, 138px);
+	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 	gap: 10px;
-	justify-content: center;
 }
 
-.deck-card-compact { width: 138px; min-height: 170px; padding: 15px; }
+.deck-card-compact { width: 100%; min-height: 170px; padding: 15px; }
 .deck-card-shell { display: flex; flex-direction: column; height: 100%; }
 
 .deck-card-icon {
@@ -250,16 +295,10 @@ h1, h2, h3, .heading {
 
 .deck-card-progress-fill { height: 100%; border-radius: inherit; }
 
-@media (min-width: 480px) { .decks-grid { grid-template-columns: repeat(3, 138px); } }
 @media (min-width: 768px) {
-	.decks-grid { grid-template-columns: repeat(4, 172px); gap: 18px; }
-	.deck-card-compact { width: 172px; min-height: 192px; padding: 20px; }
+	.decks-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; }
+	.deck-card-compact { width: 100%; min-height: 192px; padding: 20px; }
 }
-@media (min-width: 1024px) {
-	.decks-grid { grid-template-columns: repeat(4, 172px); gap: 18px; }
-	.deck-card-compact { width: 172px; min-height: 192px; padding: 20px; }
-}
-@media (min-width: 1440px) { .decks-grid { grid-template-columns: repeat(5, 172px); } }
 
 ::view-transition-old(root),
 ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }

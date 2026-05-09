@@ -2,12 +2,12 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { User } from '@/types';
 import { AuthContext, fetchApi } from '@/hooks/use-auth';
 import { ThemeContext } from '@/hooks/use-theme';
 import { attemptRefresh, getTokenExpiry } from '@/lib/auth-client';
 import SelectionTranslateOverlay from '@/components/ui/SelectionTranslateOverlay';
+import { ToastProvider } from '@/components/ui/Toast';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -44,7 +44,7 @@ function ThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('theme', theme);
   }, [theme, mounted]);
 
-  const toggleTheme = useCallback((event?: React.MouseEvent) => {
+  const toggleTheme = useCallback(() => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
 
     if (!document.startViewTransition) {
@@ -52,21 +52,8 @@ function ThemeProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const transition = document.startViewTransition(() => {
+    document.startViewTransition(() => {
       setTheme(nextTheme);
-    });
-
-    transition.ready.then(() => {
-      const x = event?.clientX ?? window.innerWidth / 2;
-      const y = event?.clientY ?? window.innerHeight / 2;
-      const endRadius = Math.hypot(
-        Math.max(x, window.innerWidth - x),
-        Math.max(y, window.innerHeight - y),
-      );
-      document.documentElement.animate(
-        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`] },
-        { duration: 600, easing: 'ease-in-out', pseudoElement: '::view-transition-new(root)' },
-      );
     });
   }, [theme]);
 
@@ -163,11 +150,12 @@ export default function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          {children}
-          <SelectionTranslateOverlay />
+          <ToastProvider>
+            {children}
+            <SelectionTranslateOverlay />
+          </ToastProvider>
         </AuthProvider>
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

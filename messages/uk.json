@@ -234,9 +234,6 @@
     "hard": "Складно",
     "good": "Добре",
     "easy": "Легко",
-    "waitingTitle": "Очікування карток для навчання...",
-    "waitingMessage": "Наступна картка через",
-    "waitingReviewed": "Ви повторили {count, plural, one {# картку} few {# картки} other {# карток}}.",
     "completedTitle": "Сесію завершено!",
     "completedMessage": "Ви повторили {count, plural, one {# картку} few {# картки} other {# карток}}.",
     "completedBack": "До колоди",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "Перекласти",
-    "translating": "Переклад..."
+    "translating": "Переклад...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "Перефразування",

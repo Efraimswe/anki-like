@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslations } from 'next-intl';
+import ThemeToggleIcon from '@/components/ui/ThemeToggleIcon';
 
 function useNavItems() {
   const t = useTranslations('nav');
@@ -13,7 +14,6 @@ function useNavItems() {
   {
     href: '/map',
     label: t('progress'),
-    section: t('insights'),
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
@@ -83,20 +83,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   const isActive = (href: string) => pathname.startsWith(href);
 
-  const sunIcon = (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-    </svg>
-  );
-
-  const moonIcon = (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-    </svg>
-  );
-
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-(--color-bg-page) text-(--color-text-primary) p-4 md:p-4 lg:py-0 lg:pr-6 lg:pl-0 lg:gap-6">
+    <div
+      data-collapsed={String(collapsed)}
+      className="app-stage min-h-screen flex flex-col lg:flex-row lg:relative bg-(--color-bg-page) text-(--color-text-primary) p-4 md:p-4 lg:py-0 lg:pr-6 lg:pl-0 lg:gap-6"
+    >
       {/* Mobile Header */}
       <header className="lg:hidden flex items-center justify-between py-2 px-1 mb-4">
         <div className="flex items-center gap-3">
@@ -105,64 +96,69 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
           <span className="text-xl font-bold text-(--color-text-primary) heading truncate">Anki-Like</span>
         </div>
-        <button onClick={toggleTheme} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-(--color-text-secondary) hover:text-white transition-all">
-          {theme === 'dark' ? sunIcon : moonIcon}
+        <button onClick={toggleTheme} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-(--color-accent) hover:text-(--color-accent-hover) transition-colors">
+          <ThemeToggleIcon theme={theme} size={20} />
         </button>
       </header>
 
       {/* Sidebar */}
-      <aside className={`fixed top-0 bottom-0 left-0 z-30 hidden lg:flex flex-col sidebar-glass sidebar-rail shadow-2xl overflow-hidden ${collapsed ? 'w-20' : 'w-64'}`} style={{ transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-        <div className={`flex items-center justify-between h-20 px-6 ${collapsed ? 'flex-col gap-4 py-6' : ''}`}>
-          {!collapsed && <span className="text-xl font-bold text-(--color-sidebar-text) heading truncate">Anki-Like</span>}
-          <button onClick={toggle} className="p-2 rounded-xl text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-all" title={collapsed ? 'Expand' : 'Collapse'}>
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </button>
-        </div>
-
-        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto overflow-x-hidden">
-          {navItems.map((item, i) => (
-            <div key={item.href}>
-              {!collapsed && item.section && (i === 0 || navItems[i - 1].section !== item.section) && (
-                <p className="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-(--color-sidebar-text-muted) opacity-60">
-                  {item.section}
-                </p>
-              )}
-              <Link href={item.href} title={collapsed ? item.label : undefined} className={`flex items-center gap-4 rounded-2xl ${collapsed ? 'justify-center p-3' : 'px-4 py-3'} ${isActive(item.href) ? 'bg-(--color-sidebar-active-bg) text-(--color-sidebar-text) shadow-lg' : 'text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-colors duration-200'}`}>
-                <span className="shrink-0">{item.icon}</span>
-                {!collapsed && (
-                  <span className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="text-sm font-semibold tracking-wide whitespace-nowrap">{item.label}</span>
-                  </span>
-                )}
-              </Link>
-            </div>
-          ))}
-        </nav>
-
-        <div className="p-4 space-y-3">
-          <button onClick={toggleTheme} className={`flex items-center gap-4 w-full rounded-2xl text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-all ${collapsed ? 'justify-center p-3' : 'px-4 py-3'}`}>
-            {theme === 'dark' ? sunIcon : moonIcon}
-            {!collapsed && <span className="text-sm font-semibold whitespace-nowrap">{theme === 'dark' ? t('lightMode') : t('darkMode')}</span>}
-          </button>
-          <div className={`flex items-center rounded-2xl bg-(--color-sidebar-active-bg) p-3 ${collapsed ? 'justify-center' : 'gap-3'}`}>
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-(--color-accent) to-orange-400 flex items-center justify-center text-white text-sm font-bold shadow-lg">
-              {(user?.displayName || user?.email || '?')[0].toUpperCase()}
-            </div>
-            {!collapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-(--color-sidebar-text) truncate whitespace-nowrap">{user?.displayName || user?.email}</p>
-                <button onClick={signOut} className="text-[10px] uppercase font-bold text-(--color-sidebar-text-muted) hover:text-(--color-accent) transition-colors mt-0.5 whitespace-nowrap">{t('signOut')}</button>
+      <aside className="nav-sidebar fixed top-0 bottom-0 left-0 z-30 hidden lg:block sidebar-glass sidebar-rail shadow-2xl">
+        <div className="nav-sidebar-inner">
+          <nav className="flex-1 py-3 px-3 space-y-1 overflow-y-auto overflow-x-hidden">
+            {navItems.map((item) => (
+              <div key={item.href}>
+                <Link
+                  href={item.href}
+                  title={item.label}
+                  className={`flex items-center gap-4 rounded-2xl px-2 py-3 ${
+                    isActive(item.href)
+                      ? 'bg-(--color-sidebar-active-bg) text-(--color-sidebar-text) shadow-lg'
+                      : 'text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-colors duration-200'
+                  }`}
+                >
+                  <span className="shrink-0">{item.icon}</span>
+                  <span className="nav-label text-sm font-semibold tracking-wide">{item.label}</span>
+                </Link>
               </div>
-            )}
+            ))}
+          </nav>
+
+          <div className="px-3 py-4 space-y-3">
+            <button
+              onClick={toggleTheme}
+              title={theme === 'dark' ? t('lightMode') : t('darkMode')}
+              className="flex items-center gap-4 w-full rounded-2xl px-4 py-3 text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-all"
+            >
+              <span className="shrink-0 text-(--color-accent)"><ThemeToggleIcon theme={theme} size={20} /></span>
+              <span className="nav-label text-sm font-semibold">{theme === 'dark' ? t('lightMode') : t('darkMode')}</span>
+            </button>
+            <div className="flex items-center gap-3 px-2">
+              <div className="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-tr from-(--color-accent) to-orange-400 flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                {(user?.displayName || user?.email || '?')[0].toUpperCase()}
+              </div>
+              <div className="nav-label flex-1 min-w-0">
+                <p className="text-xs font-bold text-(--color-sidebar-text) truncate">{user?.displayName || user?.email}</p>
+                <button onClick={signOut} className="text-[10px] uppercase font-bold text-(--color-sidebar-text-muted) hover:text-(--color-accent) transition-colors mt-0.5">{t('signOut')}</button>
+              </div>
+            </div>
           </div>
         </div>
       </aside>
 
+      {/* Toggle — absolute on stage, pinned to sidebar/main boundary */}
+      <button
+        onClick={toggle}
+        title={collapsed ? 'Expand' : 'Collapse'}
+        className="nav-toggle hidden lg:flex z-40 w-7 h-7 items-center justify-center rounded-full bg-(--color-bg-surface) border border-(--color-border) shadow-md text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg)"
+      >
+        <svg className="nav-chevron w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+      </button>
+
       {/* Main */}
-      <main className={`flex-1 transition-all duration-300 ${collapsed ? 'lg:ml-20' : 'lg:ml-64'} ml-0 mb-20 lg:mb-0`}>
-        <div className="max-w-6xl mx-auto pt-8 pb-4">
+      <main className="app-main flex-1 mb-20 lg:mb-0">
+        <div className="w-full max-w-6xl mx-auto pt-8 pb-4 px-4 lg:px-8">
           {children}
         </div>
       </main>

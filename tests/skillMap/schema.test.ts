@@ -159,8 +159,57 @@ describe('SkillMapDocSchema', () => {
     expect(SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, validSubskill, bad], edges: [] }).success).toBe(false);
   });
 
-  it('rejects two exercises sharing the same parentId (duplicate)', () => {
+  it('accepts two exercises under the same subskill (no per-parent cap)', () => {
     const ex2 = { ...validExercise, id: 'n7', parentId: 'n2' };
-    expect(SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, validSubskill, validExercise, ex2], edges: [] }).success).toBe(false);
+    expect(SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, validSubskill, validExercise, ex2], edges: [] }).success).toBe(true);
+  });
+
+  it('accepts multiple subskill children under one subskill', () => {
+    const ss2 = { ...validSubskill, id: 'n8', parentId: 'n2' };
+    expect(SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, validSubskill, ss2], edges: [] }).success).toBe(true);
+  });
+
+  it('accepts subskill nested under subskill', () => {
+    const nested = { ...validSubskill, id: 'n_deep', parentId: 'n2' };
+    expect(SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, validSubskill, nested], edges: [] }).success).toBe(true);
+  });
+
+  it('accepts subskill three levels deep (skill → subskill → subskill → subskill)', () => {
+    const lvl2 = { ...validSubskill, id: 'n_lvl2', parentId: 'n2' };
+    const lvl3 = { ...validSubskill, id: 'n_lvl3', parentId: 'n_lvl2' };
+    expect(SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, validSubskill, lvl2, lvl3], edges: [] }).success).toBe(true);
+  });
+
+  it('accepts exercise under a deeply-nested subskill', () => {
+    const lvl2 = { ...validSubskill, id: 'n_lvl2', parentId: 'n2' };
+    const deepEx = { ...validExercise, id: 'n_deep_ex', parentId: 'n_lvl2' };
+    expect(SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, validSubskill, lvl2, deepEx], edges: [] }).success).toBe(true);
+  });
+
+  it('allows mixed children (subskill + exercise under same parent)', () => {
+    const ss2 = { ...validSubskill, id: 'n_ss2', parentId: 'n2' };
+    const result = SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, validSubskill, validExercise, ss2], edges: [] });
+    expect(result.success).toBe(true);
+  });
+
+  it('allows a subskill with both a sub-skill child and an exercise child', () => {
+    const child_ss = { ...validSubskill, id: 'n_child_ss', parentId: 'n2' };
+    const child_ex = { ...validExercise, id: 'n_child_ex', parentId: 'n2' };
+    expect(SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, validSubskill, child_ss, child_ex], edges: [] }).success).toBe(true);
+  });
+
+  it('rejects subskill whose parent is an exercise', () => {
+    const bad = { ...validSubskill, id: 'n_bad', parentId: 'n3' };
+    expect(SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, validSubskill, validExercise, bad], edges: [] }).success).toBe(false);
+  });
+
+  it('rejects cycle (a.parentId = b, b.parentId = a)', () => {
+    const a = { ...validSubskill, id: 'n_a', parentId: 'n_b' };
+    const b = { ...validSubskill, id: 'n_b', parentId: 'n_a' };
+    const result = SkillMapDocSchema.safeParse({ title: 'x', nodes: [validSkill, a, b], edges: [] });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.some((i) => i.message.includes('cycle'))).toBe(true);
+    }
   });
 });

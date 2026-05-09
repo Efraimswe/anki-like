@@ -9,8 +9,10 @@ import NodeView from './NodeView';
 import NodeToolbar from './NodeToolbar';
 import EdgeLayer from './EdgeLayer';
 import Toolbar, { type Tool } from './Toolbar';
+import SkillPicker from './SkillPicker';
+import ChildTypePicker, { type ChildType } from './ChildTypePicker';
 import ZoomControls from './ZoomControls';
-import { toCanvasCoords, intersectsRect } from './geometry';
+import { toCanvasCoords, intersectsRect, resolveOverlaps } from './geometry';
 import type { SkillMapNode, SkillName, Side } from '@/types/skillMap';
 
 interface Viewport { x: number; y: number; z: number }
@@ -112,9 +114,18 @@ export default function MapPage() {
   // Tool state
   const [tool, setTool] = useState<Tool>('select');
   const connectorKind = 'straight' as const;
-  const [skillName, setSkillName] = useState<SkillName>('Reading');
   const prevToolRef = useRef<Tool>('select');
   const spaceHeld = useRef(false);
+
+  // Skill picker — opens at click position when tool === 'skill'.
+  const [skillPicker, setSkillPicker] = useState<
+    { screenX: number; screenY: number; canvasX: number; canvasY: number } | null
+  >(null);
+
+  // Child-type picker — opens when "+" is clicked on a subskill.
+  const [childTypePicker, setChildTypePicker] = useState<
+    { parentId: string; side: Side; screenX: number; screenY: number; exerciseDisabled: boolean } | null
+  >(null);
 
   // Selection
   const [selectedNodes, setSelectedNodes] = useState<Set<string>>(new Set());
@@ -249,13 +260,25 @@ export default function MapPage() {
         marqueeStart: { cx: cv.x, cy: cv.y },
       };
     } else if (tool === 'skill') {
-      const id = `n_${uid()}`;
-      const node: SkillMapNode = { id, type: 'skill', x: cv.x - 110, y: cv.y - 60, w: 220, h: 120, text: skillName, color: SKILL_NAME_TO_COLOR[skillName] };
-      editDispatch({ type: 'CREATE_NODE', node }, true, docRef.current);
-      setSelectedNodes(new Set([id]));
-      setTool('select');
+      setSkillPicker({ screenX: e.clientX, screenY: e.clientY, canvasX: cv.x, canvasY: cv.y });
     }
-  }, [tool, skillName, editDispatch]);
+  }, [tool]);
+
+  const handlePickSkill = useCallback((name: SkillName) => {
+    if (!skillPicker) return;
+    const id = `n_${uid()}`;
+    const node: SkillMapNode = {
+      id, type: 'skill',
+      x: skillPicker.canvasX - 110, y: skillPicker.canvasY - 60,
+      w: 220, h: 120,
+      text: name,
+      color: SKILL_NAME_TO_COLOR[name],
+    };
+    editDispatch({ type: 'CREATE_NODE', node }, true, docRef.current);
+    setSelectedNodes(new Set([id]));
+    setSkillPicker(null);
+    setTool('select');
+  }, [skillPicker, editDispatch]);
 
   // ─── Mouse move ───
   const onMouseMove = useCallback((e: React.MouseEvent) => {
@@ -420,26 +443,14 @@ const handleWaypointDragStart = useCallback((edgeId: string, e: React.MouseEvent
     drag.current = { type: 'waypoint', startX: e.clientX, startY: e.clientY, waypointEdgeId: edgeId };
   }, [editDispatch]);
 
-  const handleSpawnChild = useCallback((parentId: string, side: Side) => {
+  const createChild = useCallback((parentId: string, side: Side, childType: 'subskill' | 'exercise') => {
     const parent = docRef.current.nodes.find((n) => n.id === parentId);
     if (!parent) return;
 
     const GAP = 80;
     const id = `n_${uid()}`;
-    let childW: number, childH: number, childType: 'subskill' | 'exercise';
-
-    if (parent.type === 'skill') {
-      childType = 'subskill'; childW = 180; childH = 90;
-    } else if (parent.type === 'subskill') {
-      // Guard: only one exercise per subskill
-      const hasExercise = docRef.current.nodes.some(
-        (n) => n.type === 'exercise' && (n as { parentId: string }).parentId === parentId
-      );
-      if (hasExercise) return;
-      childType = 'exercise'; childW = 160; childH = 72;
-    } else {
-      return;
-    }
+    const childW = childType === 'subskill' ? 180 : 160;
+    const childH = childType === 'subskill' ? 90  : 72;
 
     const parentCx = parent.x + parent.w / 2;
     const parentCy = parent.y + parent.h / 2;
@@ -457,10 +468,51 @@ const handleWaypointDragStart = useCallback((edgeId: string, e: React.MouseEvent
       parentId,
     } as SkillMapNode;
 
-    editDispatch({ type: 'CREATE_NODE', node }, true, docRef.current);
+    // Physics: keep the parent anchored, let the new node and any
+    // existing nodes shift to clear overlaps.
+    const all = [...docRef.current.nodes, node];
+    const resolved = resolveOverlaps(all, { lockedIds: new Set([parent.id]) });
+    const resolvedNew = resolved.find((n) => n.id === id) ?? node;
+
+    for (const n of resolved) {
+      if (n.id === id) continue;
+      const orig = docRef.current.nodes.find((o) => o.id === n.id);
+      if (orig && (orig.x !== n.x || orig.y !== n.y)) {
+        dispatch({ type: 'UPDATE_NODE', id: n.id, patch: { x: n.x, y: n.y } });
+      }
+    }
+
+    editDispatch({ type: 'CREATE_NODE', node: resolvedNew }, true, docRef.current);
     setSelectedNodes(new Set([id]));
     setEditingNodeId(id);
-  }, [editDispatch]);
+  }, [editDispatch, dispatch]);
+
+  const handleSpawnChild = useCallback((parentId: string, side: Side, e: React.MouseEvent) => {
+    const parent = docRef.current.nodes.find((n) => n.id === parentId);
+    if (!parent) return;
+
+    if (parent.type === 'skill') {
+      createChild(parentId, side, 'subskill');
+      return;
+    }
+
+    if (parent.type === 'subskill') {
+      const hasExercise = docRef.current.nodes.some(
+        (n) => n.type === 'exercise' && (n as { parentId: string }).parentId === parentId
+      );
+      setChildTypePicker({
+        parentId, side,
+        screenX: e.clientX, screenY: e.clientY,
+        exerciseDisabled: hasExercise,
+      });
+    }
+  }, [createChild]);
+
+  const handlePickChildType = useCallback((type: ChildType) => {
+    if (!childTypePicker) return;
+    createChild(childTypePicker.parentId, childTypePicker.side, type);
+    setChildTypePicker(null);
+  }, [childTypePicker, createChild]);
 
   const structuralLinks = useMemo(() =>
     doc.nodes
@@ -541,7 +593,7 @@ const handleWaypointDragStart = useCallback((edgeId: string, e: React.MouseEvent
                 onDoubleClick={() => handleNodeDoubleClick(node)}
                 onTextCommit={(text) => handleTextCommit(node, text)}
                 onResizeStart={(corner, e) => handleResizeStart(node.id, corner, e)}
-                onSpawnChild={(side) => handleSpawnChild(node.id, side)}
+                onSpawnChild={(side, e) => handleSpawnChild(node.id, side, e)}
               />
             );
           })}
@@ -609,12 +661,26 @@ const handleWaypointDragStart = useCallback((edgeId: string, e: React.MouseEvent
         {isPending ? 'Saving…' : isError ? 'Save failed' : ''}
       </div>
 
-      <Toolbar
-        tool={tool}
-        skillName={skillName}
-        onTool={setTool}
-        onSkillName={setSkillName}
-      />
+      <Toolbar tool={tool} onTool={setTool} />
+
+      {skillPicker && (
+        <SkillPicker
+          screenX={skillPicker.screenX}
+          screenY={skillPicker.screenY}
+          onPick={handlePickSkill}
+          onClose={() => { setSkillPicker(null); setTool('select'); }}
+        />
+      )}
+
+      {childTypePicker && (
+        <ChildTypePicker
+          screenX={childTypePicker.screenX}
+          screenY={childTypePicker.screenY}
+          exerciseDisabled={childTypePicker.exerciseDisabled}
+          onPick={handlePickChildType}
+          onClose={() => setChildTypePicker(null)}
+        />
+      )}
 
       <ZoomControls
         zoom={vp.z}

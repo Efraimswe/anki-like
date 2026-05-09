@@ -234,9 +234,6 @@
     "hard": "Trudne",
     "good": "Dobrze",
     "easy": "Łatwe",
-    "waitingTitle": "Oczekiwanie na fiszki do nauki...",
-    "waitingMessage": "Następna fiszka za",
-    "waitingReviewed": "Powtórzono {count} fiszek do tej pory.",
     "completedTitle": "Sesja zakończona!",
     "completedMessage": "Powtórzono {count} fiszek.",
     "completedBack": "Wróć do talii",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "Przetłumacz",
-    "translating": "Tłumaczenie..."
+    "translating": "Tłumaczenie...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "Parafrazy",

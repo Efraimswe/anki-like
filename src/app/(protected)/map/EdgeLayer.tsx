@@ -91,13 +91,29 @@ export default function EdgeLayer({
         const toSide   = nearestSideToPoint(toNode, fromCenter.x, fromCenter.y);
         const p1 = portPoint(fromNode, fromSide);
         const p2 = portPoint(toNode, toSide);
+
+        // Smooth cubic-bezier curve — control points extend outward from each port.
+        const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+        const off = Math.min(160, Math.max(50, dist * 0.45));
+        const ctrl = (side: 't' | 'b' | 'l' | 'r', pt: { x: number; y: number }) => {
+          if (side === 'r') return { x: pt.x + off, y: pt.y };
+          if (side === 'l') return { x: pt.x - off, y: pt.y };
+          if (side === 't') return { x: pt.x,       y: pt.y - off };
+          return                  { x: pt.x,       y: pt.y + off }; // 'b'
+        };
+        const c1 = ctrl(fromSide, p1);
+        const c2 = ctrl(toSide,   p2);
+        const d = `M ${p1.x} ${p1.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${p2.x} ${p2.y}`;
+
         return (
-          <line
+          <path
             key={`sl-${link.from}-${link.to}`}
-            x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-            stroke="var(--structural-stroke)"
-            strokeWidth={2}
+            d={d}
+            fill="none"
+            stroke="#d14a2c"
+            strokeWidth={2.5}
             strokeLinecap="round"
+            strokeDasharray="2 8"
             style={{ pointerEvents: 'none' }}
           />
         );

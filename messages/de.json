@@ -234,9 +234,6 @@
     "hard": "Schwer",
     "good": "Gut",
     "easy": "Leicht",
-    "waitingTitle": "Warte auf Lernkarten...",
-    "waitingMessage": "Nächste Karte in",
-    "waitingReviewed": "Du hast bisher {count, plural, one {# Karte} other {# Karten}} wiederholt.",
     "completedTitle": "Sitzung abgeschlossen!",
     "completedMessage": "Du hast {count, plural, one {# Karte} other {# Karten}} wiederholt.",
     "completedBack": "Zurück zum Deck",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "Übersetzen",
-    "translating": "Übersetze..."
+    "translating": "Übersetze...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "Umformulierungen",

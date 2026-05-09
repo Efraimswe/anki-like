@@ -234,9 +234,6 @@
     "hard": "困难",
     "good": "良好",
     "easy": "简单",
-    "waitingTitle": "等待学习卡片...",
-    "waitingMessage": "下一张卡片将在",
-    "waitingReviewed": "您已复习了 {count} 张卡片。",
     "completedTitle": "学习完成！",
     "completedMessage": "您复习了 {count} 张卡片。",
     "completedBack": "返回卡组",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "翻译",
-    "translating": "翻译中..."
+    "translating": "翻译中...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "改写练习",

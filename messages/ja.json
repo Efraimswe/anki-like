@@ -234,9 +234,6 @@
     "hard": "難しい",
     "good": "良い",
     "easy": "簡単",
-    "waitingTitle": "学習カードを待機中...",
-    "waitingMessage": "次のカードまで",
-    "waitingReviewed": "{count}枚のカードを復習しました。",
     "completedTitle": "学習完了！",
     "completedMessage": "{count}枚のカードを復習しました。",
     "completedBack": "デッキに戻る",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "翻訳",
-    "translating": "翻訳中..."
+    "translating": "翻訳中...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "言い換え練習",

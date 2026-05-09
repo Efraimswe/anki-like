@@ -234,9 +234,6 @@
     "hard": "Moeilijk",
     "good": "Goed",
     "easy": "Gemakkelijk",
-    "waitingTitle": "Wachten op leerkaarten...",
-    "waitingMessage": "Volgende kaart over",
-    "waitingReviewed": "Je hebt {count} kaart(en) herhaald tot nu toe.",
     "completedTitle": "Sessie voltooid!",
     "completedMessage": "Je hebt {count} kaart(en) herhaald.",
     "completedBack": "Terug naar deck",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "Vertalen",
-    "translating": "Vertalen..."
+    "translating": "Vertalen...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "Herformuleringen",

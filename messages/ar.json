@@ -234,9 +234,6 @@
     "hard": "صعب",
     "good": "جيد",
     "easy": "سهل",
-    "waitingTitle": "في انتظار بطاقات التعلم...",
-    "waitingMessage": "البطاقة التالية خلال",
-    "waitingReviewed": "راجعت {count} بطاقة حتى الآن.",
     "completedTitle": "اكتملت الجلسة!",
     "completedMessage": "راجعت {count} بطاقة.",
     "completedBack": "العودة للحزمة",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "ترجمة",
-    "translating": "جار الترجمة..."
+    "translating": "جار الترجمة...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "إعادة الصياغة",

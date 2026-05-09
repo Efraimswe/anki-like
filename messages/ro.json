@@ -234,9 +234,6 @@
     "hard": "Greu",
     "good": "Bine",
     "easy": "Ușor",
-    "waitingTitle": "Waiting for learning cards...",
-    "waitingMessage": "Next card due in",
-    "waitingReviewed": "You've reviewed {count, plural, one {# card} other {# cards}} so far.",
     "completedTitle": "Session Complete!",
     "completedMessage": "You reviewed {count, plural, one {# card} other {# cards}}.",
     "completedBack": "Back to Deck",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "Translate",
-    "translating": "Translating..."
+    "translating": "Translating...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "Rephrasings",

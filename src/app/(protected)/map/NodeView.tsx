@@ -35,7 +35,7 @@ interface NodeViewProps {
   onDoubleClick: () => void;
   onTextCommit: (text: string) => void;
   onResizeStart: (corner: string, e: React.MouseEvent) => void;
-  onSpawnChild: (side: Side) => void;
+  onSpawnChild: (side: Side, e: React.MouseEvent) => void;
   zoom: number;
 }
 
@@ -257,28 +257,37 @@ export default function NodeView({
         />
       ))}
 
-      {/* Spawn dots (Skill → Subskill, Subskill → Exercise) */}
+      {/* Spawn buttons (Skill → Subskill, Subskill → Exercise) */}
       {showSpawnArrows && !editing && SIDES.map((side) => (
-        <div
+        <button
           key={side}
           title="Add child"
           style={{
             position: 'absolute',
             ...arrowPos(side),
-            width: 12, height: 12,
+            width: 22, height: 22,
             borderRadius: '50%',
-            background: '#3b82f6',
-            border: '2px solid white',
+            background: '#dbeafe',
+            border: '2px solid #3b82f6',
+            color: '#3b82f6',
             cursor: 'pointer',
             zIndex: 22,
-            boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 0,
+            boxShadow: '0 1px 4px rgba(0,0,0,0.18)',
           }}
           onMouseDown={(e) => {
             e.stopPropagation();
             e.preventDefault();
-            onSpawnChild(side);
+            onSpawnChild(side, e);
           }}
-        />
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
       ))}
     </div>
   );

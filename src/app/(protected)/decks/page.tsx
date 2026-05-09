@@ -10,6 +10,7 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useToast } from '@/components/ui/Toast';
 import type { Deck } from '@/types';
 import { useTranslations } from 'next-intl';
 
@@ -25,6 +26,7 @@ export default function DeckListPage() {
   const t = useTranslations('dashboard');
   const tc = useTranslations('common');
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [newName, setNewName] = useState('');
   const [showCreate, setShowCreate] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -45,8 +47,20 @@ export default function DeckListPage() {
       ]);
       return { previous };
     },
-    onError: (_err, _name, ctx) => {
+    onError: (err, _name, ctx) => {
       queryClient.setQueryData(deckKeys.lists(), ctx?.previous);
+      toast({
+        type: 'error',
+        title: 'Could not create deck',
+        description: err instanceof Error ? err.message : 'Please try again.',
+      });
+    },
+    onSuccess: (deck) => {
+      toast({
+        type: 'success',
+        title: 'Deck created',
+        description: `"${deck.name}" is ready for cards.`,
+      });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
@@ -78,13 +92,26 @@ export default function DeckListPage() {
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: deckKeys.lists() });
       const previous = queryClient.getQueryData<Deck[]>(deckKeys.lists());
+      const deletedName = previous?.find((d) => d.id === id)?.name;
       queryClient.setQueryData<Deck[]>(deckKeys.lists(), (old = []) =>
         old.filter((d) => d.id !== id),
       );
-      return { previous };
+      return { previous, deletedName };
     },
-    onError: (_err, _id, ctx) => {
+    onError: (err, _id, ctx) => {
       queryClient.setQueryData(deckKeys.lists(), ctx?.previous);
+      toast({
+        type: 'error',
+        title: 'Could not delete deck',
+        description: err instanceof Error ? err.message : 'Please try again.',
+      });
+    },
+    onSuccess: (_data, _id, ctx) => {
+      toast({
+        type: 'success',
+        title: 'Deck deleted',
+        description: ctx?.deletedName ? `"${ctx.deletedName}" was removed.` : undefined,
+      });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
@@ -117,8 +144,7 @@ export default function DeckListPage() {
   };
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="decks-content-shell space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8">
+    <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <h1 className="text-3xl md:text-5xl font-bold text-(--color-text-primary) tracking-tight">
@@ -199,7 +225,6 @@ export default function DeckListPage() {
             </div>
           )}
         </section>
-      </div>
 
       {deletingDeck && (
         <ConfirmDialog title={t('deleteDeckTitle')} message={t('deleteDeckMessage', { name: deletingDeck.name })} onConfirm={handleDelete} onCancel={() => setDeletingDeck(null)} />

@@ -234,9 +234,6 @@
     "hard": "어려움",
     "good": "좋음",
     "easy": "쉬움",
-    "waitingTitle": "학습 카드 대기 중...",
-    "waitingMessage": "다음 카드까지",
-    "waitingReviewed": "지금까지 {count}장의 카드를 복습했습니다.",
     "completedTitle": "학습 완료!",
     "completedMessage": "{count}장의 카드를 복습했습니다.",
     "completedBack": "덱으로 돌아가기",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "번역",
-    "translating": "번역 중..."
+    "translating": "번역 중...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "패러프레이징",

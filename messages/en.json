@@ -44,7 +44,15 @@
       "emailTaken": "An account with this email already exists",
       "sessionExpired": "Your session has expired. Please sign in again.",
       "unauthorized": "Unauthorized",
-      "network": "Network error. Please try again."
+      "network": "Network error. Please try again.",
+      "emailRequired": "Please enter your email address",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Please enter your password",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "passwordNeedsUppercase": "Password must include at least one uppercase letter",
+      "passwordNeedsDigit": "Password must include at least one number",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
     }
   },
   "onboarding": {
@@ -234,9 +242,6 @@
     "hard": "Hard",
     "good": "Good",
     "easy": "Easy",
-    "waitingTitle": "Waiting for learning cards...",
-    "waitingMessage": "Next card due in",
-    "waitingReviewed": "You've reviewed {count, plural, one {# card} other {# cards}} so far.",
     "completedTitle": "Session Complete!",
     "completedMessage": "You reviewed {count, plural, one {# card} other {# cards}}.",
     "completedBack": "Back to Deck",
@@ -321,7 +326,10 @@
   },
   "translate": {
     "buttonLabel": "Translate",
-    "translating": "Translating..."
+    "translating": "Translating...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "Rephrasings",
