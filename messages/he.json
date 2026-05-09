@@ -234,9 +234,6 @@
     "hard": "קשה",
     "good": "טוב",
     "easy": "קל",
-    "waitingTitle": "ממתין לכרטיסיות לימוד...",
-    "waitingMessage": "הכרטיסייה הבאה בעוד",
-    "waitingReviewed": "חזרת על {count} כרטיסיות עד כה.",
     "completedTitle": "המפגש הסתיים!",
     "completedMessage": "חזרת על {count} כרטיסיות.",
     "completedBack": "חזרה לחפיסה",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "תרגם",
-    "translating": "מתרגם..."
+    "translating": "מתרגם...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "Rephrasings",

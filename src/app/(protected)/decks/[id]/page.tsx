@@ -12,6 +12,7 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useToast } from '@/components/ui/Toast';
 import type { Card, Deck } from '@/types';
 import { useTranslations } from 'next-intl';
 
@@ -25,6 +26,7 @@ export default function DeckDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const [showCreate, setShowCreate] = useState(false);
   const [newFront, setNewFront] = useState('');
@@ -56,6 +58,18 @@ export default function DeckDetailPage() {
         prev ? { ...prev, cards: [...prev.cards, ...newCards], cardCount: prev.cardCount + newCards.length } : prev,
       );
       queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
+      toast({
+        type: 'success',
+        title: newCards.length > 1 ? `${newCards.length} cards added` : 'Card added',
+        description: newCards.length === 1 ? newCards[0].front : undefined,
+      });
+    },
+    onError: (err) => {
+      toast({
+        type: 'error',
+        title: 'Could not add card',
+        description: err instanceof Error ? err.message : 'Please try again.',
+      });
     },
   });
 

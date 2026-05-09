@@ -3,6 +3,7 @@ export interface User {
   id: string;
   email: string;
   displayName: string | null;
+  nativeLanguage?: string | null;
   createdAt?: string;
 }
 

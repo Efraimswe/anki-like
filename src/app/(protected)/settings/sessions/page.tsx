@@ -36,7 +36,7 @@ export default function SettingsSessionsPage() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <div className="space-y-6 max-w-2xl">
+        <div className="space-y-6">
           <h3 className="text-xl font-bold px-2 heading">{t('heading')}</h3>
           <div className="space-y-4">
             {sessions.map((session) => (

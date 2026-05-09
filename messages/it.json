@@ -234,9 +234,6 @@
     "hard": "Difficile",
     "good": "Bene",
     "easy": "Facile",
-    "waitingTitle": "In attesa di carte di apprendimento...",
-    "waitingMessage": "Prossima carta tra",
-    "waitingReviewed": "Hai rivisto {count, plural, one {# carta} other {# carte}} finora.",
     "completedTitle": "Sessione completata!",
     "completedMessage": "Hai rivisto {count, plural, one {# carta} other {# carte}}.",
     "completedBack": "Torna al mazzo",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "Traduci",
-    "translating": "Traduzione..."
+    "translating": "Traduzione...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "Riformulazioni",

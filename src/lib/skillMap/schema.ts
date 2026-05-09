@@ -88,15 +88,30 @@ export const SkillMapDocSchema = z
   })
   .superRefine((doc, ctx) => {
     const byId = new Map(doc.nodes.map((n) => [n.id, n]));
-    const subskillsWithExercise = new Set<string>();
 
     doc.nodes.forEach((n, i) => {
       if (n.type === 'subskill') {
         const p = byId.get(n.parentId);
         if (!p) {
           ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['nodes', i, 'parentId'], message: 'Unknown parent id' });
-        } else if (p.type !== 'skill') {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['nodes', i, 'parentId'], message: 'Subskill parent must be a Skill' });
+        } else if (p.type !== 'skill' && p.type !== 'subskill') {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['nodes', i, 'parentId'], message: 'Subskill parent must be a Skill or Subskill' });
+        } else {
+          // Cycle check: walk parentId chain
+          const visited = new Set<string>();
+          let cur: string | undefined = n.parentId;
+          let steps = 0;
+          while (cur && steps < NODE_CAP) {
+            if (visited.has(cur)) {
+              ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['nodes', i, 'parentId'], message: 'Subskill parent chain forms a cycle' });
+              break;
+            }
+            visited.add(cur);
+            const ancestor = byId.get(cur);
+            if (!ancestor || ancestor.type !== 'subskill') break;
+            cur = ancestor.parentId;
+            steps++;
+          }
         }
       }
       if (n.type === 'exercise') {
@@ -105,10 +120,6 @@ export const SkillMapDocSchema = z
           ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['nodes', i, 'parentId'], message: 'Unknown parent id' });
         } else if (p.type !== 'subskill') {
           ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['nodes', i, 'parentId'], message: 'Exercise parent must be a Subskill' });
-        } else if (subskillsWithExercise.has(n.parentId)) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['nodes', i, 'parentId'], message: 'Subskill already has an Exercise' });
-        } else {
-          subskillsWithExercise.add(n.parentId);
         }
       }
     });

@@ -3,7 +3,11 @@ import { SkillLevelsSchema } from '@/lib/onboarding/skillLevels';
 
 export const signUpSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
+    .regex(/[0-9]/, 'Password must include at least one number'),
   displayName: z.string().min(1).max(100).optional(),
 });
 

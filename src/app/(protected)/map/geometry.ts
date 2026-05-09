@@ -164,6 +164,62 @@ export function intersectsRect(
   );
 }
 
+// Iteratively push overlapping nodes apart along the axis of minimum
+// penetration. `lockedIds` are anchors that don't move; everyone else
+// shifts. Returns a new array with adjusted x/y; original positions are
+// preserved on disjoint nodes.
+export function resolveOverlaps(
+  nodes: SkillMapNode[],
+  opts?: { padding?: number; iterations?: number; lockedIds?: Set<string> }
+): SkillMapNode[] {
+  const padding = opts?.padding ?? 24;
+  const iterations = opts?.iterations ?? 60;
+  const locked = opts?.lockedIds ?? new Set<string>();
+  const result = nodes.map((n) => ({ ...n }));
+  const half = padding / 2;
+
+  for (let iter = 0; iter < iterations; iter++) {
+    let moved = false;
+    for (let i = 0; i < result.length; i++) {
+      for (let j = i + 1; j < result.length; j++) {
+        const a = result[i];
+        const b = result[j];
+        const aL = a.x - half, aR = a.x + a.w + half;
+        const aT = a.y - half, aB = a.y + a.h + half;
+        const bL = b.x - half, bR = b.x + b.w + half;
+        const bT = b.y - half, bB = b.y + b.h + half;
+
+        const overlapX = Math.min(aR, bR) - Math.max(aL, bL);
+        const overlapY = Math.min(aB, bB) - Math.max(aT, bT);
+        if (overlapX <= 0 || overlapY <= 0) continue;
+
+        const aLocked = locked.has(a.id);
+        const bLocked = locked.has(b.id);
+        if (aLocked && bLocked) continue;
+
+        if (overlapX < overlapY) {
+          const push = overlapX + 1;
+          const aIsLeft = a.x + a.w / 2 < b.x + b.w / 2;
+          const dirA = aIsLeft ? -1 : 1;
+          if (aLocked)      b.x += -dirA * push;
+          else if (bLocked) a.x +=  dirA * push;
+          else { a.x += dirA * push / 2; b.x += -dirA * push / 2; }
+        } else {
+          const push = overlapY + 1;
+          const aIsTop = a.y + a.h / 2 < b.y + b.h / 2;
+          const dirA = aIsTop ? -1 : 1;
+          if (aLocked)      b.y += -dirA * push;
+          else if (bLocked) a.y +=  dirA * push;
+          else { a.y += dirA * push / 2; b.y += -dirA * push / 2; }
+        }
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  return result;
+}
+
 // Which ortho segment index corresponds to a given drag handle index.
 // Axis is locked from the stable segment descriptor.
 export function segAxis(fromSide: Side, toSide: Side, segIdx: number): 'h' | 'v' {

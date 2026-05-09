@@ -2,22 +2,24 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { fetchApi } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
+import { getLanguageByCode } from '@/lib/onboarding/languages';
+import { useTranslations } from 'next-intl';
 
 type ButtonPosition = {
   top: number;
   left: number;
 };
 
+type Translation = { text: string; match: number };
+
 type TranslationModalState = {
   originalText: string;
-  translation: string;
+  main: Translation | null;
+  alternatives: Translation[];
   loading: boolean;
   error: string;
 } | null;
-
-const APP_NAME = 'Anki-Like';
-const NATIVE_LANGUAGE = 'Russian';
 
 function getSelectionText() {
   return window.getSelection()?.toString().trim() ?? '';
@@ -39,6 +41,11 @@ export default function SelectionTranslateOverlay() {
   const [buttonPosition, setButtonPosition] = useState<ButtonPosition | null>(null);
   const [modalState, setModalState] = useState<TranslationModalState>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const { user } = useAuth();
+  const nativeCode = user?.nativeLanguage ?? null;
+  const nativeLabel = nativeCode ? (getLanguageByCode(nativeCode)?.name ?? nativeCode) : '';
+  const t = useTranslations('translate');
 
   useEffect(() => {
     setMounted(true);
@@ -129,49 +136,85 @@ export default function SelectionTranslateOverlay() {
   }
 
   const openModal = async () => {
-    if (!selectedText) {
+    if (!selectedText || !nativeCode) return;
+
+    const today = new Date().toISOString().slice(0, 10);
+    let quota = { date: today, chars: 0 };
+    try {
+      const raw = localStorage.getItem('mm_translate_quota');
+      if (raw) {
+        const parsed = JSON.parse(raw) as { date: string; chars: number };
+        if (parsed.date === today) quota = parsed;
+      }
+    } catch { /* ignore malformed json */ }
+
+    if (quota.chars + selectedText.length > 5000) {
+      setModalState({
+        originalText: selectedText,
+        main: null,
+        alternatives: [],
+        loading: false,
+        error: t('limitReached'),
+      });
+      setButtonPosition(null);
       return;
     }
 
-    setModalState({
-      originalText: selectedText,
-      translation: '',
-      loading: true,
-      error: '',
-    });
+    setModalState({ originalText: selectedText, main: null, alternatives: [], loading: true, error: '' });
     setButtonPosition(null);
 
     try {
-      const response = await fetchApi<{ translation: string }>('/api/translate', {
-        method: 'POST',
-        body: JSON.stringify({
-          text: selectedText,
-          appName: APP_NAME,
-          nativeLanguage: NATIVE_LANGUAGE,
-        }),
-      });
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(selectedText)}&langpair=en|${nativeCode}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`MyMemory ${res.status}`);
+      const data = await res.json() as {
+        responseData?: { translatedText?: string; match?: number | string };
+        matches?: Array<{ translation?: string; match?: number | string }> | null;
+        responseStatus?: number;
+        quotaFinished?: boolean;
+      };
+
+      if (data.quotaFinished || data.responseStatus === 429) {
+        throw new Error(t('limitReached'));
+      }
+
+      const mainText: string = data?.responseData?.translatedText ?? '';
+      const mainMatch: number =
+        typeof data?.responseData?.match === 'number'
+          ? data.responseData.match
+          : parseFloat(String(data?.responseData?.match ?? '0')) || 0;
+      if (!mainText) throw new Error('No translation returned');
+
+      const alternatives: Translation[] = (Array.isArray(data?.matches) ? data.matches : [])
+        .map((m) => ({
+          text: typeof m.translation === 'string' ? m.translation.trim() : '',
+          match: typeof m.match === 'number' ? m.match : parseFloat(String(m.match ?? '0')) || 0,
+        }))
+        .filter((m) => m.text && m.text.toLowerCase() !== mainText.trim().toLowerCase())
+        .filter((m, i, arr) => arr.findIndex((x) => x.text.toLowerCase() === m.text.toLowerCase()) === i)
+        .sort((a, b) => b.match - a.match)
+        .slice(0, 3);
+
+      quota = { date: today, chars: quota.chars + selectedText.length };
+      try { localStorage.setItem('mm_translate_quota', JSON.stringify(quota)); } catch { /* ignore */ }
 
       setModalState((current) => {
-        if (!current || current.originalText !== selectedText) {
-          return current;
-        }
-
+        if (!current || current.originalText !== selectedText) return current;
         return {
           originalText: current.originalText,
-          translation: response.translation,
+          main: { text: mainText.trim(), match: mainMatch },
+          alternatives,
           loading: false,
           error: '',
         };
       });
     } catch (error) {
       setModalState((current) => {
-        if (!current || current.originalText !== selectedText) {
-          return current;
-        }
-
+        if (!current || current.originalText !== selectedText) return current;
         return {
           originalText: current.originalText,
-          translation: '',
+          main: null,
+          alternatives: [],
           loading: false,
           error: error instanceof Error ? error.message : 'Translation failed',
         };
@@ -188,7 +231,7 @@ export default function SelectionTranslateOverlay() {
 
   return createPortal(
     <>
-      {buttonPosition ? (
+      {buttonPosition && nativeCode ? (
         <button
           ref={buttonRef}
           type="button"
@@ -197,7 +240,7 @@ export default function SelectionTranslateOverlay() {
           className="fixed z-[80] rounded-full bg-orange-500 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-orange-500/25 transition-transform hover:scale-[1.03] hover:bg-orange-600"
           style={{ top: buttonPosition.top, left: buttonPosition.left }}
         >
-          Translate
+          {t('buttonLabel')}
         </button>
       ) : null}
 
@@ -210,14 +253,34 @@ export default function SelectionTranslateOverlay() {
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-(--color-text-muted)">Selected text</p>
             <p className="mt-4 text-2xl font-semibold leading-snug text-black">{modalState.originalText}</p>
             <div className="mt-6 rounded-3xl bg-neutral-100 px-6 py-5 text-left">
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500">{NATIVE_LANGUAGE}</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500">{nativeLabel}</p>
               {modalState.loading ? (
-                <p className="mt-3 text-base font-medium text-neutral-500">Translating...</p>
+                <p className="mt-3 text-base font-medium text-neutral-500">{t('translating')}</p>
               ) : modalState.error ? (
                 <p className="mt-3 text-base font-medium text-red-500">{modalState.error}</p>
-              ) : (
-                <p className="mt-3 text-xl font-semibold leading-relaxed text-black">{modalState.translation}</p>
-              )}
+              ) : modalState.main ? (
+                <div className="mt-3 space-y-3">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="text-xl font-semibold leading-relaxed text-black">{modalState.main.text}</p>
+                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                      {Math.round(modalState.main.match * 100)}%
+                    </span>
+                  </div>
+                  {modalState.alternatives.length > 0 && (
+                    <ul className="space-y-2 border-t border-neutral-200 pt-3">
+                      {modalState.alternatives.map((alt, i) => (
+                        <li key={`${alt.text}-${i}`} className="flex items-baseline justify-between gap-3">
+                          <span className="text-base font-medium text-neutral-700">{alt.text}</span>
+                          <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                            {Math.round(alt.match * 100)}%
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ) : null}
+              <p className="mt-5 text-[11px] font-medium text-neutral-400">{t('disclosure')}</p>
             </div>
           </div>
         </div>

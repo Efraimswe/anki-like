@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Type, BarChart3, Palette } from 'lucide-react';
 import type { SkillMapNode } from '@/types/skillMap';
 import { LEVELS, type Level } from '@/lib/onboarding/levels';
 import { type SubskillStatus } from '@/lib/skillMap/schema';
@@ -35,6 +36,8 @@ interface NodeToolbarProps {
 export default function NodeToolbar({ node, vp, skillLevel, onPatchNode, onChangeSkillLevel }: NodeToolbarProps) {
   const [levelOpen, setLevelOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
+  const [sizeOpen, setSizeOpen] = useState(false);
+  const [colorOpen, setColorOpen] = useState(false);
 
   const isSkill = node.type === 'skill';
   const currentColor = (node as { color?: string }).color ?? null;
@@ -98,42 +101,146 @@ export default function NodeToolbar({ node, vp, skillLevel, onPatchNode, onChang
       onMouseDown={stop}
       onClick={stop}
     >
-      {/* Color swatches — skill and exercise nodes only */}
+      {/* Color — single button + dropdown (skill and exercise nodes only) */}
       {node.type !== 'subskill' && (
         <>
-          {SKILL_COLORS.map(({ key, fill, label }) => (
-            <button
-              key={key}
-              title={label}
-              type="button"
-              onClick={(e) => { e.stopPropagation(); onPatchNode({ color: key } as Partial<SkillMapNode>); }}
-              style={{
-                width: 16,
-                height: 16,
-                borderRadius: '50%',
-                background: fill,
-                border: currentColor === key ? '2.5px solid var(--color-accent)' : '2px solid rgba(0,0,0,0.15)',
-                cursor: 'pointer',
-                flexShrink: 0,
-                transition: 'border 0.12s ease',
-              }}
-            />
-          ))}
+          <div style={{ position: 'relative' }}>
+            {(() => {
+              const current = SKILL_COLORS.find((c) => c.key === currentColor) ?? SKILL_COLORS[0];
+              return (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setColorOpen((o) => !o); }}
+                  style={{
+                    ...chipBase,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    background: colorOpen ? 'var(--color-bg-muted)' : 'var(--color-bg-surface)',
+                  }}
+                >
+                  <Palette size={12} strokeWidth={2.2} style={{ opacity: 0.7 }} />
+                  <span
+                    style={{
+                      width: 11,
+                      height: 11,
+                      borderRadius: '50%',
+                      background: current.fill,
+                      border: '1.5px solid rgba(0,0,0,0.15)',
+                    }}
+                  />
+                  <span style={{ fontSize: 8, opacity: 0.6 }}>▼</span>
+                </button>
+              );
+            })()}
+
+            {colorOpen && (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 'calc(100% + 6px)',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: 'var(--color-bg-surface)',
+                  border: '1.5px solid var(--color-border)',
+                  borderRadius: 12,
+                  padding: '6px 8px',
+                  display: 'flex',
+                  gap: 6,
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+                  zIndex: 31,
+                }}
+                onMouseDown={stop}
+                onClick={stop}
+              >
+                {SKILL_COLORS.map(({ key, fill, label }) => (
+                  <button
+                    key={key}
+                    title={label}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onPatchNode({ color: key } as Partial<SkillMapNode>);
+                      setColorOpen(false);
+                    }}
+                    style={{
+                      width: 18,
+                      height: 18,
+                      borderRadius: '50%',
+                      background: fill,
+                      border: currentColor === key ? '2.5px solid var(--color-accent)' : '2px solid rgba(0,0,0,0.15)',
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                      transition: 'border 0.12s ease',
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
           <div style={dividerStyle} />
         </>
       )}
 
-      {/* Font size chips — all node types */}
-      {FONT_SIZES.map(({ label, value }) => (
-        <button
-          key={value}
-          type="button"
-          onClick={(e) => { e.stopPropagation(); onPatchNode({ fontSize: value } as Partial<SkillMapNode>); }}
-          style={currentFontSize === value ? chipActive : chipBase}
-        >
-          {label}
-        </button>
-      ))}
+      {/* Font size — single button + dropdown */}
+      <div style={{ position: 'relative' }}>
+        {(() => {
+          const current = FONT_SIZES.find((s) => s.value === currentFontSize) ?? FONT_SIZES[1];
+          return (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setSizeOpen((o) => !o); }}
+              style={{
+                ...chipBase,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+                background: sizeOpen ? 'var(--color-bg-muted)' : 'var(--color-bg-surface)',
+              }}
+            >
+              <Type size={12} strokeWidth={2.2} style={{ opacity: 0.7 }} />
+              {current.label}
+              <span style={{ fontSize: 8, opacity: 0.6 }}>▼</span>
+            </button>
+          );
+        })()}
+
+        {sizeOpen && (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 'calc(100% + 6px)',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: 'var(--color-bg-surface)',
+              border: '1.5px solid var(--color-border)',
+              borderRadius: 12,
+              padding: '6px 8px',
+              display: 'flex',
+              gap: 4,
+              boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+              zIndex: 31,
+            }}
+            onMouseDown={stop}
+            onClick={stop}
+          >
+            {FONT_SIZES.map(({ label, value }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPatchNode({ fontSize: value } as Partial<SkillMapNode>);
+                  setSizeOpen(false);
+                }}
+                style={currentFontSize === value ? chipActive : chipBase}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Status picker — subskill nodes only */}
       {node.type === 'subskill' && (
@@ -221,10 +328,11 @@ export default function NodeToolbar({ node, vp, skillLevel, onPatchNode, onChang
                 ...chipBase,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 4,
+                gap: 5,
                 background: levelOpen ? 'var(--color-bg-muted)' : 'var(--color-bg-surface)',
               }}
             >
+              <BarChart3 size={12} strokeWidth={2.2} style={{ opacity: 0.7 }} />
               {skillLevel ?? '—'}
               <span style={{ fontSize: 8, opacity: 0.6 }}>▼</span>
             </button>

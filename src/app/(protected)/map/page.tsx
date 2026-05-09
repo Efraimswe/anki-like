@@ -9,8 +9,10 @@ import NodeView from './NodeView';
 import NodeToolbar from './NodeToolbar';
 import EdgeLayer from './EdgeLayer';
 import Toolbar, { type Tool } from './Toolbar';
+import SkillPicker from './SkillPicker';
+import ChildTypePicker, { type ChildType } from './ChildTypePicker';
 import ZoomControls from './ZoomControls';
-import { toCanvasCoords, intersectsRect } from './geometry';
+import { toCanvasCoords, intersectsRect, resolveOverlaps } from './geometry';
 import type { SkillMapNode, SkillName, Side } from '@/types/skillMap';
 
 interface Viewport { x: number; y: number; z: number }
@@ -39,68 +41,6 @@ function useDebounce<T>(value: T, ms: number) {
     return () => clearTimeout(t);
   }, [value, ms]);
   return deb;
-}
-
-const NODE_SIZES: Record<'subskill' | 'exercise', { w: number; h: number }> = {
-  subskill: { w: 180, h: 90 },
-  exercise: { w: 160, h: 72 },
-};
-
-interface SpawnPickerPopoverProps {
-  nodeId: string;
-  side: Side;
-  nodes: SkillMapNode[];
-  vp: { x: number; y: number; z: number };
-  onPick: (kind: 'subskill' | 'exercise') => void;
-  onClose: () => void;
-}
-
-function SpawnPickerPopover({ nodeId, side, nodes, vp, onPick, onClose }: SpawnPickerPopoverProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const node = nodes.find((n) => n.id === nodeId);
-
-  // Compute screen position of the spawn dot (matches NodeView arrowPos off=14)
-  let sx = 0, sy = 0;
-  const OFF = 14;
-  if (node) {
-    switch (side) {
-      case 'r': sx = vp.x + (node.x + node.w + OFF) * vp.z; sy = vp.y + (node.y + node.h / 2) * vp.z; break;
-      case 'l': sx = vp.x + (node.x - OFF) * vp.z;          sy = vp.y + (node.y + node.h / 2) * vp.z; break;
-      case 'b': sx = vp.x + (node.x + node.w / 2) * vp.z;   sy = vp.y + (node.y + node.h + OFF) * vp.z; break;
-      case 't': sx = vp.x + (node.x + node.w / 2) * vp.z;   sy = vp.y + (node.y - OFF) * vp.z; break;
-    }
-  }
-
-  useEffect(() => {
-    const handleMouse = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
-    };
-    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('mousedown', handleMouse);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      document.removeEventListener('mousedown', handleMouse);
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [onClose]);
-
-  const item = 'w-full text-left px-3 py-2 text-sm rounded-lg transition-all hover:bg-gray-100 dark:hover:bg-white/10 font-semibold';
-
-  return (
-    <div
-      ref={ref}
-      className="fixed z-[100] rounded-xl shadow-xl py-1 min-w-36"
-      style={{
-        left: sx + 14,
-        top: sy - 20,
-        background: 'var(--color-bg-surface)',
-        border: '1px solid var(--color-border)',
-      }}
-    >
-      <button className={item} onMouseDown={(e) => { e.stopPropagation(); onPick('subskill'); }}>+ Sub-skill</button>
-      <button className={item} onMouseDown={(e) => { e.stopPropagation(); onPick('exercise'); }}>+ Exercise</button>
-    </div>
-  );
 }
 
 export default function MapPage() {
@@ -174,15 +114,23 @@ export default function MapPage() {
   // Tool state
   const [tool, setTool] = useState<Tool>('select');
   const connectorKind = 'straight' as const;
-  const [skillName, setSkillName] = useState<SkillName>('Reading');
   const prevToolRef = useRef<Tool>('select');
   const spaceHeld = useRef(false);
+
+  // Skill picker — opens at click position when tool === 'skill'.
+  const [skillPicker, setSkillPicker] = useState<
+    { screenX: number; screenY: number; canvasX: number; canvasY: number } | null
+  >(null);
+
+  // Child-type picker — opens when "+" is clicked on a subskill.
+  const [childTypePicker, setChildTypePicker] = useState<
+    { parentId: string; side: Side; screenX: number; screenY: number; exerciseDisabled: boolean } | null
+  >(null);
 
   // Selection
   const [selectedNodes, setSelectedNodes] = useState<Set<string>>(new Set());
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
-  const [spawnPickerFor, setSpawnPickerFor] = useState<{ nodeId: string; side: Side } | null>(null);
 
   const suppressNextSelect = useRef(false);
 
@@ -248,7 +196,6 @@ export default function MapPage() {
         setSelectedNodes(new Set());
         setSelectedEdgeId(null);
         setEditingNodeId(null);
-        setSpawnPickerFor(null);
         return;
       }
       switch (e.key) {
@@ -313,13 +260,25 @@ export default function MapPage() {
         marqueeStart: { cx: cv.x, cy: cv.y },
       };
     } else if (tool === 'skill') {
-      const id = `n_${uid()}`;
-      const node: SkillMapNode = { id, type: 'skill', x: cv.x - 110, y: cv.y - 60, w: 220, h: 120, text: skillName, color: SKILL_NAME_TO_COLOR[skillName] };
-      editDispatch({ type: 'CREATE_NODE', node }, true, docRef.current);
-      setSelectedNodes(new Set([id]));
-      setTool('select');
+      setSkillPicker({ screenX: e.clientX, screenY: e.clientY, canvasX: cv.x, canvasY: cv.y });
     }
-  }, [tool, skillName, editDispatch]);
+  }, [tool]);
+
+  const handlePickSkill = useCallback((name: SkillName) => {
+    if (!skillPicker) return;
+    const id = `n_${uid()}`;
+    const node: SkillMapNode = {
+      id, type: 'skill',
+      x: skillPicker.canvasX - 110, y: skillPicker.canvasY - 60,
+      w: 220, h: 120,
+      text: name,
+      color: SKILL_NAME_TO_COLOR[name],
+    };
+    editDispatch({ type: 'CREATE_NODE', node }, true, docRef.current);
+    setSelectedNodes(new Set([id]));
+    setSkillPicker(null);
+    setTool('select');
+  }, [skillPicker, editDispatch]);
 
   // ─── Mouse move ───
   const onMouseMove = useCallback((e: React.MouseEvent) => {
@@ -484,13 +443,14 @@ const handleWaypointDragStart = useCallback((edgeId: string, e: React.MouseEvent
     drag.current = { type: 'waypoint', startX: e.clientX, startY: e.clientY, waypointEdgeId: edgeId };
   }, [editDispatch]);
 
-  const doSpawnChild = useCallback((parentId: string, side: Side, childKind: 'subskill' | 'exercise') => {
+  const createChild = useCallback((parentId: string, side: Side, childType: 'subskill' | 'exercise') => {
     const parent = docRef.current.nodes.find((n) => n.id === parentId);
     if (!parent) return;
 
     const GAP = 80;
     const id = `n_${uid()}`;
-    const { w: childW, h: childH } = NODE_SIZES[childKind];
+    const childW = childType === 'subskill' ? 180 : 160;
+    const childH = childType === 'subskill' ? 90  : 72;
 
     const parentCx = parent.x + parent.w / 2;
     const parentCy = parent.y + parent.h / 2;
@@ -501,29 +461,58 @@ const handleWaypointDragStart = useCallback((edgeId: string, e: React.MouseEvent
     else { cx = parentCx; cy = parent.y - GAP - childH / 2; }
 
     const node: SkillMapNode = {
-      id, type: childKind,
+      id, type: childType,
       x: cx - childW / 2, y: cy - childH / 2,
       w: childW, h: childH,
       text: '',
       parentId,
     } as SkillMapNode;
 
-    editDispatch({ type: 'CREATE_NODE', node }, true, docRef.current);
+    // Physics: keep the parent anchored, let the new node and any
+    // existing nodes shift to clear overlaps.
+    const all = [...docRef.current.nodes, node];
+    const resolved = resolveOverlaps(all, { lockedIds: new Set([parent.id]) });
+    const resolvedNew = resolved.find((n) => n.id === id) ?? node;
+
+    for (const n of resolved) {
+      if (n.id === id) continue;
+      const orig = docRef.current.nodes.find((o) => o.id === n.id);
+      if (orig && (orig.x !== n.x || orig.y !== n.y)) {
+        dispatch({ type: 'UPDATE_NODE', id: n.id, patch: { x: n.x, y: n.y } });
+      }
+    }
+
+    editDispatch({ type: 'CREATE_NODE', node: resolvedNew }, true, docRef.current);
     setSelectedNodes(new Set([id]));
     setEditingNodeId(id);
-  }, [editDispatch]);
+  }, [editDispatch, dispatch]);
 
-  const handleSpawnChild = useCallback((parentId: string, side: Side) => {
+  const handleSpawnChild = useCallback((parentId: string, side: Side, e: React.MouseEvent) => {
     const parent = docRef.current.nodes.find((n) => n.id === parentId);
     if (!parent) return;
 
     if (parent.type === 'skill') {
-      doSpawnChild(parentId, side, 'subskill');
-    } else if (parent.type === 'subskill') {
-      setSpawnPickerFor({ nodeId: parentId, side });
+      createChild(parentId, side, 'subskill');
+      return;
     }
-    // exercise → leaves, bail
-  }, [doSpawnChild]);
+
+    if (parent.type === 'subskill') {
+      const hasExercise = docRef.current.nodes.some(
+        (n) => n.type === 'exercise' && (n as { parentId: string }).parentId === parentId
+      );
+      setChildTypePicker({
+        parentId, side,
+        screenX: e.clientX, screenY: e.clientY,
+        exerciseDisabled: hasExercise,
+      });
+    }
+  }, [createChild]);
+
+  const handlePickChildType = useCallback((type: ChildType) => {
+    if (!childTypePicker) return;
+    createChild(childTypePicker.parentId, childTypePicker.side, type);
+    setChildTypePicker(null);
+  }, [childTypePicker, createChild]);
 
   const structuralLinks = useMemo(() =>
     doc.nodes
@@ -582,7 +571,11 @@ const handleWaypointDragStart = useCallback((edgeId: string, e: React.MouseEvent
           {/* Nodes */}
           {doc.nodes.map((node) => {
             const isSelected = liveSelected.has(node.id);
-            const showSpawnArrows = isSelected && (node.type === 'skill' || node.type === 'subskill');
+            const showSpawnArrows = isSelected &&
+              (node.type === 'skill' ||
+                (node.type === 'subskill' && !doc.nodes.some(
+                  (n) => n.type === 'exercise' && (n as { parentId: string }).parentId === node.id
+                )));
             const skillLevel = node.type === 'skill'
               ? (skillLevels?.[node.text.toLowerCase() as keyof SkillLevels] ?? null)
               : null;
@@ -600,7 +593,7 @@ const handleWaypointDragStart = useCallback((edgeId: string, e: React.MouseEvent
                 onDoubleClick={() => handleNodeDoubleClick(node)}
                 onTextCommit={(text) => handleTextCommit(node, text)}
                 onResizeStart={(corner, e) => handleResizeStart(node.id, corner, e)}
-                onSpawnChild={(side) => handleSpawnChild(node.id, side)}
+                onSpawnChild={(side, e) => handleSpawnChild(node.id, side, e)}
               />
             );
           })}
@@ -624,27 +617,12 @@ const handleWaypointDragStart = useCallback((edgeId: string, e: React.MouseEvent
               left: marqueeRect.x, top: marqueeRect.y,
               width: marqueeRect.w, height: marqueeRect.h,
               border: '1.5px solid var(--color-accent)',
-              background: 'rgba(31,77,255,0.08)',
+              background: 'rgba(242,91,57,0.08)',
               pointerEvents: 'none',
               borderRadius: 2,
             }} />
           )}
         </div>
-
-        {/* Spawn kind picker */}
-        {spawnPickerFor && (
-          <SpawnPickerPopover
-            nodeId={spawnPickerFor.nodeId}
-            side={spawnPickerFor.side}
-            nodes={doc.nodes}
-            vp={vp}
-            onPick={(kind) => {
-              doSpawnChild(spawnPickerFor.nodeId, spawnPickerFor.side, kind);
-              setSpawnPickerFor(null);
-            }}
-            onClose={() => setSpawnPickerFor(null)}
-          />
-        )}
 
         {/* Floating node toolbar */}
         {(() => {
@@ -683,12 +661,26 @@ const handleWaypointDragStart = useCallback((edgeId: string, e: React.MouseEvent
         {isPending ? 'Saving…' : isError ? 'Save failed' : ''}
       </div>
 
-      <Toolbar
-        tool={tool}
-        skillName={skillName}
-        onTool={setTool}
-        onSkillName={setSkillName}
-      />
+      <Toolbar tool={tool} onTool={setTool} />
+
+      {skillPicker && (
+        <SkillPicker
+          screenX={skillPicker.screenX}
+          screenY={skillPicker.screenY}
+          onPick={handlePickSkill}
+          onClose={() => { setSkillPicker(null); setTool('select'); }}
+        />
+      )}
+
+      {childTypePicker && (
+        <ChildTypePicker
+          screenX={childTypePicker.screenX}
+          screenY={childTypePicker.screenY}
+          exerciseDisabled={childTypePicker.exerciseDisabled}
+          onPick={handlePickChildType}
+          onClose={() => setChildTypePicker(null)}
+        />
+      )}
 
       <ZoomControls
         zoom={vp.z}

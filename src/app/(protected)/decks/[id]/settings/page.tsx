@@ -49,7 +49,7 @@ export default function DeckFsrsSettingsPage() {
   if (!config) return <ErrorMessage message="FSRS config not found" />;
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="space-y-6">
       <Link href={`/decks/${id}`} className="inline-flex items-center gap-2 text-sm font-bold text-(--color-text-secondary) hover:text-(--color-text-primary)">
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
         {t('backButton')}

@@ -9,7 +9,7 @@ import { reviewKeys, reviewSessionOptions } from '@/lib/queries/reviews';
 import { deckKeys } from '@/lib/queries/decks';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { getNow, getNowMs, isTestClockEnabled, getTestClockStartIso } from '@/lib/clock';
+import { getNowMs, isTestClockEnabled, getTestClockStartIso } from '@/lib/clock';
 import type { DueCard, DueCardsResponse, Rating } from '@/types';
 import { useTranslations } from 'next-intl';
 
@@ -20,24 +20,6 @@ const RATING_COLORS: Record<Rating, string> = {
   easy:  'bg-(--color-rating-easy) hover:bg-(--color-rating-easy-hover)',
 };
 
-function findNextDueIndex(cards: DueCard[], startIndex: number): number {
-  const now = getNow();
-  for (let i = startIndex; i < cards.length; i++) {
-    if (!cards[i].dueDate || new Date(cards[i].dueDate) <= now) return i;
-  }
-  return -1;
-}
-
-function getNextDueTime(cards: DueCard[], startIndex: number): Date | null {
-  let earliest: Date | null = null;
-  for (let i = startIndex; i < cards.length; i++) {
-    if (cards[i].dueDate) {
-      const d = new Date(cards[i].dueDate);
-      if (!earliest || d < earliest) earliest = d;
-    }
-  }
-  return earliest;
-}
 
 export default function ReviewSession() {
   // i18n-keys: ["again", "hard", "good", "easy"]
@@ -53,10 +35,7 @@ export default function ReviewSession() {
   const [remainingNew, setRemainingNew] = useState(0);
   const [remainingReviews, setRemainingReviews] = useState(0);
   const [reviewedCount, setReviewedCount] = useState(0);
-  const [waitingUntil, setWaitingUntil] = useState<Date | null>(null);
-  const [waitSeconds, setWaitSeconds] = useState(0);
   const cardStartTime = useRef(getNowMs());
-  const waitTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { data: initialSession, isPending: sessionLoading, isError: sessionError, error: sessionErrorObj } = useQuery(reviewSessionOptions(deckId));
 
@@ -94,25 +73,6 @@ export default function ReviewSession() {
     }
   }, [deckId]);
 
-  useEffect(() => () => { if (waitTimerRef.current) clearInterval(waitTimerRef.current); }, []);
-
-  const startWaitingFor = (dueTime: Date) => {
-    setWaitingUntil(dueTime);
-    setWaitSeconds(Math.max(0, Math.ceil((dueTime.getTime() - getNowMs()) / 1000)));
-    if (waitTimerRef.current) clearInterval(waitTimerRef.current);
-    waitTimerRef.current = setInterval(() => {
-      const remaining = Math.ceil((dueTime.getTime() - getNowMs()) / 1000);
-      if (remaining <= 0) {
-        clearInterval(waitTimerRef.current!);
-        setWaitingUntil(null);
-        setWaitSeconds(0);
-        fetchCards();
-      } else {
-        setWaitSeconds(remaining);
-      }
-    }, 1000);
-  };
-
   const showCard = (cardsList: DueCard[], idx: number) => {
     setCards(cardsList);
     setCurrentIndex(idx);
@@ -129,13 +89,7 @@ export default function ReviewSession() {
     setRemainingNew(res.remainingNew);
     setRemainingReviews(res.remainingReviews);
     if (res.cards.length === 0) { setDone(true); return; }
-    const dueIdx = findNextDueIndex(res.cards, 0);
-    if (dueIdx >= 0) { showCard(res.cards, dueIdx); return; }
-    const nextDue = getNextDueTime(res.cards, 0);
-    if (nextDue) {
-      const waitMs = nextDue.getTime() - getNowMs();
-      if (waitMs <= 60_000) { showCard(res.cards, 0); } else { setCards(res.cards); setCurrentIndex(0); startWaitingFor(nextDue); }
-    } else { setDone(true); }
+    showCard(res.cards, 0);
   };
 
   const handleRate = async (rating: Rating) => {
@@ -154,19 +108,6 @@ export default function ReviewSession() {
   if (!initialized) return <LoadingSpinner />;
   if (sessionError || error) return <ErrorMessage message={error || (sessionErrorObj instanceof Error ? sessionErrorObj.message : 'Failed to load session')} />;
 
-  if (waitingUntil) {
-    const mins = Math.floor(waitSeconds / 60);
-    const secs = waitSeconds % 60;
-    return (
-      <div className="text-center py-16">
-        <div className="text-5xl mb-4">⏳</div>
-        <h2 className="text-2xl font-bold text-(--color-text-primary)">{t('waitingTitle')}</h2>
-        <p className="text-(--color-text-tertiary) mt-2">{t('waitingMessage')} <span className="font-mono text-(--color-accent-text) text-lg">{mins > 0 ? `${mins}m ` : ''}{secs.toString().padStart(2, '0')}s</span></p>
-        <p className="text-(--color-text-muted) mt-1 text-sm">{t('waitingReviewed', { count: reviewedCount })}</p>
-      </div>
-    );
-  }
-
   if (done) {
     return (
       <div className="text-center py-16">
@@ -181,7 +122,7 @@ export default function ReviewSession() {
   const card = cards[currentIndex];
 
   return (
-    <div className="max-w-3xl mx-auto py-8">
+    <div className="space-y-6">
       <div className="flex items-center justify-between mb-10">
         <Link href={`/decks/${deckId}`} className="flex items-center gap-2 text-sm font-bold text-(--color-text-secondary) hover:text-(--color-accent) transition-colors">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>

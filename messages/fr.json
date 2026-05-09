@@ -234,9 +234,6 @@
     "hard": "Difficile",
     "good": "Bien",
     "easy": "Facile",
-    "waitingTitle": "En attente des cartes d'apprentissage...",
-    "waitingMessage": "Prochaine carte dans",
-    "waitingReviewed": "Vous avez revu {count, plural, one {# carte} other {# cartes}} jusqu'ici.",
     "completedTitle": "Session terminée !",
     "completedMessage": "Vous avez revu {count, plural, one {# carte} other {# cartes}}.",
     "completedBack": "Retour au paquet",
@@ -321,7 +318,10 @@
   },
   "translate": {
     "buttonLabel": "Traduire",
-    "translating": "Traduction..."
+    "translating": "Traduction...",
+    "alternativesHeading": "Other translations",
+    "disclosure": "Translations by MyMemory. Selected text leaves your browser.",
+    "limitReached": "Daily translation limit reached. Try again tomorrow."
   },
   "rephrase": {
     "eyebrow": "Reformulations",
