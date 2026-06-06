@@ -20,7 +20,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const card = await prisma.card.update({
     where: { id },
     data: { ...parsed.data, updatedAt: new Date() },
-    select: { id: true, deckId: true, front: true, back: true, type: true, tags: true, createdAt: true, updatedAt: true },
+    select: { id: true, deckId: true, word: true, translate: true, createdAt: true, updatedAt: true },
   });
 
   return NextResponse.json(card);

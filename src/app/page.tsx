@@ -1,11 +1,7 @@
 import { redirect } from 'next/navigation';
-import { getAuthUser } from '@/lib/auth';
+import { auth } from '@clerk/nextjs/server';
 
 export default async function HomePage() {
-  const user = await getAuthUser();
-  if (user) {
-    redirect('/decks');
-  } else {
-    redirect('/sign-in');
-  }
+  const { userId } = await auth();
+  redirect(userId ? '/decks' : '/sign-in');
 }

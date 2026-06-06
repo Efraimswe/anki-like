@@ -3,7 +3,7 @@ export interface User {
   id: string;
   email: string;
   displayName: string | null;
-  nativeLanguage?: string | null;
+  targetLanguage: string;
   createdAt?: string;
 }
 
@@ -11,9 +11,10 @@ export interface User {
 export interface Deck {
   id: string;
   name: string;
+  dailyReviewLimit: number;
+  dailyAddLimit: number;
   cardCount: number;
   dueCount: number;
-  newCount?: number;
   createdAt: string;
   updatedAt?: string;
 }
@@ -22,10 +23,8 @@ export interface Deck {
 export interface Card {
   id: string;
   deckId: string;
-  front: string;
-  back: string;
-  type: 'basic' | 'reverse' | 'cloze';
-  tags: string[];
+  word: string;
+  translate: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -49,9 +48,8 @@ export interface IntervalHints {
 
 export interface DueCard {
   id: string;
-  front: string;
-  back: string;
-  type: string;
+  word: string;
+  translate: string;
   phase: string;
   dueDate: string;
   intervalHints?: IntervalHints;
@@ -59,7 +57,6 @@ export interface DueCard {
 
 export interface DueCardsResponse {
   cards: DueCard[];
-  remainingNew: number;
   remainingReviews: number;
   nextDueDate: string | null;
 }
@@ -72,57 +69,6 @@ export interface ReviewResult {
 }
 
 export type Rating = 'again' | 'hard' | 'good' | 'easy';
-
-// Session
-export interface Session {
-  id: string;
-  deviceInfo: string | null;
-  ipAddress: string | null;
-  lastActiveAt: string;
-  createdAt: string;
-  isCurrent: boolean;
-}
-
-// Statistics
-export interface DailyStat {
-  date: string;
-  reviews: number;
-  timeMinutes: number;
-  accuracy: number;
-}
-
-export interface Statistics {
-  retentionRate: number;
-  totalReviews: number;
-  accuracyPercent: number;
-  totalTimeMinutes: number;
-  dailyBreakdown: DailyStat[];
-}
-
-export interface DailyLimits {
-  maxNewCards: number;
-  maxReviews: number;
-  todayNewCount: number;
-  todayReviewCount: number;
-}
-
-export interface DeckFsrsConfig {
-  desiredRetention: number;
-  maximumInterval: number;
-  weights: number[];
-  learningSteps: string[];
-  relearningSteps: string[];
-  isOptimized: boolean;
-  lastOptimizedAt: string | null;
-}
-
-export interface DeckFsrsOptimizationResult {
-  ok: boolean;
-  reason?: string;
-  reviewCount: number;
-  cardCount: number;
-  config?: DeckFsrsConfig;
-}
 
 // API Error
 export interface ApiError {

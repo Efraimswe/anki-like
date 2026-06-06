@@ -3,39 +3,50 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { queryOptions } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData, queryOptions } from '@tanstack/react-query';
+import { ArrowLeft, Pencil, Trash2, Play, Plus, Check, X } from 'lucide-react';
 import { fetchApi } from '@/lib/auth-client';
 import { deckKeys } from '@/lib/queries/decks';
-import { cardKeys } from '@/lib/queries/cards';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useToast } from '@/components/ui/Toast';
 import type { Card, Deck } from '@/types';
-import { useTranslations } from 'next-intl';
 
 interface DeckWithCards extends Deck {
   cards: Card[];
 }
 
+const inputCls =
+  'w-full rounded-2xl border-2 px-4 py-3 font-bold text-(--ink) outline-none focus:border-(--duo-blue)';
+
 export default function DeckDetailPage() {
-  const t = useTranslations('deckDetail');
-  const tc = useTranslations('common');
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // add-card flow
   const [showCreate, setShowCreate] = useState(false);
-  const [newFront, setNewFront] = useState('');
-  const [newBack, setNewBack] = useState('');
-  const [newType, setNewType] = useState('basic');
+  const [newWord, setNewWord] = useState('');
+  const [options, setOptions] = useState<string[] | null>(null);
+  const [manualTranslate, setManualTranslate] = useState('');
+
+  // edit card
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editFront, setEditFront] = useState('');
-  const [editBack, setEditBack] = useState('');
+  const [editWord, setEditWord] = useState('');
+  const [editTranslate, setEditTranslate] = useState('');
   const [deletingCard, setDeletingCard] = useState<Card | null>(null);
+
+  // deck header edit
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState('');
+  const [editingLimit, setEditingLimit] = useState(false);
+  const [limitInput, setLimitInput] = useState('');
+  const [editingAddLimit, setEditingAddLimit] = useState(false);
+  const [addLimitInput, setAddLimitInput] = useState('');
+  const [deletingDeck, setDeletingDeck] = useState(false);
 
   const deckWithCardsOptions = queryOptions({
     queryKey: deckKeys.detail(id),
@@ -43,61 +54,45 @@ export default function DeckDetailPage() {
     enabled: !!id,
     placeholderData: keepPreviousData,
   });
-
   const { data: deck, isPending, isError, error, refetch } = useQuery(deckWithCardsOptions);
 
+  const fetchOptions = useMutation({
+    mutationFn: (word: string) => fetchApi<{ options: string[] }>(`/api/translate?word=${encodeURIComponent(word)}`),
+    onSuccess: ({ options }) => setOptions(options),
+    onError: () => setOptions([]),
+  });
+
   const createCard = useMutation({
-    mutationFn: ({ front, back, type }: { front: string; back: string; type: string }) =>
-      fetchApi<Card | Card[]>('/api/cards', {
-        method: 'POST',
-        body: JSON.stringify({ deckId: id, front, back, type }),
-      }),
-    onSuccess: (result) => {
-      const newCards = Array.isArray(result) ? result : [result];
+    mutationFn: ({ word, translate }: { word: string; translate: string }) =>
+      fetchApi<Card>('/api/cards', { method: 'POST', body: JSON.stringify({ deckId: id, word, translate }) }),
+    onSuccess: (card) => {
       queryClient.setQueryData<DeckWithCards>(deckKeys.detail(id), (prev) =>
-        prev ? { ...prev, cards: [...prev.cards, ...newCards], cardCount: prev.cardCount + newCards.length } : prev,
+        prev ? { ...prev, cards: [card, ...prev.cards], cardCount: prev.cardCount + 1 } : prev,
       );
       queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
-      toast({
-        type: 'success',
-        title: newCards.length > 1 ? `${newCards.length} cards added` : 'Card added',
-        description: newCards.length === 1 ? newCards[0].front : undefined,
-      });
+      toast({ type: 'success', title: 'Card added', description: `${card.word} → ${card.translate}` });
+      resetAddCard();
     },
-    onError: (err) => {
-      toast({
-        type: 'error',
-        title: 'Could not add card',
-        description: err instanceof Error ? err.message : 'Please try again.',
-      });
-    },
+    onError: (err) => toast({ type: 'error', title: 'Could not add card', description: err instanceof Error ? err.message : 'Please try again.' }),
   });
 
   const updateCard = useMutation({
-    mutationFn: ({ cardId, front, back }: { cardId: string; front: string; back: string }) =>
-      fetchApi<Card>(`/api/cards/${cardId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ front, back }),
-      }),
-    onMutate: async ({ cardId, front, back }) => {
+    mutationFn: ({ cardId, word, translate }: { cardId: string; word: string; translate: string }) =>
+      fetchApi<Card>(`/api/cards/${cardId}`, { method: 'PATCH', body: JSON.stringify({ word, translate }) }),
+    onMutate: async ({ cardId, word, translate }) => {
       await queryClient.cancelQueries({ queryKey: deckKeys.detail(id) });
       const previous = queryClient.getQueryData<DeckWithCards>(deckKeys.detail(id));
       queryClient.setQueryData<DeckWithCards>(deckKeys.detail(id), (prev) =>
-        prev ? { ...prev, cards: prev.cards.map((c) => (c.id === cardId ? { ...c, front, back } : c)) } : prev,
+        prev ? { ...prev, cards: prev.cards.map((c) => (c.id === cardId ? { ...c, word, translate } : c)) } : prev,
       );
       return { previous };
     },
-    onError: (_err, _vars, ctx) => {
-      queryClient.setQueryData(deckKeys.detail(id), ctx?.previous);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: deckKeys.detail(id) });
-    },
+    onError: (_e, _v, ctx) => queryClient.setQueryData(deckKeys.detail(id), ctx?.previous),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: deckKeys.detail(id) }),
   });
 
   const deleteCard = useMutation({
-    mutationFn: (cardId: string) =>
-      fetchApi(`/api/cards/${cardId}`, { method: 'DELETE' }),
+    mutationFn: (cardId: string) => fetchApi(`/api/cards/${cardId}`, { method: 'DELETE' }),
     onMutate: async (cardId) => {
       await queryClient.cancelQueries({ queryKey: deckKeys.detail(id) });
       const previous = queryClient.getQueryData<DeckWithCards>(deckKeys.detail(id));
@@ -106,8 +101,25 @@ export default function DeckDetailPage() {
       );
       return { previous };
     },
-    onError: (_err, _id, ctx) => {
+    onError: (_e, _id, ctx) => queryClient.setQueryData(deckKeys.detail(id), ctx?.previous),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: deckKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
+    },
+  });
+
+  const updateDeck = useMutation({
+    mutationFn: (body: { name?: string; dailyReviewLimit?: number; dailyAddLimit?: number }) =>
+      fetchApi<Deck>(`/api/decks/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
+    onMutate: async (body) => {
+      await queryClient.cancelQueries({ queryKey: deckKeys.detail(id) });
+      const previous = queryClient.getQueryData<DeckWithCards>(deckKeys.detail(id));
+      queryClient.setQueryData<DeckWithCards>(deckKeys.detail(id), (prev) => (prev ? { ...prev, ...body } : prev));
+      return { previous };
+    },
+    onError: (err, _v, ctx) => {
       queryClient.setQueryData(deckKeys.detail(id), ctx?.previous);
+      toast({ type: 'error', title: 'Could not save', description: err instanceof Error ? err.message : 'Please try again.' });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: deckKeys.detail(id) });
@@ -115,31 +127,51 @@ export default function DeckDetailPage() {
     },
   });
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const deleteDeck = useMutation({
+    mutationFn: () => fetchApi(`/api/decks/${id}`, { method: 'DELETE' }),
+    onSuccess: () => {
+      toast({ type: 'success', title: 'Deck deleted' });
+      queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
+      router.push('/decks');
+    },
+    onError: (err) => toast({ type: 'error', title: 'Could not delete', description: err instanceof Error ? err.message : 'Please try again.' }),
+  });
+
+  function resetAddCard() {
+    setNewWord('');
+    setOptions(null);
+    setManualTranslate('');
+    setShowCreate(false);
+  }
+
+  const handleFindTranslations = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newFront.trim() || !newBack.trim() || !id) return;
-    createCard.mutate({ front: newFront.trim(), back: newBack.trim(), type: newType }, {
-      onSuccess: () => {
-        setNewFront('');
-        setNewBack('');
-        setNewType('basic');
-        setShowCreate(false);
-      },
-    });
+    const word = newWord.trim();
+    if (!word) return;
+    setOptions(null);
+    fetchOptions.mutate(word);
   };
 
-  const handleUpdate = (cardId: string) => {
-    if (!editFront.trim() || !editBack.trim()) return;
-    updateCard.mutate({ cardId, front: editFront.trim(), back: editBack.trim() }, {
-      onSuccess: () => setEditingId(null),
-    });
+  const handlePick = (translate: string) => {
+    const word = newWord.trim();
+    if (!word || !translate.trim()) return;
+    createCard.mutate({ word, translate: translate.trim() });
   };
 
-  const handleDelete = () => {
-    if (!deletingCard) return;
-    deleteCard.mutate(deletingCard.id, {
-      onSuccess: () => setDeletingCard(null),
-    });
+  const saveName = () => {
+    const name = nameInput.trim();
+    if (name && name !== deck?.name) updateDeck.mutate({ name });
+    setEditingName(false);
+  };
+  const saveLimit = () => {
+    const n = parseInt(limitInput, 10);
+    if (Number.isFinite(n) && n >= 1 && n <= 9999) updateDeck.mutate({ dailyReviewLimit: n });
+    setEditingLimit(false);
+  };
+  const saveAddLimit = () => {
+    const n = parseInt(addLimitInput, 10);
+    if (Number.isFinite(n) && n >= 1 && n <= 9999) updateDeck.mutate({ dailyAddLimit: n });
+    setEditingAddLimit(false);
   };
 
   if (isError) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load deck'} onRetry={() => refetch()} />;
@@ -148,112 +180,193 @@ export default function DeckDetailPage() {
   const cards = deck?.cards ?? [];
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-4">
-        <Link href="/decks" className="flex items-center gap-2 text-sm font-bold text-(--color-text-secondary) hover:text-(--color-accent) transition-colors">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-          {t('backButton')}
-        </Link>
-        {isPending ? <LoadingSpinner /> : (
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-1">
-            <h1 className="text-5xl font-bold text-(--color-text-primary) tracking-tight heading">{deck!.name}</h1>
-            <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">
-              <span>{cards.length} {t('cardsTotal')}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-(--color-accent) opacity-50" />
-              <span className="text-(--color-accent)">{deck!.dueCount} {t('dueNow')}</span>
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <button onClick={() => router.push(`/review/${id}`)} className="px-8 py-3 bg-(--color-accent) text-white font-bold rounded-2xl shadow-xl shadow-orange-500/20 hover:scale-105 transition-all flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347c-.75.412-1.667-.13-1.667-.986V5.653z" /></svg>
-              {t('startSession')}
-            </button>
-            <button onClick={() => router.push(`/decks/${id}/settings`)} className="px-8 py-3 bg-white dark:bg-white/10 text-(--color-text-primary) border border-(--color-border) font-bold rounded-2xl hover:bg-(--color-bg-surface-hover) transition-all">
-              {t('fsrsSettings')}
-            </button>
-            <button onClick={() => setShowCreate(true)} className="px-8 py-3 bg-white dark:bg-white/10 text-(--color-text-primary) border border-(--color-border) font-bold rounded-2xl hover:bg-(--color-bg-surface-hover) transition-all">{t('addCard')}</button>
-          </div>
-        </div>
-        )}
-      </div>
+    <div className="mx-auto max-w-2xl space-y-6">
+      <Link href="/decks" className="inline-flex items-center gap-1.5 text-sm font-extrabold" style={{ color: 'var(--ink-muted)' }}>
+        <ArrowLeft className="h-4 w-4" strokeWidth={2.5} /> Back to path
+      </Link>
 
-      {showCreate && (
-        <div className="premium-card p-8 shadow-2xl">
-          <h3 className="text-xl font-bold mb-6 heading">{t('createCardHeading')}</h3>
-          <form onSubmit={handleCreate} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('frontLabel')}</label>
-                <textarea autoFocus value={newFront} onChange={(e) => setNewFront(e.target.value)} placeholder={t('frontPlaceholder')} rows={3} className="w-full px-4 py-3 bg-(--color-bg-page) border border-(--color-border) rounded-2xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none resize-none" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('backLabel')}</label>
-                <textarea value={newBack} onChange={(e) => setNewBack(e.target.value)} placeholder={t('backPlaceholder')} rows={3} className="w-full px-4 py-3 bg-(--color-bg-page) border border-(--color-border) rounded-2xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none resize-none" />
-              </div>
+      {isPending ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          {/* Header card */}
+          <div className="premium-card p-6">
+            <div className="flex items-start justify-between gap-3">
+              {editingName ? (
+                <div className="flex flex-1 items-center gap-2">
+                  <input
+                    autoFocus
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') saveName(); if (e.key === 'Escape') setEditingName(false); }}
+                    className={`${inputCls} text-2xl`}
+                    style={{ borderColor: 'var(--rule)' }}
+                  />
+                  <button onClick={saveName} className="btn-spring rounded-xl p-2" style={{ color: 'var(--duo-green)' }} aria-label="Save name"><Check strokeWidth={3} /></button>
+                  <button onClick={() => setEditingName(false)} className="btn-spring rounded-xl p-2" style={{ color: 'var(--ink-soft)' }} aria-label="Cancel"><X strokeWidth={3} /></button>
+                </div>
+              ) : (
+                <h1 className="font-display flex-1 text-3xl font-extrabold">{deck!.name}</h1>
+              )}
+              {!editingName && (
+                <div className="flex gap-1">
+                  <button onClick={() => { setNameInput(deck!.name); setEditingName(true); }} className="btn-spring rounded-xl p-2" style={{ color: 'var(--ink-muted)' }} aria-label="Rename deck">
+                    <Pencil className="h-5 w-5" strokeWidth={2.5} />
+                  </button>
+                  <button onClick={() => setDeletingDeck(true)} className="btn-spring rounded-xl p-2" style={{ color: 'var(--duo-red)' }} aria-label="Delete deck">
+                    <Trash2 className="h-5 w-5" strokeWidth={2.5} />
+                  </button>
+                </div>
+              )}
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <label className="text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">{t('typeLabel')}</label>
-                <select value={newType} onChange={(e) => setNewType(e.target.value)} className="bg-(--color-bg-page) border border-(--color-border) rounded-xl px-3 py-1.5 text-sm font-bold outline-none cursor-pointer">
-                  <option value="basic">{t('typeBasic')}</option>
-                  <option value="reverse">{t('typeReverse')}</option>
-                  <option value="cloze">{t('typeCloze')}</option>
-                </select>
-              </div>
-              <div className="flex gap-4">
-                <button type="button" onClick={() => { setShowCreate(false); setNewFront(''); setNewBack(''); }} className="px-6 py-2 text-sm font-bold text-(--color-text-tertiary) hover:text-(--color-text-secondary)">{tc('cancel')}</button>
-                <button type="submit" className="button-primary px-8">{t('createCardSubmit')}</button>
-              </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-extrabold uppercase tracking-wide" style={{ color: 'var(--ink-soft)' }}>
+              <span>{cards.length} {cards.length === 1 ? 'card' : 'cards'}</span>
+              {editingLimit ? (
+                <span className="flex items-center gap-1.5 normal-case">
+                  <input
+                    type="number" min={1} max={9999} autoFocus value={limitInput}
+                    onChange={(e) => setLimitInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') saveLimit(); if (e.key === 'Escape') setEditingLimit(false); }}
+                    className="w-16 rounded-lg border-2 px-2 py-1 text-sm" style={{ borderColor: 'var(--rule)' }}
+                  />
+                  <button onClick={saveLimit} className="font-extrabold" style={{ color: 'var(--duo-green)' }}>save</button>
+                </span>
+              ) : (
+                <button onClick={() => { setLimitInput(String(deck!.dailyReviewLimit)); setEditingLimit(true); }} className="hover:underline" style={{ color: 'var(--duo-blue)' }}>
+                  {deck!.dailyReviewLimit}/day ✎
+                </button>
+              )}
+              {editingAddLimit ? (
+                <span className="flex items-center gap-1.5 normal-case">
+                  <input
+                    type="number" min={1} max={9999} autoFocus value={addLimitInput}
+                    onChange={(e) => setAddLimitInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') saveAddLimit(); if (e.key === 'Escape') setEditingAddLimit(false); }}
+                    className="w-16 rounded-lg border-2 px-2 py-1 text-sm" style={{ borderColor: 'var(--rule)' }}
+                  />
+                  <button onClick={saveAddLimit} className="font-extrabold" style={{ color: 'var(--duo-green)' }}>save</button>
+                </span>
+              ) : (
+                <button onClick={() => { setAddLimitInput(String(deck!.dailyAddLimit)); setEditingAddLimit(true); }} className="hover:underline" style={{ color: 'var(--duo-blue)' }}>
+                  {deck!.dailyAddLimit} added/day ✎
+                </button>
+              )}
             </div>
-          </form>
-        </div>
+
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <button onClick={() => router.push(`/review/${id}`)} className="btn-3d btn-green flex flex-1 items-center justify-center gap-2">
+                <Play className="h-5 w-5" strokeWidth={3} /> Start review
+              </button>
+              <button onClick={() => setShowCreate(true)} className="btn-3d btn-blue flex flex-1 items-center justify-center gap-2">
+                <Plus className="h-5 w-5" strokeWidth={3} /> Add card
+              </button>
+            </div>
+          </div>
+
+          {/* Add-card flow */}
+          {showCreate && (
+            <div className="premium-card p-6">
+              <h3 className="font-display mb-4 text-lg font-extrabold">Add a card</h3>
+              <form onSubmit={handleFindTranslations} className="space-y-3">
+                <label className="eyebrow block">English word</label>
+                <input
+                  autoFocus value={newWord}
+                  onChange={(e) => { setNewWord(e.target.value); setOptions(null); }}
+                  placeholder="e.g. house"
+                  className={inputCls} style={{ borderColor: 'var(--rule)' }}
+                />
+                <div className="flex gap-3">
+                  <button type="button" onClick={resetAddCard} className="btn-3d btn-gray flex-1">Cancel</button>
+                  <button type="submit" disabled={!newWord.trim() || fetchOptions.isPending} className="btn-3d btn-green flex-1">
+                    {fetchOptions.isPending ? 'Finding…' : 'Find'}
+                  </button>
+                </div>
+              </form>
+
+              {fetchOptions.isPending && <div className="mt-5"><LoadingSpinner /></div>}
+
+              {options !== null && !fetchOptions.isPending && (
+                <div className="mt-5 space-y-3">
+                  {options.length > 0 ? (
+                    <>
+                      <p className="eyebrow">Pick a translation</p>
+                      <div className="flex flex-wrap gap-2">
+                        {options.map((opt, i) => (
+                          <button
+                            key={i} onClick={() => handlePick(opt)} disabled={createCard.isPending}
+                            className="btn-spring rounded-2xl border-2 px-4 py-2.5 font-extrabold disabled:opacity-50"
+                            style={{ borderColor: 'var(--rule)', color: 'var(--ink)' }}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-sm font-bold" style={{ color: 'var(--ink-muted)' }}>No translations found. Enter one below.</p>
+                  )}
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      value={manualTranslate}
+                      onChange={(e) => setManualTranslate(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && manualTranslate.trim()) handlePick(manualTranslate); }}
+                      placeholder="Or type your own"
+                      className={inputCls} style={{ borderColor: 'var(--rule)' }}
+                    />
+                    <button onClick={() => handlePick(manualTranslate)} disabled={!manualTranslate.trim() || createCard.isPending} className="btn-3d btn-green">Add</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Card list */}
+          {cards.length === 0 ? (
+            <EmptyState title="No cards yet" description="Add your first card to start studying." action={{ label: 'Add card', onClick: () => setShowCreate(true) }} />
+          ) : (
+            <div className="space-y-3">
+              {cards.map((card) => (
+                <div key={card.id} className="premium-card p-4">
+                  {editingId === card.id ? (
+                    <form onSubmit={(e) => { e.preventDefault(); if (editWord.trim() && editTranslate.trim()) { updateCard.mutate({ cardId: card.id, word: editWord.trim(), translate: editTranslate.trim() }); setEditingId(null); } }} className="space-y-3">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <input autoFocus value={editWord} onChange={(e) => setEditWord(e.target.value)} className={inputCls} style={{ borderColor: 'var(--rule)' }} />
+                        <input value={editTranslate} onChange={(e) => setEditTranslate(e.target.value)} className={inputCls} style={{ borderColor: 'var(--rule)' }} />
+                      </div>
+                      <div className="flex gap-3">
+                        <button type="submit" className="btn-3d btn-green">Save</button>
+                        <button type="button" onClick={() => setEditingId(null)} className="btn-3d btn-gray">Cancel</button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-lg font-extrabold" style={{ color: 'var(--ink)' }}>{card.word}</p>
+                        <p className="truncate font-bold" style={{ color: 'var(--ink-muted)' }}>{card.translate}</p>
+                      </div>
+                      <div className="flex shrink-0 gap-1">
+                        <button onClick={() => { setEditingId(card.id); setEditWord(card.word); setEditTranslate(card.translate); }} className="btn-spring rounded-xl p-2" style={{ color: 'var(--ink-muted)' }} aria-label="Edit card">
+                          <Pencil className="h-5 w-5" strokeWidth={2.5} />
+                        </button>
+                        <button onClick={() => setDeletingCard(card)} className="btn-spring rounded-xl p-2" style={{ color: 'var(--duo-red)' }} aria-label="Delete card">
+                          <Trash2 className="h-5 w-5" strokeWidth={2.5} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold text-(--color-text-primary) px-2 heading">{t('memoryStack')}</h2>
-        {cards.length === 0 ? (
-          <EmptyState title={t('emptyStackTitle')} description={t('emptyStackDescription')} action={{ label: t('emptyStackAction'), onClick: () => setShowCreate(true) }} />
-        ) : (
-          <div className="grid grid-cols-1 gap-4">
-            {cards.map((card) => (
-              <div key={card.id} className="premium-card p-6 group hover:border-(--color-accent)">
-                {editingId === card.id ? (
-                  <form onSubmit={(e) => { e.preventDefault(); handleUpdate(card.id); }} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <textarea autoFocus value={editFront} onChange={(e) => setEditFront(e.target.value)} rows={2} className="w-full px-4 py-2 bg-(--color-bg-page) border border-(--color-border) rounded-xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none resize-none" />
-                      <textarea value={editBack} onChange={(e) => setEditBack(e.target.value)} rows={2} className="w-full px-4 py-2 bg-(--color-bg-page) border border-(--color-border) rounded-xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none resize-none" />
-                    </div>
-                    <div className="flex gap-4">
-                      <button type="submit" className="text-sm font-bold text-(--color-accent) hover:underline">{t('saveChanges')}</button>
-                      <button type="button" onClick={() => setEditingId(null)} className="text-sm font-bold text-(--color-text-muted)">{tc('cancel')}</button>
-                    </div>
-                  </form>
-                ) : (
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0 pr-4">
-                      <p className="text-lg font-bold text-(--color-text-primary) leading-tight">{card.front}</p>
-                      <p className="text-sm text-(--color-text-secondary) mt-2 italic border-l-2 border-(--color-accent) pl-3">{card.back}</p>
-                      <span className="inline-block mt-3 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 bg-(--color-bg-muted) text-(--color-text-tertiary) rounded-md">{card.type}</span>
-                    </div>
-                    <div className="flex gap-2 ml-4 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => { setEditingId(card.id); setEditFront(card.front); setEditBack(card.back); }} className="p-2 text-(--color-text-muted) hover:text-(--color-accent) hover:bg-(--color-accent-muted) rounded-xl transition-all">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
-                      </button>
-                      <button onClick={() => setDeletingCard(card)} className="p-2 text-(--color-text-muted) hover:text-(--color-danger) hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-all">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
       {deletingCard && (
-        <ConfirmDialog title={t('archiveCard')} message={t('archiveCardMessage', { front: deletingCard.front })} onConfirm={handleDelete} onCancel={() => setDeletingCard(null)} />
+        <ConfirmDialog title="Delete card" message={`Delete "${deletingCard.word}"? This cannot be undone.`} onConfirm={() => { deleteCard.mutate(deletingCard.id); setDeletingCard(null); }} onCancel={() => setDeletingCard(null)} />
+      )}
+      {deletingDeck && (
+        <ConfirmDialog title="Delete deck" message={`Delete "${deck?.name}" and all its cards? This cannot be undone.`} onConfirm={() => { deleteDeck.mutate(); setDeletingDeck(false); }} onCancel={() => setDeletingDeck(false)} />
       )}
     </div>
   );

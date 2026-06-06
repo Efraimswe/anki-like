@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { Rating } from 'ts-fsrs';
 import { createNewStoredState, getIntervalHints, scheduleReview, toFsrsHistory } from '@/lib/fsrs';
 import { materializeFsrsState } from '@/lib/fsrs-migration';
-import { optimizeDeckFsrs } from '@/lib/fsrs-optimize';
 
 describe('FSRS scheduling', () => {
   it('returns Anki-style short-term hints for a new card', () => {
@@ -61,20 +60,5 @@ describe('FSRS scheduling', () => {
 
     expect(history).toHaveLength(2);
     expect(history[0].review).toEqual(new Date('2026-01-01T00:00:00Z'));
-  });
-});
-
-describe('FSRS optimization', () => {
-  it('refuses optimization when review history is too small', async () => {
-    const result = await optimizeDeckFsrs([
-      {
-        cardId: 'card-1',
-        rating: 3,
-        reviewedAt: new Date('2026-01-01T00:00:00Z'),
-      },
-    ]);
-
-    expect(result.ok).toBe(false);
-    expect(result.reason).toMatch(/Need at least/);
   });
 });

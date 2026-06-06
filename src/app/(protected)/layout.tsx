@@ -1,26 +1,13 @@
-'use client';
-
-import { useAuth } from '@/hooks/use-auth';
+import { redirect } from 'next/navigation';
+import { auth } from '@clerk/nextjs/server';
+import { ensureUserRecord } from '@/lib/auth';
 import AppLayout from '@/components/layout/AppLayout';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
-export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
+  const { userId } = await auth();
+  if (!userId) redirect('/sign-in');
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-(--color-bg-page)">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  if (!user) {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/sign-in';
-    }
-    return null;
-  }
+  await ensureUserRecord(userId);
 
   return <AppLayout>{children}</AppLayout>;
 }

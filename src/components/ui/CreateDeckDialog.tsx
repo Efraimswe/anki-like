@@ -1,27 +1,36 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
 
 interface Props {
   title: string;
-  message: string;
-  confirmLabel?: string;
-  onConfirm: () => void;
+  placeholder?: string;
+  initialValue?: string;
+  submitLabel?: string;
+  cancelLabel?: string;
+  onSubmit: (name: string) => void;
   onCancel: () => void;
 }
 
-export default function ConfirmDialog({
+export default function CreateDeckDialog({
   title,
-  message,
-  confirmLabel = 'Delete',
-  onConfirm,
+  placeholder,
+  initialValue = '',
+  submitLabel = 'Create',
+  cancelLabel = 'Cancel',
+  onSubmit,
   onCancel,
 }: Props) {
   const [open, setOpen] = useState(false);
+  const [name, setName] = useState(initialValue);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const id = requestAnimationFrame(() => setOpen(true));
+    const id = requestAnimationFrame(() => {
+      setOpen(true);
+      inputRef.current?.focus();
+    });
     return () => cancelAnimationFrame(id);
   }, []);
 
@@ -37,6 +46,13 @@ export default function ConfirmDialog({
     if (e.target === e.currentTarget) onCancel();
   };
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    onSubmit(trimmed);
+  };
+
   const dialog = (
     <div
       onClick={handleBackdropClick}
@@ -49,10 +65,11 @@ export default function ConfirmDialog({
         transition: 'opacity 300ms ease-out, backdrop-filter 300ms ease-out, -webkit-backdrop-filter 300ms ease-out',
       }}
     >
-      <div
+      <form
+        onSubmit={handleSubmit}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="confirm-dialog-title"
+        aria-labelledby="create-deck-title"
         className="premium-card p-10 max-w-md w-full shadow-2xl border-none"
         style={{
           transform: open ? 'scale(1) translateY(0)' : 'scale(0.92) translateY(8px)',
@@ -63,29 +80,35 @@ export default function ConfirmDialog({
         }}
       >
         <h3
-          id="confirm-dialog-title"
+          id="create-deck-title"
           className="text-2xl font-bold text-(--color-text-primary) heading tracking-tight"
         >
           {title}
         </h3>
-        <p className="mt-4 text-sm font-medium text-(--color-text-tertiary) leading-relaxed">
-          {message}
-        </p>
+        <input
+          ref={inputRef}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={placeholder}
+          className="mt-6 w-full px-5 py-4 bg-(--color-bg-page) rounded-2xl font-medium focus:ring-2 focus:ring-(--color-accent-ring) outline-none transition-all placeholder:text-(--color-text-tertiary)/50"
+        />
         <div className="mt-10 flex gap-4">
           <button
+            type="button"
             onClick={onCancel}
             className="flex-1 px-6 py-3 text-sm font-bold text-(--color-text-secondary) hover:text-(--color-text-primary) bg-(--color-bg-page) rounded-2xl transition-all"
           >
-            Cancel
+            {cancelLabel}
           </button>
           <button
-            onClick={onConfirm}
-            className="btn-3d btn-red flex-1"
+            type="submit"
+            disabled={!name.trim()}
+            className="btn-3d btn-green flex-1"
           >
-            {confirmLabel}
+            {submitLabel}
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 

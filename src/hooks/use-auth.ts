@@ -1,25 +1,45 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+import { useCallback } from 'react';
+import { useUser, useClerk } from '@clerk/nextjs';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { User } from '@/types';
+import { fetchApi } from '@/lib/auth-client';
 
-export { fetchApi } from '@/lib/auth-client';
+export { fetchApi };
 
-interface AuthContextValue {
+interface UseAuthValue {
   user: User | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateUser: (user: User) => void;
 }
 
-export const AuthContext = createContext<AuthContextValue | null>(null);
+export function useAuth(): UseAuthValue {
+  const { isLoaded, isSignedIn } = useUser();
+  const clerk = useClerk();
+  const queryClient = useQueryClient();
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
+  const { data, isLoading } = useQuery<User>({
+    queryKey: ['user'],
+    queryFn: () => fetchApi<User>('/api/users/me'),
+    enabled: isLoaded && isSignedIn === true,
+    staleTime: 60_000,
+  });
+
+  const signOut = useCallback(async () => {
+    await clerk.signOut({ redirectUrl: '/sign-in' });
+  }, [clerk]);
+
+  const updateUser = useCallback(
+    (u: User) => queryClient.setQueryData(['user'], u),
+    [queryClient],
+  );
+
+  return {
+    user: isSignedIn ? (data ?? null) : null,
+    loading: !isLoaded || (isSignedIn === true && isLoading),
+    signOut,
+    updateUser,
+  };
 }

@@ -2,42 +2,48 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth, jsonError } from '@/lib/api-utils';
 import { createDeckSchema } from '@/lib/validations';
-import { buildDefaultDeckFsrsConfig } from '@/lib/fsrs-defaults';
 import { getNow } from '@/lib/clock';
 import type { TokenPayload } from '@/lib/auth';
 
-export async function GET() {
+const PAGE_SIZE = 20;
+
+export async function GET(request: NextRequest) {
   const auth = await requireAuth();
   if (auth instanceof NextResponse) return auth;
   const user = auth as TokenPayload;
 
+  const cursor = request.nextUrl.searchParams.get('cursor') || undefined;
+
   const decks = await prisma.deck.findMany({
     where: { userId: user.sub, deletedAt: null },
     orderBy: { createdAt: 'desc' },
+    take: PAGE_SIZE + 1,
+    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     include: {
       cards: {
         where: { deletedAt: null },
-        select: { id: true, cardState: { select: { dueDate: true, phase: true } } },
+        select: { id: true, cardState: { select: { dueDate: true } } },
       },
     },
   });
 
-  const now = getNow();
-  const result = decks.map((d) => {
-    const dueCount = d.cards.filter((c) => c.cardState && new Date(c.cardState.dueDate) <= now).length;
-    const newCount = d.cards.filter((c) => c.cardState?.phase === 'new').length;
-    return {
-      id: d.id,
-      name: d.name,
-      cardCount: d.cards.length,
-      dueCount,
-      newCount,
-      createdAt: d.createdAt,
-      updatedAt: d.updatedAt,
-    };
-  });
+  const hasMore = decks.length > PAGE_SIZE;
+  const page = hasMore ? decks.slice(0, PAGE_SIZE) : decks;
+  const nextCursor = hasMore ? page[page.length - 1].id : null;
 
-  return NextResponse.json(result);
+  const now = getNow();
+  const items = page.map((d) => ({
+    id: d.id,
+    name: d.name,
+    dailyReviewLimit: d.dailyReviewLimit,
+    dailyAddLimit: d.dailyAddLimit,
+    cardCount: d.cards.length,
+    dueCount: d.cards.filter((c) => c.cardState && new Date(c.cardState.dueDate) <= now).length,
+    createdAt: d.createdAt,
+    updatedAt: d.updatedAt,
+  }));
+
+  return NextResponse.json({ items, nextCursor });
 }
 
 export async function POST(request: NextRequest) {
@@ -53,12 +59,11 @@ export async function POST(request: NextRequest) {
     data: {
       name: parsed.data.name,
       userId: user.sub,
-      fsrs: {
-        create: buildDefaultDeckFsrsConfig(),
-      },
+      ...(parsed.data.dailyReviewLimit ? { dailyReviewLimit: parsed.data.dailyReviewLimit } : {}),
+      ...(parsed.data.dailyAddLimit ? { dailyAddLimit: parsed.data.dailyAddLimit } : {}),
     },
-    select: { id: true, name: true, createdAt: true, updatedAt: true },
+    select: { id: true, name: true, dailyReviewLimit: true, dailyAddLimit: true, createdAt: true, updatedAt: true },
   });
 
-  return NextResponse.json({ ...deck, cardCount: 0, dueCount: 0, newCount: 0 }, { status: 201 });
+  return NextResponse.json({ ...deck, cardCount: 0, dueCount: 0 }, { status: 201 });
 }

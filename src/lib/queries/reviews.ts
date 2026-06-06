@@ -1,13 +1,12 @@
 import { queryOptions } from '@tanstack/react-query';
 import { fetchApi } from '@/lib/auth-client';
-import type { DueCardsResponse, DailyLimits } from '@/types';
+import type { DueCardsResponse } from '@/types';
 
 const reviewAll = ['reviews'] as const;
 
 export const reviewKeys = {
   all: reviewAll,
   session: (deckId: string) => [...reviewAll, 'session', deckId] as const,
-  dailyLimits: [...reviewAll, 'daily-limits'] as const,
 };
 
 export const reviewSessionOptions = (deckId: string) =>
@@ -17,8 +16,3 @@ export const reviewSessionOptions = (deckId: string) =>
     enabled: !!deckId,
     staleTime: 0,
   });
-
-export const dailyLimitsOptions = queryOptions({
-  queryKey: reviewKeys.dailyLimits,
-  queryFn: () => fetchApi<DailyLimits>('/api/reviews/daily-limits'),
-});

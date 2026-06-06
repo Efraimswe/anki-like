@@ -1,12 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth, jsonError } from '@/lib/api-utils';
-import { getLimits, getCounters } from '@/lib/daily-limits';
-import { ensureDeckFsrsConfig } from '@/lib/fsrs-config';
 import { getIntervalHints } from '@/lib/fsrs';
 import { materializeFsrsState } from '@/lib/fsrs-migration';
 import { addMinutes, getNow } from '@/lib/clock';
+import { startOfUtcDay } from '@/lib/daily';
 import type { TokenPayload } from '@/lib/auth';
+
+const cardSelect = {
+  id: true,
+  word: true,
+  translate: true,
+  cardState: {
+    select: {
+      phase: true,
+      dueDate: true,
+      interval: true,
+      learningStep: true,
+      stability: true,
+      difficulty: true,
+      scheduledDays: true,
+      reps: true,
+      lapses: true,
+      lastReview: true,
+    },
+  },
+  reviewLogs: {
+    orderBy: { reviewedAt: 'asc' as const },
+    select: { rating: true, reviewedAt: true },
+  },
+};
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ deckId: string }> }) {
   const auth = await requireAuth();
@@ -16,23 +39,22 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
   const deck = await prisma.deck.findFirst({
     where: { id: deckId, userId: user.sub, deletedAt: null },
-    select: { id: true },
+    select: { id: true, dailyReviewLimit: true },
   });
   if (!deck) return jsonError(404, 'Deck not found');
 
-  const fsrsConfig = await ensureDeckFsrsConfig(deckId);
-  const limits = await getLimits(user.sub);
-  const counters = await getCounters(user.sub);
-
-  const remainingNew = Math.max(0, limits.maxNewCards - counters.todayNewCount);
-  const remainingReviews = Math.max(0, limits.maxReviews - counters.todayReviewCount);
+  const now = getNow();
+  const counter = await prisma.deckDailyCounter.findUnique({
+    where: { deckId_date: { deckId, date: startOfUtcDay(now) } },
+    select: { reviewCount: true },
+  });
+  const remainingReviews = Math.max(0, deck.dailyReviewLimit - (counter?.reviewCount ?? 0));
 
   if (remainingReviews === 0) {
-    return NextResponse.json({ cards: [], remainingNew: 0, remainingReviews: 0, nextDueDate: null });
+    return NextResponse.json({ cards: [], remainingReviews: 0, nextDueDate: null });
   }
 
   const effectiveLimit = Math.min(50, remainingReviews);
-  const now = getNow();
   const learningCutoff = addMinutes(now, 20);
 
   const reviewCards = await prisma.card.findMany({
@@ -50,63 +72,17 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     },
     orderBy: { cardState: { dueDate: 'asc' } },
     take: effectiveLimit,
-    select: {
-      id: true,
-      front: true,
-      back: true,
-      type: true,
-      cardState: {
-        select: {
-          phase: true,
-          dueDate: true,
-          interval: true,
-          learningStep: true,
-          stability: true,
-          difficulty: true,
-          scheduledDays: true,
-          reps: true,
-          lapses: true,
-          lastReview: true,
-        },
-      },
-      reviewLogs: {
-        orderBy: { reviewedAt: 'asc' },
-        select: { rating: true, reviewedAt: true },
-      },
-    },
+    select: cardSelect,
   });
 
-  const newLimit = Math.min(remainingNew, effectiveLimit - reviewCards.length);
+  const newLimit = effectiveLimit - reviewCards.length;
   let newCards: typeof reviewCards = [];
   if (newLimit > 0) {
     newCards = await prisma.card.findMany({
       where: { deckId, deletedAt: null, deck: { userId: user.sub }, cardState: { phase: 'new' } },
       orderBy: { createdAt: 'asc' },
       take: newLimit,
-      select: {
-        id: true,
-        front: true,
-        back: true,
-        type: true,
-        cardState: {
-          select: {
-            phase: true,
-            dueDate: true,
-            interval: true,
-            learningStep: true,
-            stability: true,
-            difficulty: true,
-            scheduledDays: true,
-            reps: true,
-            lapses: true,
-            lastReview: true,
-          },
-        },
-        reviewLogs: {
-          orderBy: { reviewedAt: 'asc' },
-          select: { rating: true, reviewedAt: true },
-        },
-      },
+      select: cardSelect,
     });
   }
 
@@ -126,17 +102,15 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       },
       reviewLogs: card.reviewLogs,
       now,
-      config: fsrsConfig,
     });
 
     return {
       id: card.id,
-      front: card.front,
-      back: card.back,
-      type: card.type,
+      word: card.word,
+      translate: card.translate,
       phase: state.phase,
       dueDate: state.dueDate,
-      intervalHints: getIntervalHints(state, now, fsrsConfig),
+      intervalHints: getIntervalHints(state, now),
     };
   });
 
@@ -148,7 +122,6 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
   return NextResponse.json({
     cards: allCards,
-    remainingNew: remainingNew - newCards.length,
     remainingReviews: remainingReviews - allCards.length,
     nextDueDate: nextDueCard?.cardState?.dueDate || null,
   });

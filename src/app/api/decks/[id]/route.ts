@@ -17,7 +17,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       cards: {
         where: { deletedAt: null },
         orderBy: { createdAt: 'desc' },
-        select: { id: true, front: true, back: true, type: true, tags: true, createdAt: true, updatedAt: true, deckId: true },
+        select: { id: true, word: true, translate: true, createdAt: true, updatedAt: true, deckId: true },
       },
     },
   });
@@ -27,6 +27,8 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   return NextResponse.json({
     id: deck.id,
     name: deck.name,
+    dailyReviewLimit: deck.dailyReviewLimit,
+    dailyAddLimit: deck.dailyAddLimit,
     cardCount: deck.cards.length,
     createdAt: deck.createdAt,
     updatedAt: deck.updatedAt,
@@ -49,8 +51,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
   const deck = await prisma.deck.update({
     where: { id },
-    data: { name: parsed.data.name, updatedAt: new Date() },
-    select: { id: true, name: true, createdAt: true, updatedAt: true },
+    data: { ...parsed.data, updatedAt: new Date() },
+    select: { id: true, name: true, dailyReviewLimit: true, dailyAddLimit: true, createdAt: true, updatedAt: true },
   });
 
   return NextResponse.json(deck);

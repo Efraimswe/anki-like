@@ -1,29 +1,28 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { X } from 'lucide-react';
 import { fetchApi } from '@/lib/auth-client';
 import { reviewKeys, reviewSessionOptions } from '@/lib/queries/reviews';
 import { deckKeys } from '@/lib/queries/decks';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import Owl from '@/components/ui/Owl';
 import { getNowMs, isTestClockEnabled, getTestClockStartIso } from '@/lib/clock';
 import type { DueCard, DueCardsResponse, Rating } from '@/types';
-import { useTranslations } from 'next-intl';
 
-const RATING_COLORS: Record<Rating, string> = {
-  again: 'bg-(--color-rating-again) hover:bg-(--color-rating-again-hover)',
-  hard:  'bg-(--color-rating-hard) hover:bg-(--color-rating-hard-hover)',
-  good:  'bg-(--color-rating-good) hover:bg-(--color-rating-good-hover)',
-  easy:  'bg-(--color-rating-easy) hover:bg-(--color-rating-easy-hover)',
+const RATING_BTN: Record<Rating, string> = {
+  again: 'btn-red',
+  hard: 'btn-orange',
+  good: 'btn-green',
+  easy: 'btn-blue',
 };
-
+const RATING_LABELS: Record<Rating, string> = { again: 'Again', hard: 'Hard', good: 'Good', easy: 'Easy' };
 
 export default function ReviewSession() {
-  // i18n-keys: ["again", "hard", "good", "easy"]
-  const t = useTranslations('review');
   const { deckId } = useParams<{ deckId: string }>();
   const queryClient = useQueryClient();
   const [cards, setCards] = useState<DueCard[]>([]);
@@ -32,20 +31,15 @@ export default function ReviewSession() {
   const [initialized, setInitialized] = useState(false);
   const [error, setError] = useState('');
   const [done, setDone] = useState(false);
-  const [remainingNew, setRemainingNew] = useState(0);
-  const [remainingReviews, setRemainingReviews] = useState(0);
   const [reviewedCount, setReviewedCount] = useState(0);
   const cardStartTime = useRef(getNowMs());
 
-  const { data: initialSession, isPending: sessionLoading, isError: sessionError, error: sessionErrorObj } = useQuery(reviewSessionOptions(deckId));
+  const { data: initialSession, isError: sessionError, error: sessionErrorObj } = useQuery(reviewSessionOptions(deckId));
 
-  // Initialize local state from query result on first load
   useEffect(() => {
     if (!initialSession || initialized) return;
     setCards(initialSession.cards);
     setCurrentIndex(0);
-    setRemainingNew(initialSession.remainingNew);
-    setRemainingReviews(initialSession.remainingReviews);
     if (initialSession.cards.length === 0) setDone(true);
     setInitialized(true);
   }, [initialSession, initialized]);
@@ -55,39 +49,20 @@ export default function ReviewSession() {
       fetchApi('/api/reviews/submit', { method: 'POST', body: JSON.stringify(payload) }),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: reviewKeys.session(deckId) });
-      queryClient.invalidateQueries({ queryKey: reviewKeys.dailyLimits });
       queryClient.invalidateQueries({ queryKey: deckKeys.all });
     },
   });
 
-  const fetchCards = useCallback(async () => {
-    try {
-      const res = await fetchApi<DueCardsResponse>(`/api/reviews/session/${deckId}`);
-      setCards(res.cards);
-      setCurrentIndex(0);
-      setRemainingNew(res.remainingNew);
-      setRemainingReviews(res.remainingReviews);
-      if (res.cards.length === 0) setDone(true);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load cards');
-    }
-  }, [deckId]);
-
-  const showCard = (cardsList: DueCard[], idx: number) => {
-    setCards(cardsList);
+  const showCard = (list: DueCard[], idx: number) => {
+    setCards(list);
     setCurrentIndex(idx);
     setRevealed(false);
     cardStartTime.current = getNowMs();
   };
 
   const advanceToNextCard = async (nextIndex: number) => {
-    if (nextIndex < cards.length) {
-      showCard(cards, nextIndex);
-      return;
-    }
+    if (nextIndex < cards.length) { showCard(cards, nextIndex); return; }
     const res = await fetchApi<DueCardsResponse>(`/api/reviews/session/${deckId}`);
-    setRemainingNew(res.remainingNew);
-    setRemainingReviews(res.remainingReviews);
     if (res.cards.length === 0) { setDone(true); return; }
     showCard(res.cards, 0);
   };
@@ -110,72 +85,70 @@ export default function ReviewSession() {
 
   if (done) {
     return (
-      <div className="text-center py-16">
-        <div className="text-5xl mb-4">🎉</div>
-        <h2 className="text-2xl font-bold text-(--color-text-primary)">{t('completedTitle')}</h2>
-        <p className="text-(--color-text-tertiary) mt-2">{t('completedMessage', { count: reviewedCount })}</p>
-        <Link href={`/decks/${deckId}`} className="inline-block mt-6 px-6 py-2 bg-(--color-accent) text-white rounded-md hover:bg-(--color-accent-hover) transition-colors">{t('completedBack')}</Link>
+      <div className="mx-auto flex max-w-md flex-col items-center py-12 text-center">
+        <Owl size={120} className="owl-bob" />
+        <h2 className="font-display mt-6 text-3xl font-extrabold">Lesson complete!</h2>
+        <p className="mt-2 font-bold" style={{ color: 'var(--ink-muted)' }}>
+          You reviewed {reviewedCount} {reviewedCount === 1 ? 'card' : 'cards'}. Nice work.
+        </p>
+        <Link href={`/decks/${deckId}`} className="button-primary mt-8 inline-flex items-center justify-center">Continue</Link>
       </div>
     );
   }
 
   const card = cards[currentIndex];
+  const progress = cards.length > 0 ? (currentIndex / cards.length) * 100 : 0;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-10">
-        <Link href={`/decks/${deckId}`} className="flex items-center gap-2 text-sm font-bold text-(--color-text-secondary) hover:text-(--color-accent) transition-colors">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-          {t('backButton')}
+    <div className="mx-auto max-w-2xl">
+      {/* Lesson top bar */}
+      <div className="lesson-topbar mb-8">
+        <Link href={`/decks/${deckId}`} className="btn-spring shrink-0 rounded-xl p-1" style={{ color: 'var(--ink-soft)' }} aria-label="Close lesson">
+          <X className="h-7 w-7" strokeWidth={3} />
         </Link>
-        <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-(--color-text-muted)">
-          <span className="text-(--color-text-primary)">{currentIndex + 1} {t('of')} {cards.length}</span>
-          <span className="w-1 h-1 rounded-full bg-gray-300" />
-          <span>{remainingNew} {t('newCards')}</span>
-          <span className="w-1 h-1 rounded-full bg-gray-300" />
-          <span>{remainingReviews} {t('reviewCards')}</span>
+        <div className="lesson-progress">
+          <div className="lesson-progress-fill" style={{ width: `${progress}%` }} />
         </div>
       </div>
+
       {isTestClockEnabled() && (
-        <div className="mb-6 rounded-2xl border border-amber-300/50 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900 dark:border-amber-500/30 dark:bg-amber-950/30 dark:text-amber-200">
-          {t('testClockWarning', { time: getTestClockStartIso() })}
+        <div className="mb-6 rounded-2xl border-2 px-4 py-3 text-sm font-bold" style={{ borderColor: 'var(--duo-gold)', background: '#FFF8DC', color: '#7A5C00' }}>
+          Test clock active — simulating time from {getTestClockStartIso()}
         </div>
       )}
 
-      <div className="relative group">
-        <div className="absolute -inset-1 bg-linear-to-r from-(--color-accent) to-orange-400 rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-500" />
-        <div className="relative premium-card p-12 text-center min-h-[400px] flex flex-col justify-center items-center shadow-2xl border-none">
-          <div className="mb-auto w-full">
-            <div className="h-1.5 bg-(--color-bg-page) rounded-full overflow-hidden w-full">
-              <div className="h-full bg-linear-to-r from-(--color-accent) to-orange-400 transition-all duration-500 rounded-full" style={{ width: `${(currentIndex / cards.length) * 100}%` }} />
+      {/* Prompt */}
+      <div className="flex min-h-70 flex-col items-center justify-center rounded-3xl border-2 px-6 py-12 text-center" style={{ borderColor: 'var(--rule)', background: 'var(--surface)' }}>
+        <p className="eyebrow mb-3">Translate</p>
+        <h2 className="font-display text-4xl font-extrabold" style={{ color: 'var(--ink)' }}>{card.word}</h2>
+        {revealed && (
+          <>
+            <div className="my-6 h-0.5 w-24" style={{ background: 'var(--rule)' }} />
+            <p className="text-2xl font-extrabold" style={{ color: 'var(--duo-green)' }}>{card.translate}</p>
+          </>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="mt-8">
+        {!revealed ? (
+          <button onClick={() => setRevealed(true)} className="button-primary w-full">Show answer</button>
+        ) : (
+          <div>
+            <p className="eyebrow mb-3 text-center">How well did you know it?</p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {(['again', 'hard', 'good', 'easy'] as const).map((rating) => {
+                const hint = card.intervalHints?.[rating];
+                return (
+                  <button key={rating} disabled={submitReview.isPending} onClick={() => handleRate(rating)} className={`btn-3d ${RATING_BTN[rating]} flex flex-col items-center gap-0.5`}>
+                    <span>{RATING_LABELS[rating]}</span>
+                    {hint && <span className="text-[10px] font-bold opacity-80">{hint}</span>}
+                  </button>
+                );
+              })}
             </div>
           </div>
-          <div className="flex-1 flex flex-col justify-center w-full py-10">
-            <h2 className="text-4xl font-bold text-(--color-text-primary) heading whitespace-pre-wrap leading-tight">{card.front}</h2>
-            {!revealed ? (
-              <button onClick={() => setRevealed(true)} className="mt-12 button-primary px-12 py-4 shadow-xl shadow-orange-500/20 text-lg">{t('revealButton')}</button>
-            ) : (
-              <div className="mt-12 w-full">
-                <div className="h-px bg-linear-to-r from-transparent via-(--color-border) to-transparent mb-12" />
-                <p className="text-2xl text-(--color-text-secondary) font-medium whitespace-pre-wrap leading-relaxed">{card.back}</p>
-                <div className="mt-16 flex flex-wrap justify-center gap-4">
-                  {(['again', 'hard', 'good', 'easy'] as const).map((rating) => {
-                    const hint = card.intervalHints?.[rating];
-                    return (
-                      <button key={rating} disabled={submitReview.isPending} onClick={() => handleRate(rating)} className={`flex flex-col items-center px-8 py-4 text-white text-sm font-bold rounded-2xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-lg ${RATING_COLORS[rating]}`}>
-                        <span>{t(rating)}</span>
-                        {hint && <span className="text-[10px] opacity-80 mt-1 uppercase tracking-tighter">{hint}</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="mt-10 text-center">
-        <p className="text-xs font-bold text-(--color-text-muted) uppercase tracking-widest">{t('keyboardHint')}</p>
+        )}
       </div>
     </div>
   );

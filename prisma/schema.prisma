@@ -8,119 +8,73 @@ datasource db {
 }
 
 model User {
-  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email               String    @unique @db.VarChar(255)
-  passwordHash        String    @map("password_hash")
-  displayName         String?   @map("display_name") @db.VarChar(100)
-  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt           DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+  id             String   @id
+  email          String   @unique @db.VarChar(255)
+  displayName    String?  @map("display_name") @db.VarChar(100)
+  targetLanguage String   @default("ru") @map("target_language") @db.VarChar(10)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
 
-  // Onboarding
-  onboardingCompleted Boolean   @default(false) @map("onboarding_completed")
-  nativeLanguage      String?   @map("native_language") @db.VarChar(10)
-  interfaceLanguage   String?   @map("interface_language") @db.VarChar(10)
-  skillLevels         Json?     @map("skill_levels")
-  goals               Json?     @map("goals")
-
-  decks    Deck[]
-  sessions Session[]
-  skillMap SkillMap?
+  decks Deck[]
 
   @@map("users")
 }
 
-model Session {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId       String   @map("user_id") @db.Uuid
-  refreshToken String   @unique @map("refresh_token")
-  deviceInfo   String?  @map("device_info")
-  ipAddress    String?  @map("ip_address") @db.VarChar(45)
-  lastActiveAt DateTime @default(now()) @map("last_active_at") @db.Timestamptz()
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  expiresAt    DateTime @map("expires_at") @db.Timestamptz()
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId], map: "idx_sessions_user_id")
-  @@map("sessions")
-}
-
 model Deck {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId      String    @map("user_id") @db.Uuid
-  name        String    @db.VarChar(255)
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz()
-  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz()
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String    @map("user_id")
+  name             String    @db.VarChar(255)
+  dailyReviewLimit Int       @default(20) @map("daily_review_limit")
+  dailyAddLimit    Int       @default(20) @map("daily_add_limit")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt        DateTime? @map("deleted_at") @db.Timestamptz()
 
-  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  cards Card[]
-  fsrs  DeckFsrsConfig?
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cards    Card[]
+  counters DeckDailyCounter[]
 
   @@index([userId], map: "idx_decks_user_id")
   @@map("decks")
 }
 
 model Card {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  deckId       String    @map("deck_id") @db.Uuid
-  front        String    @db.Text
-  back         String    @db.Text
-  type         String    @db.VarChar(10)
-  tags         String[]  @default([])
-  sourceCardId String?   @map("source_card_id") @db.Uuid
-  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt    DateTime  @default(now()) @map("updated_at") @db.Timestamptz()
-  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz()
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  deckId    String    @map("deck_id") @db.Uuid
+  word      String    @db.Text
+  translate String    @db.Text
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz()
 
-  deck       Deck       @relation(fields: [deckId], references: [id])
-  sourceCard Card?      @relation("ReverseCards", fields: [sourceCardId], references: [id])
-  reverseOf  Card[]     @relation("ReverseCards")
+  deck       Deck        @relation(fields: [deckId], references: [id])
   cardState  CardState?
   reviewLogs ReviewLog[]
 
   @@index([deckId], map: "idx_cards_deck_id")
-  @@index([tags], type: Gin, map: "idx_cards_tags")
   @@map("cards")
 }
 
 model CardState {
-  cardId       String   @id @map("card_id") @db.Uuid
-  phase        String   @default("new") @db.VarChar(12)
-  interval     Int      @default(0)
-  easeFactor   Float    @default(2.5) @map("ease_factor") @db.Real
-  repetitions  Int      @default(0)
-  learningStep Int      @default(0) @map("learning_step")
-  stability    Float    @default(0) @db.Real
-  difficulty   Float    @default(0) @db.Real
-  scheduledDays Int     @default(0) @map("scheduled_days")
-  reps         Int      @default(0)
-  lapses       Int      @default(0)
-  dueDate      DateTime @default(now()) @map("due_date") @db.Timestamptz()
-  lastReview   DateTime? @map("last_review") @db.Timestamptz()
-  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz()
+  cardId        String    @id @map("card_id") @db.Uuid
+  phase         String    @default("new") @db.VarChar(12)
+  interval      Int       @default(0)
+  easeFactor    Float     @default(2.5) @map("ease_factor") @db.Real
+  repetitions   Int       @default(0)
+  learningStep  Int       @default(0) @map("learning_step")
+  stability     Float     @default(0) @db.Real
+  difficulty    Float     @default(0) @db.Real
+  scheduledDays Int       @default(0) @map("scheduled_days")
+  reps          Int       @default(0)
+  lapses        Int       @default(0)
+  dueDate       DateTime  @default(now()) @map("due_date") @db.Timestamptz()
+  lastReview    DateTime? @map("last_review") @db.Timestamptz()
+  updatedAt     DateTime  @default(now()) @map("updated_at") @db.Timestamptz()
 
   card Card @relation(fields: [cardId], references: [id])
 
   @@index([dueDate], map: "idx_card_states_due_date")
   @@map("card_states")
-}
-
-model DeckFsrsConfig {
-  deckId            String    @id @map("deck_id") @db.Uuid
-  desiredRetention  Float     @default(0.9) @map("desired_retention") @db.Real
-  maximumInterval   Int       @default(36500) @map("maximum_interval")
-  weights           Float[]   @default([]) @db.Real
-  learningSteps     String[]  @default([]) @map("learning_steps")
-  relearningSteps   String[]  @default([]) @map("relearning_steps")
-  isOptimized       Boolean   @default(false) @map("is_optimized")
-  lastOptimizedAt   DateTime? @map("last_optimized_at") @db.Timestamptz()
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
-
-  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
-
-  @@map("deck_fsrs_configs")
 }
 
 model ReviewLog {
@@ -141,38 +95,14 @@ model ReviewLog {
   @@map("review_logs")
 }
 
-model DailyLimit {
+model DeckDailyCounter {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  maxNewCards Int      @default(20) @map("max_new_cards")
-  maxReviews  Int      @default(200) @map("max_reviews")
-  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz()
-
-  @@unique([userId], map: "idx_daily_limits_user_id")
-  @@map("daily_limits")
-}
-
-model DailyCounter {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
+  deckId      String   @map("deck_id") @db.Uuid
   date        DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
-  newCount    Int      @default(0) @map("new_count")
   reviewCount Int      @default(0) @map("review_count")
 
-  @@unique([userId, date], map: "idx_daily_counters_user_date")
-  @@map("daily_counters")
-}
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
 
-model SkillMap {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String   @unique @map("user_id") @db.Uuid
-  title     String   @default("My Skill Map") @db.VarChar(255)
-  nodes     Json     @default("[]")
-  edges     Json     @default("[]")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("skill_maps")
+  @@unique([deckId, date], map: "idx_deck_daily_counters_deck_date")
+  @@map("deck_daily_counters")
 }

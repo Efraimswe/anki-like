@@ -3,12 +3,11 @@ import { Rating, type Grade } from 'ts-fsrs';
 import { prisma } from '@/lib/prisma';
 import type { Prisma } from '@prisma/client';
 import { requireAuth, jsonError } from '@/lib/api-utils';
-import { checkLimits } from '@/lib/daily-limits';
-import { ensureDeckFsrsConfig } from '@/lib/fsrs-config';
 import { scheduleReview, toStoredRating } from '@/lib/fsrs';
 import { materializeFsrsState } from '@/lib/fsrs-migration';
 import { formatInterval } from '@/lib/interval-format';
 import { getNow } from '@/lib/clock';
+import { startOfUtcDay } from '@/lib/daily';
 import { submitReviewSchema } from '@/lib/validations';
 import type { TokenPayload } from '@/lib/auth';
 
@@ -18,12 +17,6 @@ const RATING_MAP: Record<string, Grade> = {
   good: Rating.Good,
   easy: Rating.Easy,
 };
-
-function startOfUtcDay(date: Date) {
-  const d = new Date(date);
-  d.setUTCHours(0, 0, 0, 0);
-  return d;
-}
 
 export async function POST(request: NextRequest) {
   const auth = await requireAuth();
@@ -44,7 +37,7 @@ export async function POST(request: NextRequest) {
         select: {
           deletedAt: true,
           deckId: true,
-          deck: { select: { userId: true } },
+          deck: { select: { userId: true, dailyReviewLimit: true } },
         },
       },
     },
@@ -54,14 +47,24 @@ export async function POST(request: NextRequest) {
     return jsonError(404, 'Card not found');
   }
 
-  const fsrsConfig = await ensureDeckFsrsConfig(cardState.card.deckId);
+  const deckId = cardState.card.deckId;
+  const now = getNow();
+  const today = startOfUtcDay(now);
+
+  const counter = await prisma.deckDailyCounter.findUnique({
+    where: { deckId_date: { deckId, date: today } },
+    select: { reviewCount: true },
+  });
+  if ((counter?.reviewCount ?? 0) >= cardState.card.deck.dailyReviewLimit) {
+    return jsonError(429, 'Daily review limit reached for this deck');
+  }
+
   const reviewLogs = await prisma.reviewLog.findMany({
     where: { cardId },
     orderBy: { reviewedAt: 'asc' },
     select: { rating: true, reviewedAt: true },
   });
 
-  const now = getNow();
   const currentState = materializeFsrsState({
     current: {
       interval: cardState.interval,
@@ -77,16 +80,9 @@ export async function POST(request: NextRequest) {
     },
     reviewLogs,
     now,
-    config: fsrsConfig,
   });
 
-  const isNewCard = currentState.phase === 'new';
-  const limitCheck = await checkLimits(user.sub, isNewCard);
-  if (!limitCheck.allowed) {
-    return jsonError(429, limitCheck.reason!);
-  }
-
-  const newState = scheduleReview(currentState, rating, now, fsrsConfig);
+  const newState = scheduleReview(currentState, rating, now);
 
   await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.cardState.update({
@@ -118,10 +114,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await tx.dailyCounter.upsert({
-      where: { userId_date: { userId: user.sub, date: startOfUtcDay(now) } },
-      create: { userId: user.sub, date: startOfUtcDay(now), newCount: isNewCard ? 1 : 0, reviewCount: 1 },
-      update: { newCount: { increment: isNewCard ? 1 : 0 }, reviewCount: { increment: 1 } },
+    await tx.deckDailyCounter.upsert({
+      where: { deckId_date: { deckId, date: today } },
+      create: { deckId, date: today, reviewCount: 1 },
+      update: { reviewCount: { increment: 1 } },
     });
   });
 

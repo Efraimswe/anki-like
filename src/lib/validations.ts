@@ -1,41 +1,26 @@
 import { z } from 'zod';
-import { SkillLevelsSchema } from '@/lib/onboarding/skillLevels';
-
-export const signUpSchema = z.object({
-  email: z.string().email(),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
-    .regex(/[0-9]/, 'Password must include at least one number'),
-  displayName: z.string().min(1).max(100).optional(),
-});
-
-export const signInSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
-});
 
 export const createDeckSchema = z.object({
   name: z.string().min(1).max(200),
+  dailyReviewLimit: z.number().int().min(1).max(9999).optional(),
+  dailyAddLimit: z.number().int().min(1).max(9999).optional(),
 });
 
 export const updateDeckSchema = z.object({
   name: z.string().min(1).max(200).optional(),
+  dailyReviewLimit: z.number().int().min(1).max(9999).optional(),
+  dailyAddLimit: z.number().int().min(1).max(9999).optional(),
 });
 
 export const createCardSchema = z.object({
   deckId: z.string().uuid(),
-  front: z.string().min(1),
-  back: z.string().min(1),
-  type: z.enum(['basic', 'reverse', 'cloze']),
-  tags: z.array(z.string()).optional().default([]),
+  word: z.string().min(1),
+  translate: z.string().min(1),
 });
 
 export const updateCardSchema = z.object({
-  front: z.string().min(1).optional(),
-  back: z.string().min(1).optional(),
-  tags: z.array(z.string()).optional(),
+  word: z.string().min(1).optional(),
+  translate: z.string().min(1).optional(),
 });
 
 export const submitReviewSchema = z.object({
@@ -44,23 +29,11 @@ export const submitReviewSchema = z.object({
   timeTakenMs: z.number().int().positive().optional(),
 });
 
-export const updateDailyLimitsSchema = z.object({
-  maxNewCards: z.number().int().min(1).max(9999).optional(),
-  maxReviews: z.number().int().min(1).max(9999).optional(),
-});
-
 export const updateProfileSchema = z.object({
   displayName: z.string().min(1).max(100).optional(),
-  password: z.string().min(8).optional(),
-  interfaceLanguage: z.string().min(2).max(10).optional(),
-  skillLevels: SkillLevelsSchema.optional(),
+  targetLanguage: z.enum(['ru']).optional(),
 });
 
-export const statisticsQuerySchema = z.object({
-  period: z.enum(['week', 'month', 'all']).optional().default('week'),
-});
-
-export const updateDeckFsrsSchema = z.object({
-  desiredRetention: z.number().min(0.7).max(0.99).optional(),
-  maximumInterval: z.number().int().min(1).max(36500).optional(),
+export const translateQuerySchema = z.object({
+  word: z.string().min(1).max(100),
 });

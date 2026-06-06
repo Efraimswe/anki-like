@@ -1,182 +1,71 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
-import { useTheme } from '@/hooks/use-theme';
-import { useTranslations } from 'next-intl';
-import ThemeToggleIcon from '@/components/ui/ThemeToggleIcon';
+import { UserButton } from '@clerk/nextjs';
+import { Layers } from 'lucide-react';
+import Owl from '@/components/ui/Owl';
 
-function useNavItems() {
-  const t = useTranslations('nav');
-  return [
-  {
-    href: '/map',
-    label: t('progress'),
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
-      </svg>
-    ),
-  },
-  {
-    href: '/decks',
-    label: t('decks'),
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L12 12.75 6.429 9.75m11.142 0 4.179 2.25L12 17.25 2.25 12l4.179-2.25m11.142 0 4.179 2.25L12 22.5l-9.75-5.25 4.179-2.25" />
-      </svg>
-    ),
-  },
-  {
-    href: '/rephrasings',
-    label: t('rephrasings'),
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 4.5h6m-9 7.5h9.75A2.25 2.25 0 0 0 16.5 18V5.25A2.25 2.25 0 0 0 14.25 3H6A2.25 2.25 0 0 0 3.75 5.25v12.5A2.25 2.25 0 0 0 6 20.25Zm12-12 2.25 2.25-6.75 6.75H11.25v-2.25L18 8.25Z" />
-      </svg>
-    ),
-  },
-  {
-    href: '/fairy-tales',
-    label: t('fairyTales'),
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 6.75v10.5m0-10.5c-1.864-1.34-4.75-1.34-6.75 0v10.5c2-1.34 4.886-1.34 6.75 0m0-10.5c1.864-1.34 4.75-1.34 6.75 0v10.5c-2-1.34-4.886-1.34-6.75 0"
-        />
-      </svg>
-    ),
-  },
-  {
-    href: '/settings',
-    label: t('settings'),
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-      </svg>
-    ),
-  },
-  ];
+const NAV_ITEMS = [
+  { href: '/decks', label: 'Learn', Icon: Layers },
+];
+
+function Wordmark() {
+  return (
+    <Link href="/decks" className="flex items-center gap-2.5">
+      <Owl size={36} />
+      <span className="font-display text-xl font-extrabold tracking-tight" style={{ color: 'var(--duo-green)' }}>
+        Lexa
+      </span>
+    </Link>
+  );
 }
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const t = useTranslations('nav');
-  const navItems = useNavItems();
-  const { user, signOut } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(() =>
-    typeof window !== 'undefined' ? localStorage.getItem('sidebar-collapsed') === 'true' : false,
-  );
-
-  const toggle = () => {
-    setCollapsed((prev) => {
-      localStorage.setItem('sidebar-collapsed', String(!prev));
-      return !prev;
-    });
-  };
-
-  const isActive = (href: string) => pathname.startsWith(href);
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
 
   return (
-    <div
-      data-collapsed={String(collapsed)}
-      className="app-stage min-h-screen flex flex-col lg:flex-row lg:relative bg-(--color-bg-page) text-(--color-text-primary) p-4 md:p-4 lg:py-0 lg:pr-6 lg:pl-0 lg:gap-6"
-    >
-      {/* Mobile Header */}
-      <header className="lg:hidden flex items-center justify-between py-2 px-1 mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-(--color-accent) to-orange-400 flex items-center justify-center text-white text-xs font-bold shadow-lg">
-            {(user?.displayName || user?.email || '?')[0].toUpperCase()}
+    <div className="min-h-dvh flex flex-col">
+      {/* —— Top bar (≥1024px) —— */}
+      <header className="nav-topbar hidden lg:block">
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
+          <div className="flex items-center gap-6">
+            <Wordmark />
+            <nav className="flex items-center gap-2">
+              {NAV_ITEMS.map(({ href, label, Icon }) => (
+                <Link key={href} href={href} className="nav-pill" data-active={isActive(href)}>
+                  <Icon className="h-[18px] w-[18px]" strokeWidth={2.5} />
+                  <span>{label}</span>
+                </Link>
+              ))}
+            </nav>
           </div>
-          <span className="text-xl font-bold text-(--color-text-primary) heading truncate">Anki-Like</span>
+          <UserButton appearance={{ elements: { userButtonAvatarBox: { width: 36, height: 36 } } }} />
         </div>
-        <button onClick={toggleTheme} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-(--color-accent) hover:text-(--color-accent-hover) transition-colors">
-          <ThemeToggleIcon theme={theme} size={20} />
-        </button>
       </header>
 
-      {/* Sidebar */}
-      <aside className="nav-sidebar fixed top-0 bottom-0 left-0 z-30 hidden lg:block sidebar-glass sidebar-rail shadow-2xl">
-        <div className="nav-sidebar-inner">
-          <nav className="flex-1 py-3 px-3 space-y-1 overflow-y-auto overflow-x-hidden">
-            {navItems.map((item) => (
-              <div key={item.href}>
-                <Link
-                  href={item.href}
-                  title={item.label}
-                  className={`flex items-center gap-4 rounded-2xl px-2 py-3 ${
-                    isActive(item.href)
-                      ? 'bg-(--color-sidebar-active-bg) text-(--color-sidebar-text) shadow-lg'
-                      : 'text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-colors duration-200'
-                  }`}
-                >
-                  <span className="shrink-0">{item.icon}</span>
-                  <span className="nav-label text-sm font-semibold tracking-wide">{item.label}</span>
-                </Link>
-              </div>
-            ))}
-          </nav>
+      {/* —— Mobile top header (<1024px) —— */}
+      <header className="lg:hidden flex items-center justify-between px-5 h-14 border-b-2" style={{ borderColor: 'var(--rule)' }}>
+        <Wordmark />
+        <UserButton appearance={{ elements: { userButtonAvatarBox: { width: 34, height: 34 } } }} />
+      </header>
 
-          <div className="px-3 py-4 space-y-3">
-            <button
-              onClick={toggleTheme}
-              title={theme === 'dark' ? t('lightMode') : t('darkMode')}
-              className="flex items-center gap-4 w-full rounded-2xl px-4 py-3 text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg) transition-all"
-            >
-              <span className="shrink-0 text-(--color-accent)"><ThemeToggleIcon theme={theme} size={20} /></span>
-              <span className="nav-label text-sm font-semibold">{theme === 'dark' ? t('lightMode') : t('darkMode')}</span>
-            </button>
-            <div className="flex items-center gap-3 px-2">
-              <div className="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-tr from-(--color-accent) to-orange-400 flex items-center justify-center text-white text-sm font-bold shadow-lg">
-                {(user?.displayName || user?.email || '?')[0].toUpperCase()}
-              </div>
-              <div className="nav-label flex-1 min-w-0">
-                <p className="text-xs font-bold text-(--color-sidebar-text) truncate">{user?.displayName || user?.email}</p>
-                <button onClick={signOut} className="text-[10px] uppercase font-bold text-(--color-sidebar-text-muted) hover:text-(--color-accent) transition-colors mt-0.5">{t('signOut')}</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Toggle — absolute on stage, pinned to sidebar/main boundary */}
-      <button
-        onClick={toggle}
-        title={collapsed ? 'Expand' : 'Collapse'}
-        className="nav-toggle hidden lg:flex z-40 w-7 h-7 items-center justify-center rounded-full bg-(--color-bg-surface) border border-(--color-border) shadow-md text-(--color-sidebar-text-muted) hover:text-(--color-sidebar-text) hover:bg-(--color-sidebar-active-bg)"
-      >
-        <svg className="nav-chevron w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-        </svg>
-      </button>
-
-      {/* Main */}
-      <main className="app-main flex-1 mb-20 lg:mb-0">
-        <div className="w-full max-w-6xl mx-auto pt-8 pb-4 px-4 lg:px-8">
+      {/* —— Main —— */}
+      <main className="flex-1 pb-24 lg:pb-0">
+        <div className="mx-auto w-full max-w-5xl px-5 pt-6 pb-10 lg:px-8 lg:pt-10">
           {children}
         </div>
       </main>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 sidebar-glass flex items-center justify-around px-3 py-3 shadow-2xl backdrop-blur-xl border-t border-white/10">
-        {navItems.map((item) => (
-          <Link key={item.href} href={item.href} className={`flex flex-col items-center p-2 rounded-xl transition-all ${isActive(item.href) ? 'text-(--color-accent)' : 'text-(--color-text-muted) hover:text-(--color-text-secondary)'}`}>
-            <span className="scale-110">{item.icon}</span>
-            <span className="text-[9px] font-bold mt-1 uppercase tracking-widest">{item.label}</span>
+      {/* —— Bottom tab bar (<1024px) —— */}
+      <nav className="nav-tabbar flex lg:hidden">
+        {NAV_ITEMS.map(({ href, label, Icon }) => (
+          <Link key={href} href={href} className="nav-tab btn-spring" data-active={isActive(href)}>
+            <Icon className="h-6 w-6" strokeWidth={2.5} />
+            <span>{label}</span>
           </Link>
         ))}
-        <button onClick={signOut} className="flex flex-col items-center p-2 rounded-xl text-(--color-text-muted) hover:text-red-400">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-          </svg>
-          <span className="text-[9px] font-bold mt-1 uppercase tracking-widest">Exit</span>
-        </button>
       </nav>
     </div>
   );
