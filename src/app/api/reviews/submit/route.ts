@@ -7,7 +7,7 @@ import { scheduleReview, toStoredRating } from '@/lib/fsrs';
 import { materializeFsrsState } from '@/lib/fsrs-migration';
 import { formatInterval } from '@/lib/interval-format';
 import { getNow } from '@/lib/clock';
-import { startOfUtcDay } from '@/lib/daily';
+import { dayKey } from '@/lib/daily';
 import { submitReviewSchema } from '@/lib/validations';
 import type { TokenPayload } from '@/lib/auth';
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
   const deckId = cardState.card.deckId;
   const now = getNow();
-  const today = startOfUtcDay(now);
+  const today = dayKey(now);
 
   const counter = await prisma.deckDailyCounter.findUnique({
     where: { deckId_date: { deckId, date: today } },

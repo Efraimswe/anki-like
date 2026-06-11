@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { requireAuth, jsonError } from '@/lib/api-utils';
 import { createDeckSchema } from '@/lib/validations';
 import { getNow } from '@/lib/clock';
+import { countDueForReview } from '@/lib/due';
 import type { TokenPayload } from '@/lib/auth';
 
 const PAGE_SIZE = 20;
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
     include: {
       cards: {
         where: { deletedAt: null },
-        select: { id: true, cardState: { select: { dueDate: true } } },
+        select: { id: true, cardState: { select: { phase: true, dueDate: true } } },
       },
     },
   });
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
     dailyReviewLimit: d.dailyReviewLimit,
     dailyAddLimit: d.dailyAddLimit,
     cardCount: d.cards.length,
-    dueCount: d.cards.filter((c) => c.cardState && new Date(c.cardState.dueDate) <= now).length,
+    dueCount: countDueForReview(d.cards.map((c) => c.cardState), now),
     createdAt: d.createdAt,
     updatedAt: d.updatedAt,
   }));

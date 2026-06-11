@@ -67,7 +67,7 @@ export default function DeckDetailPage() {
       fetchApi<Card>('/api/cards', { method: 'POST', body: JSON.stringify({ deckId: id, word, translate }) }),
     onSuccess: (card) => {
       queryClient.setQueryData<DeckWithCards>(deckKeys.detail(id), (prev) =>
-        prev ? { ...prev, cards: [card, ...prev.cards], cardCount: prev.cardCount + 1 } : prev,
+        prev ? { ...prev, cards: [card, ...prev.cards], cardCount: prev.cardCount + 1, addedToday: (prev.addedToday ?? 0) + 1 } : prev,
       );
       queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
       toast({ type: 'success', title: 'Card added', description: `${card.word} → ${card.translate}` });
@@ -252,6 +252,9 @@ export default function DeckDetailPage() {
                   {deck!.dailyAddLimit} added/day ✎
                 </button>
               )}
+              <span style={{ color: 'var(--duo-green)' }}>{deck!.dueCount ?? 0} to review today</span>
+              <span>{deck!.addedToday ?? 0} added today</span>
+              <span>{deck!.reviewedToday ?? 0} reviewed today</span>
             </div>
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">

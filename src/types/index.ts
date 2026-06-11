@@ -15,6 +15,8 @@ export interface Deck {
   dailyAddLimit: number;
   cardCount: number;
   dueCount: number;
+  addedToday?: number;
+  reviewedToday?: number;
   createdAt: string;
   updatedAt?: string;
 }

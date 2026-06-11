@@ -4,7 +4,7 @@ import { requireAuth, jsonError } from '@/lib/api-utils';
 import { getIntervalHints } from '@/lib/fsrs';
 import { materializeFsrsState } from '@/lib/fsrs-migration';
 import { addMinutes, getNow } from '@/lib/clock';
-import { startOfUtcDay } from '@/lib/daily';
+import { dayKey } from '@/lib/daily';
 import type { TokenPayload } from '@/lib/auth';
 
 const cardSelect = {
@@ -45,7 +45,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
   const now = getNow();
   const counter = await prisma.deckDailyCounter.findUnique({
-    where: { deckId_date: { deckId, date: startOfUtcDay(now) } },
+    where: { deckId_date: { deckId, date: dayKey(now) } },
     select: { reviewCount: true },
   });
   const remainingReviews = Math.max(0, deck.dailyReviewLimit - (counter?.reviewCount ?? 0));
