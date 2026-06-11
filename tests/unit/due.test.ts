@@ -16,8 +16,17 @@ describe('isDueForReview', () => {
     expect(isDueForReview({ phase: 'review', dueDate: now }, now)).toBe(true);
   });
 
-  it('does NOT count a card due in the future', () => {
+  it('counts a review card due LATER today as due (available from local midnight)', () => {
+    // now is 09:00 Brussels; this card is stamped for 21:00 Brussels the same day.
+    expect(isDueForReview({ phase: 'review', dueDate: ms('2026-01-10T20:00:00Z') }, now)).toBe(true);
+  });
+
+  it('does NOT count a review card due on a future calendar day', () => {
     expect(isDueForReview({ phase: 'review', dueDate: ms('2026-01-11T08:00:00Z') }, now)).toBe(false);
+  });
+
+  it('does NOT count a learning card due later today (minute precision kept)', () => {
+    expect(isDueForReview({ phase: 'learning', dueDate: ms('2026-01-10T20:00:00Z') }, now)).toBe(false);
   });
 
   it('does NOT count a brand-new card (never studied) as "to review"', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { startOfDay, dayKey } from '@/lib/daily';
+import { startOfDay, endOfDay, dayKey } from '@/lib/daily';
 
 const iso = (d: Date) => d.toISOString();
 
@@ -27,6 +27,21 @@ describe('startOfDay (Brussels boundary)', () => {
   it('rolls over to the next day at Brussels midnight', () => {
     // 2026-06-12 00:30 Brussels == 2026-06-11 22:30 UTC
     expect(iso(startOfDay(new Date('2026-06-11T22:30:00Z')))).toBe('2026-06-11T22:00:00.000Z');
+  });
+});
+
+describe('endOfDay (exclusive upper bound = next Brussels midnight)', () => {
+  it('summer: ends at 22:00 UTC (next local midnight)', () => {
+    expect(iso(endOfDay(new Date('2026-06-11T14:37:12Z')))).toBe('2026-06-11T22:00:00.000Z');
+  });
+
+  it('winter: ends at 23:00 UTC (next local midnight)', () => {
+    expect(iso(endOfDay(new Date('2026-01-15T10:00:00Z')))).toBe('2026-01-15T23:00:00.000Z');
+  });
+
+  it('is exactly 24h after startOfDay on a normal day', () => {
+    const d = new Date('2026-06-11T14:37:12Z');
+    expect(endOfDay(d).getTime() - startOfDay(d).getTime()).toBe(24 * 60 * 60 * 1000);
   });
 });
 

@@ -51,6 +51,18 @@ export function startOfDay(date: Date): Date {
 }
 
 /**
+ * The instant at which the Brussels day containing `date` ends, i.e. the start
+ * of the next local day (exclusive upper bound). A card whose due date is
+ * before this is "due today or earlier".
+ */
+export function endOfDay(date: Date): Date {
+  const start = startOfDay(date);
+  // +36h lands safely inside the next day regardless of a 23h/25h DST day,
+  // then snap back to that day's local midnight.
+  return startOfDay(new Date(start.getTime() + 36 * 60 * 60 * 1000));
+}
+
+/**
  * The Brussels calendar date of `date`, as a UTC-midnight Date — the value to
  * use for the `@db.Date` daily-counter key so the stored date matches the
  * local calendar day.

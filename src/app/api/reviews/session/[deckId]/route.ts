@@ -4,7 +4,7 @@ import { requireAuth, jsonError } from '@/lib/api-utils';
 import { getIntervalHints } from '@/lib/fsrs';
 import { materializeFsrsState } from '@/lib/fsrs-migration';
 import { addMinutes, getNow } from '@/lib/clock';
-import { dayKey } from '@/lib/daily';
+import { dayKey, endOfDay } from '@/lib/daily';
 import type { TokenPayload } from '@/lib/auth';
 
 const cardSelect = {
@@ -56,6 +56,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
   const effectiveLimit = Math.min(50, remainingReviews);
   const learningCutoff = addMinutes(now, 20);
+  const endOfToday = endOfDay(now);
 
   const reviewCards = await prisma.card.findMany({
     where: {
@@ -65,7 +66,10 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       cardState: {
         phase: { not: 'new' },
         OR: [
-          { dueDate: { lte: now } },
+          // Review cards: day granularity — due today (local) or earlier, so they
+          // become available at local midnight regardless of their time-of-day stamp.
+          { phase: 'review', dueDate: { lt: endOfToday } },
+          // Learning / relearning: minute precision for sub-day steps (overdue included).
           { phase: { in: ['learning', 'relearning'] }, dueDate: { lte: learningCutoff } },
         ],
       },
@@ -114,8 +118,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     };
   });
 
+  // "Next due" = the next batch from tomorrow onward (today's cards are already available).
   const nextDueCard = await prisma.card.findFirst({
-    where: { deckId, deletedAt: null, deck: { userId: user.sub }, cardState: { dueDate: { gt: now } } },
+    where: { deckId, deletedAt: null, deck: { userId: user.sub }, cardState: { dueDate: { gte: endOfToday } } },
     orderBy: { cardState: { dueDate: 'asc' } },
     select: { cardState: { select: { dueDate: true } } },
   });
