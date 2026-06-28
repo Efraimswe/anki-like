@@ -10,17 +10,28 @@ const PROMPT = (word: string) =>
 
 type OpenRouterResponse = { choices?: { message?: { content?: string } }[]; error?: { code?: number } };
 
+const TIMEOUT_MS = 8000;
+
 async function tryModel(apiKey: string, model: string, word: string): Promise<string[] | null> {
-  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'user', content: PROMPT(word) }],
-      temperature: 0.3,
-    }),
-    cache: 'no-store',
-  });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+  let res: Response;
+  try {
+    res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model,
+        messages: [{ role: 'user', content: PROMPT(word) }],
+        temperature: 0.3,
+      }),
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
 
   const data = await res.json() as OpenRouterResponse;
 
