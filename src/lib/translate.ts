@@ -1,48 +1,43 @@
-interface MyMemoryMatch {
-  translation?: string;
-  quality?: string | number;
-}
-
-interface MyMemoryResponse {
-  responseData?: { translatedText?: string };
-  matches?: MyMemoryMatch[];
-}
+const MODEL = 'google/gemini-2.0-flash-exp:free';
 
 /**
- * Fetch up to 5 distinct translation options for an English word into Russian
- * using the free MyMemory API. Returns [] on any failure.
+ * Fetch up to 5 distinct Russian translations for an English word
+ * using OpenRouter (Gemini Flash free tier). Returns [] on any failure.
  */
 export async function fetchTranslations(word: string): Promise<string[]> {
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(
-    word,
-  )}&langpair=en|ru`;
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) return [];
 
   try {
-    const res = await fetch(url, { cache: 'no-store' });
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [
+          {
+            role: 'user',
+            content: `Give me exactly 5 different Russian translations for the English word "${word}". Return ONLY a JSON array of 5 strings, no explanation, no markdown. Example: ["слово1","слово2","слово3","слово4","слово5"]`,
+          },
+        ],
+        temperature: 0.3,
+      }),
+      cache: 'no-store',
+    });
+
     if (!res.ok) return [];
 
-    const data: MyMemoryResponse = await res.json();
+    const data = await res.json() as { choices?: { message?: { content?: string } }[] };
+    const text = data.choices?.[0]?.message?.content?.trim() ?? '';
 
-    const seen = new Set<string>();
-    const options: string[] = [];
+    const match = text.match(/\[[\s\S]*\]/);
+    if (!match) return [];
 
-    const push = (raw?: string) => {
-      const value = raw?.trim();
-      if (!value) return;
-      const key = value.toLowerCase();
-      if (seen.has(key)) return;
-      seen.add(key);
-      options.push(value);
-    };
-
-    for (const match of data.matches ?? []) {
-      push(match.translation);
-      if (options.length >= 5) break;
-    }
-
-    if (options.length === 0) push(data.responseData?.translatedText);
-
-    return options.slice(0, 5);
+    const parsed = JSON.parse(match[0]) as unknown[];
+    return parsed.filter((v): v is string => typeof v === 'string').slice(0, 5);
   } catch {
     return [];
   }
