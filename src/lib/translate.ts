@@ -1,4 +1,4 @@
-const MODEL = 'google/gemini-2.0-flash-exp:free';
+const MODEL = 'google/gemma-4-31b-it:free';
 
 /**
  * Fetch up to 5 distinct Russian translations for an English word
