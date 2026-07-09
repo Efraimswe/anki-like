@@ -17,7 +17,7 @@ export default function SignInPage() {
             Learn words<br />the <span className="serif-em">fun</span> way.
           </h1>
           <p className="mt-5 max-w-sm text-base font-bold" style={{ color: 'var(--ink-muted)' }}>
-            Bite-size decks, smart spaced-repetition review, and a friendly owl cheering you on.
+            Bite-size lessons, smart spaced-repetition review, and a friendly owl cheering you on.
           </p>
         </div>
 

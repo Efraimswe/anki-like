@@ -1,11 +1,5 @@
 import { z } from 'zod';
 
-export const createDeckSchema = z.object({
-  name: z.string().min(1).max(200),
-  dailyReviewLimit: z.number().int().min(1).max(9999).optional(),
-  dailyAddLimit: z.number().int().min(1).max(9999).optional(),
-});
-
 export const updateDeckSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   dailyReviewLimit: z.number().int().min(1).max(9999).optional(),

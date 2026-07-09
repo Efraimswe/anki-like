@@ -16,7 +16,7 @@ export default function SignUpPage() {
             Start your<br /><span className="serif-em">streak</span>.
           </h1>
           <p className="mt-5 max-w-sm text-base font-bold" style={{ color: 'var(--ink-muted)' }}>
-            Build decks, review daily, and remember more with every session.
+            Build your vocabulary, review daily, and remember more with every session.
           </p>
         </div>
 

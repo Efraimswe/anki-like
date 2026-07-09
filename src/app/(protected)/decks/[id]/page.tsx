@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient, keepPreviousData, queryOptions } from '@tanstack/react-query';
-import { ArrowLeft, Pencil, Trash2, Play, Plus, Check, X } from 'lucide-react';
+import { Pencil, Trash2, Play, Plus, Check, X } from 'lucide-react';
 import { fetchApi } from '@/lib/auth-client';
 import { deckKeys } from '@/lib/queries/decks';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
@@ -46,7 +45,6 @@ export default function DeckDetailPage() {
   const [limitInput, setLimitInput] = useState('');
   const [editingAddLimit, setEditingAddLimit] = useState(false);
   const [addLimitInput, setAddLimitInput] = useState('');
-  const [deletingDeck, setDeletingDeck] = useState(false);
 
   const deckWithCardsOptions = queryOptions({
     queryKey: deckKeys.detail(id),
@@ -127,16 +125,6 @@ export default function DeckDetailPage() {
     },
   });
 
-  const deleteDeck = useMutation({
-    mutationFn: () => fetchApi(`/api/decks/${id}`, { method: 'DELETE' }),
-    onSuccess: () => {
-      toast({ type: 'success', title: 'Deck deleted' });
-      queryClient.invalidateQueries({ queryKey: deckKeys.lists() });
-      router.push('/decks');
-    },
-    onError: (err) => toast({ type: 'error', title: 'Could not delete', description: err instanceof Error ? err.message : 'Please try again.' }),
-  });
-
   function resetAddCard() {
     setNewWord('');
     setOptions(null);
@@ -174,17 +162,13 @@ export default function DeckDetailPage() {
     setEditingAddLimit(false);
   };
 
-  if (isError) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load deck'} onRetry={() => refetch()} />;
-  if (!isPending && !deck) return <ErrorMessage message="Deck not found" />;
+  if (isError) return <ErrorMessage message={error instanceof Error ? error.message : 'Failed to load your vocabulary'} onRetry={() => refetch()} />;
+  if (!isPending && !deck) return <ErrorMessage message="Vocabulary not found" />;
 
   const cards = deck?.cards ?? [];
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <Link href="/decks" className="inline-flex items-center gap-1.5 text-sm font-extrabold" style={{ color: 'var(--ink-muted)' }}>
-        <ArrowLeft className="h-4 w-4" strokeWidth={2.5} /> Back to path
-      </Link>
-
       {isPending ? (
         <LoadingSpinner />
       ) : (
@@ -210,11 +194,8 @@ export default function DeckDetailPage() {
               )}
               {!editingName && (
                 <div className="flex gap-1">
-                  <button onClick={() => { setNameInput(deck!.name); setEditingName(true); }} className="btn-spring rounded-xl p-2" style={{ color: 'var(--ink-muted)' }} aria-label="Rename deck">
+                  <button onClick={() => { setNameInput(deck!.name); setEditingName(true); }} className="btn-spring rounded-xl p-2" style={{ color: 'var(--ink-muted)' }} aria-label="Rename vocabulary">
                     <Pencil className="h-5 w-5" strokeWidth={2.5} />
-                  </button>
-                  <button onClick={() => setDeletingDeck(true)} className="btn-spring rounded-xl p-2" style={{ color: 'var(--duo-red)' }} aria-label="Delete deck">
-                    <Trash2 className="h-5 w-5" strokeWidth={2.5} />
                   </button>
                 </div>
               )}
@@ -367,9 +348,6 @@ export default function DeckDetailPage() {
 
       {deletingCard && (
         <ConfirmDialog title="Delete card" message={`Delete "${deletingCard.word}"? This cannot be undone.`} onConfirm={() => { deleteCard.mutate(deletingCard.id); setDeletingCard(null); }} onCancel={() => setDeletingCard(null)} />
-      )}
-      {deletingDeck && (
-        <ConfirmDialog title="Delete deck" message={`Delete "${deck?.name}" and all its cards? This cannot be undone.`} onConfirm={() => { deleteDeck.mutate(); setDeletingDeck(false); }} onCancel={() => setDeletingDeck(false)} />
       )}
     </div>
   );

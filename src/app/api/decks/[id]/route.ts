@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import type { Prisma } from '@prisma/client';
 import { requireAuth, jsonError } from '@/lib/api-utils';
 import { updateDeckSchema } from '@/lib/validations';
 import { getNow } from '@/lib/clock';
@@ -91,26 +90,4 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   });
 
   return NextResponse.json(deck);
-}
-
-export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await requireAuth();
-  if (auth instanceof NextResponse) return auth;
-  const user = auth as TokenPayload;
-  const { id } = await params;
-
-  const now = new Date();
-  const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-    await tx.card.updateMany({
-      where: { deckId: id, deck: { userId: user.sub }, deletedAt: null },
-      data: { deletedAt: now },
-    });
-    return tx.deck.updateMany({
-      where: { id, userId: user.sub, deletedAt: null },
-      data: { deletedAt: now },
-    });
-  });
-
-  if (result.count === 0) return jsonError(404, 'Deck not found');
-  return new NextResponse(null, { status: 204 });
 }
