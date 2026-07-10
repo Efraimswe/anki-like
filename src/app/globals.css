@@ -412,3 +412,166 @@ input::placeholder, textarea::placeholder { color: var(--ink-soft); }
   .button-primary:active:not(:disabled),
   .btn-3d:active:not(:disabled) { transform: none; }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   Skills path (Duolingo-style zigzag ladder)
+   ════════════════════════════════════════════════════════════════ */
+
+.skill-path {
+  --node: 72px;
+  --offset: 36px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 96px;
+}
+@media (min-width: 768px) {
+  .skill-path { --node: 84px; --offset: 72px; }
+}
+
+.skill-path::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  bottom: 96px;
+  transform: translateX(-50%);
+  border-left: 3px dashed var(--rule-strong);
+  z-index: 0;
+}
+
+.skill-path-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.skill-path-node-wrap { display: grid; place-items: center; }
+.skill-path-row[data-side="left"]  .skill-path-node-wrap { transform: translateX(calc(-1 * var(--offset))); }
+.skill-path-row[data-side="right"] .skill-path-node-wrap { transform: translateX(var(--offset)); }
+
+.skill-path-node {
+  position: relative;
+  width: var(--node);
+  height: var(--node);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+.skill-path-node.is-completed {
+  background: var(--accent);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--accent) 68%, #000);
+}
+.skill-path-node.is-current {
+  background: var(--accent);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--accent) 68%, #000);
+  animation: skill-node-pulse 2s ease-in-out infinite;
+}
+.skill-path-node.is-locked {
+  background: var(--paper);
+  color: var(--ink-soft);
+  border: 3px dashed var(--rule-strong);
+  box-shadow: 0 6px 0 var(--rule);
+}
+.skill-path-node.is-burst { animation: skill-node-pop 0.45s ease; }
+
+.skill-path-here {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  padding: 2px 10px;
+  border-radius: 9999px;
+  animation: skill-bob 2.4s ease-in-out infinite;
+}
+
+.skill-path-bubble { max-width: 22rem; width: 100%; }
+@media (max-width: 420px) { .skill-path-bubble { max-width: 300px; } }
+
+.skill-path-caption { max-width: 15rem; text-align: center; }
+
+.skill-burst { position: absolute; inset: 0; pointer-events: none; }
+.skill-burst-ring {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--node); height: var(--node);
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  transform: translate(-50%, -50%) scale(0.4);
+  animation: skill-burst-ring 0.55s ease-out forwards;
+}
+.skill-burst-dot {
+  position: absolute; left: 50%; top: 50%;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translate(-50%, -50%) rotate(var(--a)) translateY(0);
+  animation: skill-burst-dot 0.6s ease-out forwards;
+}
+
+@keyframes skill-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes skill-burst-ring { to { transform: translate(-50%, -50%) scale(1.9); opacity: 0; } }
+@keyframes skill-burst-dot { 0% { opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(var(--a)) translateY(-46px) scale(0.3); opacity: 0; } }
+@keyframes skill-node-pop { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@keyframes skill-node-pulse {
+  0%, 100% { box-shadow: 0 6px 0 color-mix(in srgb, var(--accent) 68%, #000), 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); }
+  70% { box-shadow: 0 6px 0 color-mix(in srgb, var(--accent) 68%, #000), 0 0 0 14px transparent; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Level celebration
+   ════════════════════════════════════════════════════════════════ */
+.level-celebration-overlay {
+  position: fixed; inset: 0; z-index: 1100;
+  display: grid; place-items: center; padding: 1.5rem;
+  overflow: hidden;                                   /* clip confetti/shake, no scroll */
+  background: color-mix(in srgb, var(--ink) 55%, transparent);
+  animation: celebration-overlay-in 160ms ease-out;
+}
+.level-celebration-card {
+  position: relative; z-index: 1; max-width: 24rem; width: 100%;
+  text-align: center; padding: 2rem 1.5rem;
+  display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+  animation: celebration-card-in 220ms cubic-bezier(0.2,0.8,0.2,1);
+}
+.level-celebration-card.is-shaking { animation: celebration-card-in 220ms cubic-bezier(0.2,0.8,0.2,1), celebration-shake 500ms ease-in-out 180ms; }
+.level-celebration-medal {
+  display: grid; place-items: center; width: 4.5rem; height: 4.5rem; border-radius: 9999px;
+  color: #fff; background: var(--accent);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--accent) 68%, #000);
+  animation: celebration-medal-pop 300ms cubic-bezier(0.2,0.8,0.2,1) 120ms both;
+}
+.level-celebration-medal svg { width: 2.25rem; height: 2.25rem; }
+.level-celebration-card h2 { font-size: 1.5rem; font-weight: 800; color: var(--ink); }
+.level-celebration-card p  { font-size: 0.95rem; color: var(--ink-muted); }
+
+/* Confetti: particles positioned from center, fly out by --a, waves staggered by --d */
+.level-celebration-confetti { position: absolute; inset: 0; pointer-events: none; }
+.level-celebration-confetti span {
+  position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; border-radius: 2px;
+  background: var(--c); opacity: 0;
+  animation: celebration-confetti 900ms ease-out var(--d) forwards;
+}
+
+@keyframes celebration-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes celebration-card-in { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+@keyframes celebration-medal-pop { 0% { transform: scale(0); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
+@keyframes celebration-shake {
+  0%,100% { transform: translateX(0); } 15% { transform: translateX(-10px) rotate(-1.5deg); }
+  30% { transform: translateX(9px) rotate(1.5deg); } 45% { transform: translateX(-7px) rotate(-1deg); }
+  60% { transform: translateX(5px) rotate(0.8deg); } 75% { transform: translateX(-3px); }
+}
+@keyframes celebration-confetti {
+  0%   { opacity: 1; transform: translate(-50%,-50%) rotate(0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%,-50%) rotate(var(--a)) translateY(-220px) scale(0.4); }
+}

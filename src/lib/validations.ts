@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SKILL_CODES } from './skills';
 
 export const updateDeckSchema = z.object({
   name: z.string().min(1).max(200).optional(),
@@ -30,4 +31,10 @@ export const updateProfileSchema = z.object({
 
 export const translateQuerySchema = z.object({
   word: z.string().min(1).max(100),
+});
+
+export const skillProgressSchema = z.object({
+  skill: z.enum(SKILL_CODES),
+  level: z.number().int().min(1).max(10),
+  action: z.enum(['complete', 'uncomplete']),
 });

@@ -16,6 +16,7 @@ model User {
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
 
   decks Deck[]
+  skillProgress SkillProgress[]
 
   @@map("users")
 }
@@ -93,6 +94,20 @@ model ReviewLog {
   @@index([cardId], map: "idx_review_logs_card_id")
   @@index([reviewedAt], map: "idx_review_logs_reviewed_at")
   @@map("review_logs")
+}
+
+model SkillProgress {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String   @map("user_id")
+  skill          String   @db.VarChar(20)
+  completedLevel Int      @default(0) @map("completed_level")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skill], map: "idx_skill_progress_user_skill")
+  @@map("skill_progress")
 }
 
 model DeckDailyCounter {

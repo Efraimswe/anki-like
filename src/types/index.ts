@@ -78,3 +78,8 @@ export interface ApiError {
   message: string;
   error: string;
 }
+
+// Skills
+import type { SkillCode } from '@/lib/skills';
+export type SkillsResponse = { progress: Record<SkillCode, number> };
+export interface SkillProgressUpdate { skill: SkillCode; completedLevel: number; }

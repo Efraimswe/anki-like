@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UserButton } from '@clerk/nextjs';
-import { Layers } from 'lucide-react';
+import { Layers, Trophy } from 'lucide-react';
 import Owl from '@/components/ui/Owl';
 
 const NAV_ITEMS = [
   { href: '/decks', label: 'Learn', Icon: Layers },
+  { href: '/skills', label: 'Skills', Icon: Trophy },
 ];
 
 function Wordmark() {
