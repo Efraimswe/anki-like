@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { SKILL_CODES } from '@/lib/skills';
 import { useSkills } from '@/hooks/use-skills';
 import ErrorMessage from '@/components/ui/ErrorMessage';
@@ -31,9 +30,7 @@ export default function SkillsPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {SKILL_CODES.map((code) => (
-          <Link key={code} href={`/skills/${code}`} className="block">
-            <SkillCard code={code} progress={data.progress[code]} />
-          </Link>
+          <SkillCard key={code} code={code} progress={data.progress[code]} />
         ))}
       </div>
     </div>

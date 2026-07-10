@@ -7,6 +7,7 @@ interface Props {
   title: string;
   message: string;
   confirmLabel?: string;
+  cancelLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -15,6 +16,7 @@ export default function ConfirmDialog({
   title,
   message,
   confirmLabel = 'Delete',
+  cancelLabel = 'Cancel',
   onConfirm,
   onCancel,
 }: Props) {
@@ -76,7 +78,7 @@ export default function ConfirmDialog({
             onClick={onCancel}
             className="flex-1 px-6 py-3 text-sm font-bold text-(--color-text-secondary) hover:text-(--color-text-primary) bg-(--color-bg-page) rounded-2xl transition-all"
           >
-            Cancel
+            {cancelLabel}
           </button>
           <button
             onClick={onConfirm}

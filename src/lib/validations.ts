@@ -38,3 +38,19 @@ export const skillProgressSchema = z.object({
   level: z.number().int().min(1).max(10),
   action: z.enum(['complete', 'uncomplete']),
 });
+
+export const createBigGoalSchema = z.object({
+  skill: z.enum(SKILL_CODES),
+});
+
+export const createMediumGoalSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+});
+
+export const toggleGoalSchema = z.object({
+  completed: z.boolean(),
+});
+
+export const updateGoalTitleSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+});

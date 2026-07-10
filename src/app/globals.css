@@ -82,6 +82,9 @@
   --shadow-lg:  0 8px 24px rgba(0, 0, 0, 0.12);
   --shadow-cta: 0 4px 0 var(--duo-green-shadow);
 
+  /* —— motion —— */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+
   /* —— radii —— */
   --r-sm: 0.5rem;
   --r-md: 0.75rem;
@@ -411,6 +414,10 @@ input::placeholder, textarea::placeholder { color: var(--ink-soft); }
   .duo-node-btn:active,
   .button-primary:active:not(:disabled),
   .btn-3d:active:not(:disabled) { transform: none; }
+  .goal-icon-btn:active:not(:disabled),
+  .goal-icon-btn:hover:not(:disabled),
+  .plan-disclosure:hover,
+  .plan-add-step:hover { transform: none; }
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -575,3 +582,238 @@ input::placeholder, textarea::placeholder { color: var(--ink-soft); }
   0%   { opacity: 1; transform: translate(-50%,-50%) rotate(0) scale(1); }
   100% { opacity: 0; transform: translate(-50%,-50%) rotate(var(--a)) translateY(-220px) scale(0.4); }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   Plan (goals)
+   ════════════════════════════════════════════════════════════════ */
+
+.goal-aim-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--rule);
+  background: #fff;
+  color: var(--duo-green);
+  transition: background-color 0.15s ease, transform 0.12s ease;
+}
+.goal-aim-btn:hover:not(:disabled) { background: var(--duo-green-haze); }
+.goal-aim-btn:active:not(:disabled) { transform: scale(0.94); }
+.goal-aim-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.goal-aim-btn:focus-visible { outline: 2px solid var(--color-accent-ring); outline-offset: 2px; }
+
+/* ════════════════════════════════════════════════════════════
+   Plan · classic todo list — flat, borderless, indented substeps
+   Accent (green) only on checkboxes + add affordance; red only on delete.
+   ════════════════════════════════════════════════════════════ */
+
+/* list */
+.plan-list { max-width: 40rem; margin: 0 auto; }
+.plan-goal { list-style: none; }
+.plan-goal + .plan-goal { border-top: 1px solid var(--rule); }
+
+/* delete height-collapse wrapper */
+.plan-goal-collapse { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 220ms ease; }
+.plan-goal-collapse[data-open="false"] { grid-template-rows: 0fr; }
+.plan-goal-collapse-inner { overflow: hidden; min-height: 0; }
+.plan-goal[data-deleting] .plan-goal-collapse-inner { animation: plan-fade-out 220ms ease forwards; }
+
+/* PARENT ROW */
+.plan-goal-head {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px; border-radius: 12px;
+  transition: background-color 150ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .plan-goal-head:hover { background: var(--surface-hover); }
+}
+
+/* row 1: chevron | checkbox | title */
+.plan-goal-head-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+
+/* row 2: count + delete, under the title, aligned to the row's right edge */
+.plan-goal-head-meta { display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
+
+/* disclosure chevron */
+.plan-disclosure {
+  flex: 0 0 auto; width: 28px; height: 28px; display: grid; place-items: center;
+  border: none; background: transparent; color: var(--ink-soft); cursor: pointer;
+  border-radius: 8px; transition: color 150ms ease, background-color 150ms ease;
+}
+.plan-disclosure svg { width: 18px; height: 18px; transition: transform 200ms var(--ease-out-strong); }
+.plan-disclosure[aria-expanded="true"] svg { transform: rotate(90deg); }
+@media (hover: hover) and (pointer: fine) {
+  .plan-disclosure:hover { color: var(--ink-muted); background: var(--surface-hover); }
+}
+.plan-disclosure:focus-visible { outline: 2px solid var(--color-accent-ring); outline-offset: 2px; }
+
+/* title */
+.plan-goal-title {
+  flex: 1 1 auto; min-width: 0;
+  font-weight: 700; font-size: 1.0625rem; line-height: 1.3; color: var(--ink);
+  word-break: break-word;
+}
+
+/* progress count */
+.plan-goal-count {
+  flex: 0 0 auto; font-weight: 700; font-size: 0.75rem; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* parent hover-actions */
+.plan-goal-actions { flex: 0 0 auto; display: flex; gap: 2px; }
+
+/* unified green tint on unchecked checkboxes */
+.plan-goal-head .goal-checkbox::before,
+.plan-substep-row .goal-checkbox::before { border-color: color-mix(in srgb, var(--duo-green) 34%, #fff); }
+
+/* BODY (collapsible) */
+.plan-goal-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 220ms ease-out; }
+.plan-goal-body[data-open="true"] { grid-template-rows: 1fr; }
+.plan-goal-body-inner { overflow: hidden; min-height: 0; }
+.plan-goal-body[data-open="true"] .plan-goal-body-inner { padding: 2px 0 8px; }
+
+/* substeps — indented under parent title */
+.plan-substeps { display: flex; flex-direction: column; padding-left: 34px; }
+.plan-substep { list-style: none; display: grid; grid-template-rows: 1fr; overflow: hidden; }
+.plan-substep-row {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 4px 8px; border-radius: 10px; transition: background-color 150ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .plan-substep-row:hover { background: var(--surface-hover); }
+}
+
+/* row 1: checkbox | text */
+.plan-substep-row-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+
+/* row 2: delete, under the text, aligned to the row's right edge */
+.plan-substep-row-meta { display: flex; justify-content: flex-end; }
+.plan-substep-title { flex: 1 1 auto; min-width: 0; font-weight: 500; font-size: 0.9375rem; line-height: 1.35; color: var(--ink); word-break: break-word; }
+.plan-substep[data-phase="deleting"] { animation: plan-substep-collapse 200ms ease forwards; }
+.plan-substep[data-phase="deleting"] .plan-substep-row { animation: plan-fade-out 180ms ease forwards; }
+
+/* reveal-on-hover for quiet actions (pointer:fine only; always visible on touch) */
+@media (hover: hover) and (pointer: fine) {
+  .plan-goal-actions .goal-icon-btn,
+  .plan-substep-row .goal-icon-btn--danger { opacity: 0; transition: opacity 150ms ease; }
+  .plan-goal-head:hover .plan-goal-actions .goal-icon-btn,
+  .plan-goal-head:focus-within .plan-goal-actions .goal-icon-btn,
+  .plan-substep-row:hover .goal-icon-btn--danger,
+  .plan-substep-row:focus-within .goal-icon-btn--danger { opacity: 1; }
+}
+
+/* "+ Add step" affordance */
+.plan-add-step {
+  display: flex; align-items: center; gap: 8px;
+  margin-left: 34px; padding: 6px 8px; border-radius: 10px;
+  border: none; background: transparent; cursor: pointer;
+  font: inherit; font-weight: 600; font-size: 0.875rem; color: var(--ink-soft);
+  transition: color 150ms ease, background-color 150ms ease;
+}
+.plan-add-step svg { width: 16px; height: 16px; }
+@media (hover: hover) and (pointer: fine) {
+  .plan-add-step:hover { color: var(--duo-green); background: var(--surface-hover); }
+}
+.plan-add-step:focus-visible { outline: 2px solid var(--color-accent-ring); outline-offset: 2px; }
+
+/* inline add-input row — geometry mirrors .plan-add-step exactly (same icon,
+   gap, padding, type) so switching button → input shifts nothing visually */
+.plan-add-input { margin-left: 34px; padding: 6px 8px; display: flex; align-items: center; gap: 8px; }
+.plan-add-input-plus { width: 16px; height: 16px; flex: 0 0 auto; color: var(--ink-soft); }
+.plan-add-input .plan-input {
+  padding: 0; font-size: 0.875rem; font-weight: 600; line-height: inherit; color: var(--ink);
+}
+.plan-input {
+  flex: 1 1 auto; min-width: 0;
+  border: none; border-radius: 0;
+  padding: 4px 2px; font: inherit; font-size: 0.9375rem; color: var(--ink); background: transparent;
+}
+.plan-input:focus { outline: none; }
+.plan-input::placeholder { color: var(--ink-soft); }
+.plan-add-input-actions { flex: 0 0 auto; display: flex; gap: 2px; }
+
+/* editable goal/step title — display trigger + inline editor */
+.goal-title-trigger {
+  flex: 1 1 auto; min-width: 0; display: block; text-align: left;
+  border: none; background: transparent; padding: 0; margin: 0;
+  font: inherit; color: inherit; cursor: text;
+}
+.goal-title-trigger:focus-visible { outline: 2px solid var(--color-accent-ring); outline-offset: 2px; border-radius: 6px; }
+.plan-edit-title { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; position: relative; }
+/* Actions float below the text, out of flow: the edit block keeps the exact
+   height of the displayed text, so nothing shifts vertically on edit.
+   They land in the space freed by the meta row (hidden while editing). */
+/* Multi-line editor: inherits the exact typography of the displayed title
+   (font/size/line-height come from the same parent as .goal-title-trigger),
+   grows with content via JS scrollHeight sync — no visual jump on edit. */
+.plan-edit-textarea {
+  display: block; width: 100%;
+  flex: 0 0 auto; /* .plan-input's flex-grow would stretch it down the column, pushing actions away */
+  font: inherit;
+  /* longhand belt-and-braces: must beat .plan-input's font-size for pixel-identical text */
+  font-family: inherit; font-size: inherit; font-weight: inherit; line-height: inherit; letter-spacing: inherit;
+  color: inherit;
+  resize: none; overflow: hidden;
+  padding: 0; word-break: break-word;
+}
+
+@keyframes plan-fade-out { to { opacity: 0; } }
+@keyframes plan-substep-collapse { 0% { grid-template-rows: 1fr; } 100% { grid-template-rows: 0fr; } }
+
+/* checkbox — kept from existing system (do not restyle the visual) */
+.goal-checkbox { position: relative; width: 44px; height: 44px; display: grid; place-items: center; color: transparent; flex: 0 0 auto; }
+.goal-checkbox::before {
+  content: ""; position: absolute; inset: 8px; border-radius: 50%;
+  border: 2px solid var(--rule); background: transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s var(--ease-out-strong);
+}
+.goal-checkbox--sm::before { inset: 10px; }
+.goal-checkbox[aria-checked="true"]::before { background: var(--accent, var(--duo-green)); border-color: transparent; }
+.goal-checkbox svg { position: relative; z-index: 1; color: #fff; }
+.goal-checkbox:focus-visible { outline: 2px solid var(--color-accent-ring); outline-offset: 2px; border-radius: 50%; }
+/* toggle feedback: reuse the existing global .pop class (globals.css line 406) — GoalCheckbox already adds it. Do NOT add a forked keyframe. */
+
+/* icon buttons — ghost; tinted circle appears only on hover/focus */
+.goal-icon-btn {
+  position: relative; width: 44px; height: 44px; display: grid; place-items: center;
+  color: var(--ink-muted); background: transparent; border: none; cursor: pointer;
+  transition: transform 0.12s var(--ease-out-strong), color 0.15s ease;
+}
+.goal-icon-btn::before {
+  content: ""; position: absolute; inset: 6px; border-radius: 50%;
+  background: transparent; transition: background-color 0.15s ease; z-index: 0;
+}
+.goal-icon-btn svg { position: relative; z-index: 1; }
+.goal-icon-btn--sm { width: 40px; height: 40px; }
+.goal-icon-btn--sm::before { inset: 6px; }
+@media (hover: hover) and (pointer: fine) {
+  .goal-icon-btn:hover:not(:disabled)::before { background: var(--surface-hover); }
+  .goal-icon-btn--danger:hover:not(:disabled) { color: var(--duo-red); }
+  .goal-icon-btn--danger:hover:not(:disabled)::before { background: var(--danger-soft); }
+  .goal-icon-btn--confirm:hover:not(:disabled) { color: var(--duo-green); }
+  .goal-icon-btn--confirm:hover:not(:disabled)::before { background: var(--duo-green-haze); }
+}
+.goal-icon-btn:active:not(:disabled) { transform: scale(0.9); }
+.goal-icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.goal-icon-btn:focus-visible { outline: 2px solid var(--color-accent-ring); outline-offset: 2px; border-radius: 50%; }
+
+.goal-label {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  word-break: break-word;
+  transition: color 180ms ease-out, opacity 180ms ease-out;
+}
+.goal-label[data-done] {
+  color: var(--ink-soft);
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+/* keep reusing: .goal-checkbox, .goal-icon-btn(+--sm,--danger,--confirm), .goal-label — unchanged */

@@ -17,6 +17,7 @@ model User {
 
   decks Deck[]
   skillProgress SkillProgress[]
+  planGoals PlanGoal[]
 
   @@map("users")
 }
@@ -108,6 +109,37 @@ model SkillProgress {
 
   @@unique([userId, skill], map: "idx_skill_progress_user_skill")
   @@map("skill_progress")
+}
+
+model PlanGoal {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String   @map("user_id")
+  skill       String   @db.VarChar(20)
+  level       Int
+  title       String   @db.VarChar(200)
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mediumGoals PlanMediumGoal[]
+
+  @@index([userId], map: "idx_plan_goals_user_id")
+  @@map("plan_goals")
+}
+
+model PlanMediumGoal {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bigGoalId String   @map("big_goal_id") @db.Uuid
+  title     String   @db.VarChar(200)
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+
+  bigGoal   PlanGoal @relation(fields: [bigGoalId], references: [id], onDelete: Cascade)
+
+  @@index([bigGoalId], map: "idx_plan_medium_goals_big_goal_id")
+  @@map("plan_medium_goals")
 }
 
 model DeckDailyCounter {

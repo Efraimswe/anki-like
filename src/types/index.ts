@@ -83,3 +83,23 @@ export interface ApiError {
 import type { SkillCode } from '@/lib/skills';
 export type SkillsResponse = { progress: Record<SkillCode, number> };
 export interface SkillProgressUpdate { skill: SkillCode; completedLevel: number; }
+
+// Plan (goals)
+export interface PlanMediumGoal {
+  id: string;
+  title: string;
+  completed: boolean;
+  createdAt: string;
+}
+export interface PlanBigGoal {
+  id: string;
+  skill: SkillCode;      // SkillCode уже импортирован в файле для Skills-типов
+  level: number;
+  title: string;
+  completed: boolean;
+  createdAt: string;
+  mediumGoals: PlanMediumGoal[];
+}
+export interface PlanGoalsResponse { goals: PlanBigGoal[]; }
+export interface CreateBigGoalResult { goal: PlanBigGoal; duplicate: boolean; }
+export interface CreateMediumGoalResult { medium: PlanMediumGoal; }
