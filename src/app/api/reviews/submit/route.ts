@@ -7,7 +7,7 @@ import { scheduleReview, toStoredRating } from '@/lib/fsrs';
 import { materializeFsrsState } from '@/lib/fsrs-migration';
 import { formatInterval } from '@/lib/interval-format';
 import { getNow } from '@/lib/clock';
-import { dayKey } from '@/lib/daily';
+import { dayKey, startOfDay } from '@/lib/daily';
 import { submitReviewSchema } from '@/lib/validations';
 import type { TokenPayload } from '@/lib/auth';
 
@@ -51,19 +51,25 @@ export async function POST(request: NextRequest) {
   const now = getNow();
   const today = dayKey(now);
 
-  const counter = await prisma.deckDailyCounter.findUnique({
-    where: { deckId_date: { deckId, date: today } },
-    select: { reviewCount: true },
-  });
-  if ((counter?.reviewCount ?? 0) >= cardState.card.deck.dailyReviewLimit) {
-    return jsonError(429, 'Daily review limit reached for this deck');
-  }
-
   const reviewLogs = await prisma.reviewLog.findMany({
     where: { cardId },
     orderBy: { reviewedAt: 'asc' },
     select: { rating: true, reviewedAt: true },
   });
+
+  // The daily limit counts DISTINCT cards seen today, not every review action.
+  // A card already reviewed today (coming back via learning steps after Again/
+  // Hard) is a repeat: it neither consumes quota nor is blocked by the limit.
+  const startToday = startOfDay(now);
+  const isFirstReviewToday = !reviewLogs.some((l) => l.reviewedAt >= startToday);
+
+  const counter = await prisma.deckDailyCounter.findUnique({
+    where: { deckId_date: { deckId, date: today } },
+    select: { reviewCount: true },
+  });
+  if (isFirstReviewToday && (counter?.reviewCount ?? 0) >= cardState.card.deck.dailyReviewLimit) {
+    return jsonError(429, 'Daily review limit reached for this deck');
+  }
 
   const currentState = materializeFsrsState({
     current: {
@@ -114,11 +120,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await tx.deckDailyCounter.upsert({
-      where: { deckId_date: { deckId, date: today } },
-      create: { deckId, date: today, reviewCount: 1 },
-      update: { reviewCount: { increment: 1 } },
-    });
+    if (isFirstReviewToday) {
+      await tx.deckDailyCounter.upsert({
+        where: { deckId_date: { deckId, date: today } },
+        create: { deckId, date: today, reviewCount: 1 },
+        update: { reviewCount: { increment: 1 } },
+      });
+    }
   });
 
   return NextResponse.json({

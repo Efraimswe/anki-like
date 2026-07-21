@@ -4,7 +4,7 @@ import { requireAuth, jsonError } from '@/lib/api-utils';
 import { getIntervalHints } from '@/lib/fsrs';
 import { materializeFsrsState } from '@/lib/fsrs-migration';
 import { addMinutes, getNow } from '@/lib/clock';
-import { dayKey, endOfDay } from '@/lib/daily';
+import { dayKey, endOfDay, startOfDay } from '@/lib/daily';
 import type { TokenPayload } from '@/lib/auth';
 
 const cardSelect = {
@@ -50,47 +50,68 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   });
   const remainingReviews = Math.max(0, deck.dailyReviewLimit - (counter?.reviewCount ?? 0));
 
-  if (remainingReviews === 0) {
-    return NextResponse.json({ cards: [], remainingReviews: 0, nextDueDate: null });
-  }
-
-  const effectiveLimit = Math.min(50, remainingReviews);
   const learningCutoff = addMinutes(now, 20);
   const endOfToday = endOfDay(now);
+  const startToday = startOfDay(now);
 
-  const reviewCards = await prisma.card.findMany({
+  // In-progress cards: already reviewed today and back for another learning step
+  // (after Again/Hard). Always available — repeats don't consume the daily limit,
+  // so you can finish a word you started even after the day's quota is spent.
+  const inProgressCards = await prisma.card.findMany({
     where: {
       deckId,
       deletedAt: null,
       deck: { userId: user.sub },
       cardState: {
-        phase: { not: 'new' },
-        OR: [
-          // Review cards: day granularity — due today (local) or earlier, so they
-          // become available at local midnight regardless of their time-of-day stamp.
-          { phase: 'review', dueDate: { lt: endOfToday } },
-          // Learning / relearning: minute precision for sub-day steps (overdue included).
-          { phase: { in: ['learning', 'relearning'] }, dueDate: { lte: learningCutoff } },
-        ],
+        phase: { in: ['learning', 'relearning'] },
+        dueDate: { lte: learningCutoff },
+        lastReview: { gte: startToday },
       },
     },
     orderBy: { cardState: { dueDate: 'asc' } },
-    take: effectiveLimit,
+    take: 50,
     select: cardSelect,
   });
 
-  const newLimit = effectiveLimit - reviewCards.length;
-  let newCards: typeof reviewCards = [];
-  if (newLimit > 0) {
-    newCards = await prisma.card.findMany({
-      where: { deckId, deletedAt: null, deck: { userId: user.sub }, cardState: { phase: 'new' } },
-      orderBy: { createdAt: 'asc' },
-      take: newLimit,
+  // Fresh cards not yet touched today — these are what the daily limit gates.
+  const gatedLimit = Math.min(50, remainingReviews);
+  let reviewCards: typeof inProgressCards = [];
+  let newCards: typeof inProgressCards = [];
+  if (gatedLimit > 0) {
+    reviewCards = await prisma.card.findMany({
+      where: {
+        deckId,
+        deletedAt: null,
+        deck: { userId: user.sub },
+        cardState: {
+          // Exclude cards already reviewed today (served above, uncapped).
+          NOT: { lastReview: { gte: startToday } },
+          OR: [
+            // Review cards: day granularity — due today (local) or earlier, so they
+            // become available at local midnight regardless of their time-of-day stamp.
+            { phase: 'review', dueDate: { lt: endOfToday } },
+            // Learning / relearning carried over from before today (overdue included).
+            { phase: { in: ['learning', 'relearning'] }, dueDate: { lte: learningCutoff } },
+          ],
+        },
+      },
+      orderBy: { cardState: { dueDate: 'asc' } },
+      take: gatedLimit,
       select: cardSelect,
     });
+
+    const newLimit = gatedLimit - reviewCards.length;
+    if (newLimit > 0) {
+      newCards = await prisma.card.findMany({
+        where: { deckId, deletedAt: null, deck: { userId: user.sub }, cardState: { phase: 'new' } },
+        orderBy: { createdAt: 'asc' },
+        take: newLimit,
+        select: cardSelect,
+      });
+    }
   }
 
-  const allCards = [...reviewCards, ...newCards].map((card) => {
+  const allCards = [...inProgressCards, ...reviewCards, ...newCards].map((card) => {
     const state = materializeFsrsState({
       current: {
         interval: card.cardState!.interval,
@@ -127,7 +148,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
   return NextResponse.json({
     cards: allCards,
-    remainingReviews: remainingReviews - allCards.length,
+    remainingReviews: Math.max(0, remainingReviews - reviewCards.length - newCards.length),
     nextDueDate: nextDueCard?.cardState?.dueDate || null,
   });
 }
