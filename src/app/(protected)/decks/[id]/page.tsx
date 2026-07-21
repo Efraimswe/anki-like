@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData, queryOptions }
 import { Pencil, Trash2, Play, Plus, Check, X } from 'lucide-react';
 import { fetchApi } from '@/lib/auth-client';
 import { deckKeys } from '@/lib/queries/decks';
+import type { GeneratedWord } from '@/lib/generate-words';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
 import ErrorMessage from '@/components/ui/ErrorMessage';
@@ -31,6 +32,15 @@ export default function DeckDetailPage() {
   const [newWord, setNewWord] = useState('');
   const [options, setOptions] = useState<string[] | null>(null);
   const [manualTranslate, setManualTranslate] = useState('');
+
+  // generate-words flow
+  const [showGenerator, setShowGenerator] = useState(false);
+  const [genDifficulty, setGenDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
+  const [genCount, setGenCount] = useState<5 | 10>(5);
+  const [genTheme, setGenTheme] = useState('');
+  const [genWords, setGenWords] = useState<GeneratedWord[] | null>(null);
+  const [addedWords, setAddedWords] = useState<Set<string>>(new Set());
+  const [seenWords, setSeenWords] = useState<string[]>([]);
 
   // edit card
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -58,6 +68,19 @@ export default function DeckDetailPage() {
     mutationFn: (word: string) => fetchApi<{ options: string[] }>(`/api/translate?word=${encodeURIComponent(word)}`),
     onSuccess: ({ options }) => setOptions(options),
     onError: () => setOptions([]),
+  });
+
+  const generateWords = useMutation({
+    mutationFn: () =>
+      fetchApi<{ words: GeneratedWord[] }>('/api/generate-words', {
+        method: 'POST',
+        body: JSON.stringify({ difficulty: genDifficulty, count: genCount, theme: genTheme.trim() || undefined, exclude: seenWords }),
+      }),
+    onSuccess: ({ words }) => {
+      setGenWords(words);
+      setSeenWords((prev) => Array.from(new Set([...prev, ...words.map((w) => w.word)])));
+    },
+    onError: () => setGenWords([]),
   });
 
   const createCard = useMutation({
@@ -194,6 +217,9 @@ export default function DeckDetailPage() {
               )}
               {!editingName && (
                 <div className="flex gap-1">
+                  <button onClick={() => setShowGenerator(true)} className="btn-spring rounded-xl p-2" style={{ color: 'var(--ink-muted)' }} aria-label="Generate words">
+                    <Plus className="h-5 w-5" strokeWidth={2.5} />
+                  </button>
                   <button onClick={() => { setNameInput(deck!.name); setEditingName(true); }} className="btn-spring rounded-xl p-2" style={{ color: 'var(--ink-muted)' }} aria-label="Rename vocabulary">
                     <Pencil className="h-5 w-5" strokeWidth={2.5} />
                   </button>
@@ -300,6 +326,92 @@ export default function DeckDetailPage() {
                     />
                     <button onClick={() => handlePick(manualTranslate)} disabled={!manualTranslate.trim() || createCard.isPending} className="btn-3d btn-green">Add</button>
                   </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Generate-words flow */}
+          {showGenerator && (
+            <div className="premium-card p-6">
+              <h3 className="font-display mb-4 text-lg font-extrabold">Generate words</h3>
+              <div className="space-y-3">
+                <label className="eyebrow block">Difficulty</label>
+                <div className="flex flex-wrap gap-2">
+                  {(['easy', 'medium', 'hard'] as const).map((d) => (
+                    <button
+                      key={d} type="button" onClick={() => setGenDifficulty(d)}
+                      className="btn-spring rounded-2xl border-2 px-4 py-2.5 font-extrabold capitalize"
+                      style={genDifficulty === d
+                        ? { borderColor: 'var(--duo-blue)', backgroundColor: 'var(--duo-blue-haze)', color: 'var(--duo-blue)' }
+                        : { borderColor: 'var(--rule)', color: 'var(--ink)' }}
+                    >
+                      {d}
+                    </button>
+                  ))}
+                </div>
+
+                <label className="eyebrow block">Words</label>
+                <div className="flex flex-wrap gap-2">
+                  {([5, 10] as const).map((n) => (
+                    <button
+                      key={n} type="button" onClick={() => setGenCount(n)}
+                      className="btn-spring rounded-2xl border-2 px-4 py-2.5 font-extrabold"
+                      style={genCount === n
+                        ? { borderColor: 'var(--duo-blue)', backgroundColor: 'var(--duo-blue-haze)', color: 'var(--duo-blue)' }
+                        : { borderColor: 'var(--rule)', color: 'var(--ink)' }}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+
+                <input
+                  value={genTheme}
+                  onChange={(e) => setGenTheme(e.target.value)}
+                  placeholder="Theme (optional) — e.g. travel"
+                  className={inputCls} style={{ borderColor: 'var(--rule)' }}
+                />
+
+                {seenWords.length > 0 && (
+                  <p className="text-xs font-bold" style={{ color: 'var(--ink-soft)' }}>Avoiding {seenWords.length} previous words</p>
+                )}
+
+                <div className="flex gap-3">
+                  <button type="button" onClick={() => { setShowGenerator(false); setGenWords(null); }} className="btn-3d btn-gray flex-1">Cancel</button>
+                  <button type="button" onClick={() => generateWords.mutate()} disabled={generateWords.isPending} className="btn-3d btn-green flex-1">
+                    {generateWords.isPending ? 'Finding…' : 'Find'}
+                  </button>
+                </div>
+              </div>
+
+              {generateWords.isPending && <div className="mt-5"><LoadingSpinner /></div>}
+
+              {genWords !== null && !generateWords.isPending && (
+                <div className="mt-5 space-y-3">
+                  {genWords.length === 0 ? (
+                    <p className="text-sm font-bold" style={{ color: 'var(--ink-muted)' }}>No words returned. Try again.</p>
+                  ) : (
+                    genWords.map((w, i) => {
+                      const added = addedWords.has(w.word);
+                      return (
+                        <div key={i} className="flex items-center justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-lg font-extrabold" style={{ color: 'var(--ink)' }}>{w.word}</p>
+                            <p className="truncate font-bold" style={{ color: 'var(--ink-muted)' }}>{w.translate}</p>
+                          </div>
+                          <button
+                            type="button"
+                            disabled={added || createCard.isPending}
+                            onClick={() => { createCard.mutate({ word: w.word, translate: w.translate }); setAddedWords((prev) => new Set(prev).add(w.word)); }}
+                            className="btn-3d btn-green flex shrink-0 items-center gap-1.5"
+                          >
+                            {added ? (<><Check className="h-4 w-4" strokeWidth={3} /> Added</>) : 'Add'}
+                          </button>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               )}
             </div>

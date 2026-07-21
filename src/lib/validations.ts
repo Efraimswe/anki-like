@@ -33,6 +33,13 @@ export const translateQuerySchema = z.object({
   word: z.string().min(1).max(100),
 });
 
+export const generateWordsSchema = z.object({
+  difficulty: z.enum(['easy', 'medium', 'hard']),
+  count: z.union([z.literal(5), z.literal(10)]),
+  theme: z.string().max(100).optional(),
+  exclude: z.array(z.string()).max(300).optional(),
+});
+
 export const skillProgressSchema = z.object({
   skill: z.enum(SKILL_CODES),
   level: z.number().int().min(1).max(10),
